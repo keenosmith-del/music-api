@@ -2,6 +2,12 @@ const typography = {
     fontFamily:
         '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif',
 
+    modal: {
+        fontSize: 50,
+        fontWeight: 600,
+        letterSpacing: "-0.01em",
+    },
+
     display: {
         fontSize: 33,
         fontWeight: 600,
@@ -16,7 +22,7 @@ const typography = {
 
     title: {
         fontSize: 20,
-        fontWeight: 400,
+        fontWeight: 600,
         letterSpacing: "-0.02em",
     },
 
@@ -41,6 +47,12 @@ const typography = {
     button: {
         fontSize: 14,
         fontWeight: 300,
+        letterSpacing: "0",
+    },
+
+    buttonSecondary: {
+        fontSize: 12,
+        fontWeight: 250,
         letterSpacing: "0",
     },
 };

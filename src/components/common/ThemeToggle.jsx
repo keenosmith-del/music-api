@@ -1,5 +1,7 @@
 import { useTheme } from "../../context/ThemeContext";
 
+import { Sun, Moon } from "lucide-react";
+
 export default function ThemeToggle() {
     const { theme, toggleTheme } = useTheme();
 
@@ -9,52 +11,130 @@ export default function ThemeToggle() {
         <button
             onClick={toggleTheme}
             style={{
-                width: 40,
-                height: 22,
+                position: "relative",
+
+                width: 92,
+                height: 38,
 
                 border: "none",
                 outline: "none",
                 cursor: "pointer",
 
-                padding: 3,
+                padding: 4,
 
                 borderRadius: 9999,
 
-                background: dark
-                    ? "rgba(255,255,255,0.08)"
-                    : "rgba(255,255,255,0.45)",
-
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-
-                boxShadow: dark
-                    ? "0 4px 18px rgba(0,0,0,0.25)"
-                    : "0 4px 18px rgba(0,0,0,0.08)",
-
-                transition: "all .25s ease",
-
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
+
+                background: dark
+                    ? "rgba(43,43,43,0.08)"
+                    : "rgba(255,255,255,0.45)",
+
+                backdropFilter: "blur(18px)",
+                WebkitBackdropFilter: "blur(18px)",
+
+                boxShadow: dark
+                    ? `
+                0 6px 18px rgba(0,0,0,0.28),
+                inset 0 1px 0 rgba(255,255,255,0.03)
+              `
+                    : `
+                0 6px 18px rgba(0,0,0,0.08),
+                inset 0 1px 0 rgba(255,255,255,0.8)
+              `,
+
+                transition: "all 220ms ease",
             }}
         >
+            {/* Glass Lens toggle buttn*/}
             <div
                 style={{
-                    width: 20,
-                    height: 20,
+                    position: "absolute",
 
-                    borderRadius: "50%",
+                    top: 4,
+
+                    left: dark ? 4 : 56,
+
+                    width: 32,
+                    height: 30,
+
+                    borderRadius: 9999,
 
                     background: dark
-                        ? "rgba(240,240,235,0.95)"
-                        : "rgba(40,40,40,0.85)",
+                        ? "rgba(255, 255, 255, 0.01)"
+                        : "rgba(255,255,255,0.22)",
 
-                    transform: dark
-                        ? "translateX(0)"
-                        : "translateX(16px)",
+                    backdropFilter: "blur(16px)",
+                    WebkitBackdropFilter: "blur(16px)",
 
-                    transition: "all .25s ease",
+                    border: dark
+                        ? "1px solid rgba(255,255,255,0.05)"
+                        : "1px solid rgba(255,255,255,0.7)",
+
+                    boxShadow: dark
+                        ? "0 6px 16px rgba(0,0,0,0.25)"
+                        : `
+                    0 8px 18px rgba(0,0,0,0.08),
+                    inset 0 1px 0 rgba(255,255,255,0.9)
+                  `,
+
+                    transition: "all 220ms ease",
                 }}
             />
+
+            {/* Moon = DARK */}
+            <div
+                style={{
+                    width: 30,
+
+                    display: "flex",
+                    justifyContent: "center",
+
+                    zIndex: 1,
+
+                    transform: dark
+                        ? "scale(0.88)"
+                        : "scale(1.15)",
+
+                    opacity: dark ? 1 : 0.35,
+
+                    transition: "all 220ms ease",
+                }}
+            >
+                <Moon
+                    size={18}
+                    strokeWidth={1}
+                    color={theme.colors.text}
+                />
+            </div>
+
+            {/* Sun = LIGHT */}
+            <div
+                style={{
+                    width: 30,
+
+                    display: "flex",
+                    justifyContent: "center",
+
+                    zIndex: 1,
+
+                    transform: dark
+                        ? "scale(1.15)"
+                        : "scale(0.88)",
+
+                    opacity: dark ? 0.35 : 1,
+
+                    transition: "all 220ms ease",
+                }}
+            >
+                <Sun
+                    size={18}
+                    strokeWidth={1.5}
+                    color={theme.colors.text}
+                />
+            </div>
         </button>
     );
 }

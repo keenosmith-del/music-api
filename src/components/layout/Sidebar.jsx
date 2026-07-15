@@ -3,6 +3,10 @@ import { useTheme } from "../../context/ThemeContext";
 import avatar from "../../assets/images/avatar.png"
 import { useState } from "react";
 
+import GlassModal from "../glass/GlassModal";
+
+import Toast from "../common/Toast";
+
 import {
     House,
     Search,
@@ -29,6 +33,11 @@ export default function Sidebar({
     const { theme } = useTheme();
 
     const [selectedItem, setSelectedItem] = useState("home");
+
+    // modal for account on click
+    const [accountOpen, setAccountOpen] = useState(false);
+
+    const [showToast, setShowToast] = useState(false);
 
     const sidebarItemStyle = (active) => ({
         display: "flex",
@@ -772,7 +781,7 @@ export default function Sidebar({
                                     borderRadius: 9999,
 
                                     ...theme.typography.body,
-                            
+
                                 }}
                             >
                                 <House
@@ -836,7 +845,8 @@ export default function Sidebar({
 
                             {/* user info */}
                             <div
-                                onClick={() => setSignedIn(false)} // temp for testing
+                                // onClick={() => setSignedIn(false)} // temp for testing
+                                onClick={() => setAccountOpen(true)}
                                 style={{
                                     display: "flex",
                                     flexDirection: "column",
@@ -944,6 +954,30 @@ export default function Sidebar({
                     )}
                 </div>
             </GlassPanel>
+            {/* modal open on account */}
+            <GlassModal
+                open={accountOpen}
+                onClose={() => setAccountOpen(false)}
+                onSignOut={() => {
+                    setAccountOpen(false);
+                    setSignedIn(false);
+                }}
+                onSave={() => {
+                    setAccountOpen(false);
+
+                    setShowToast(true);
+
+                    setTimeout(() => {
+                        setShowToast(false);
+                    }, 5000);
+                }}
+            >
+            </GlassModal>
+
+            <Toast
+                open={showToast}
+                message="Profile updated"
+            />
         </div>
     );
 }
