@@ -114,12 +114,12 @@ export default function AppLayout({
                                 <AudioLines
                                     size={22}
                                     strokeWidth={1.5}
-                                    color={theme.colors.text}
+                                    color={theme.colors.textSecondary}
                                 />
 
                                 <span
                                     style={{
-                                        color: theme.colors.text,
+                                        color: theme.colors.textSecondary,
                                         ...theme.typography.title,
                                     }}
                                 >
@@ -147,7 +147,7 @@ export default function AppLayout({
                             <AudioLines
                                 size={90}
                                 strokeWidth={1}
-                                color={theme.colors.textSecondary}
+                                color={theme.colors.text}
                             />
 
                             {/* DISCRIPTION */}
@@ -259,7 +259,10 @@ export default function AppLayout({
                     {children}
                 </main>
 
-                {player}
+                {player &&
+                    React.cloneElement(player, {
+                        signedIn,
+                    })}
             </div>
         </AppCanvas>
     );
