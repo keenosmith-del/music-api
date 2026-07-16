@@ -37,34 +37,55 @@ import {
 
 export default function FloatingPlayer({
     signedIn,
-    queueOpen,
-    setQueueOpen,
-    lyricsOpen,
-    setLyricsOpen,
-    isPlaying,
-    setIsPlaying,
+
     hasTrack,
     setHasTrack,
+
+    isPlaying,
+    setIsPlaying,
+
+    currentTime,
+    setCurrentTime,
+
+    duration,
+    setDuration,
+
+    queueOpen,
+    setQueueOpen,
+
+    lyricsOpen,
+    setLyricsOpen,
+
+    expandedPlayerOpen,
+    setExpandedPlayerOpen,
+
+    repeatOne,
+    setRepeatOne,
+
+    shuffleOn,
+    setShuffleOn,
+
+    volume,
+    setVolume,
+
+    muted,
+    setMuted,
+
+    previousVolume,
+    setPreviousVolume,
 }) {
     const { theme } = useTheme();
 
-    // const [isPlaying, setIsPlaying] = useState(false);
-
-    const [repeatOne, setRepeatOne] = useState(false);
-    const [shuffleOn, setShuffleOn] = useState(false);
+    const controlsEnabled = signedIn && hasTrack;
 
     // volume states
     const [volumeExpanded, setVolumeExpanded] = useState(false);
 
-    const [volume, setVolume] = useState(100);
-
-    const [muted, setMuted] = useState(false);
-
-    const [previousVolume, setPreviousVolume] = useState(100);
-
     const volumeRef = useRef(null);
 
     const sliderRef = useRef(null);
+
+    const progressRef = useRef(null);
 
     const updateVolume = (clientX) => {
         if (!sliderRef.current) return;
@@ -85,6 +106,23 @@ export default function FloatingPlayer({
         if (value > 0) {
             setPreviousVolume(value);
         }
+    };
+
+    // helper slider time duration progress bar
+    const updateProgress = (clientX) => {
+        if (!progressRef.current) return;
+
+        const rect = progressRef.current.getBoundingClientRect();
+
+        const percent = Math.max(
+            0,
+            Math.min(
+                1,
+                (clientX - rect.left) / rect.width
+            )
+        );
+
+        setCurrentTime(Math.round(percent * duration));
     };
 
     useEffect(() => {
@@ -122,7 +160,8 @@ export default function FloatingPlayer({
             if (
                 menuOpen &&
                 menuRef.current &&
-                !menuRef.current.contains(event.target)
+                !menuRef.current.contains(event.target) &&
+                !ellipsisRef.current?.contains(event.target)
             ) {
                 setMenuOpen(false);
             }
@@ -134,6 +173,42 @@ export default function FloatingPlayer({
             document.removeEventListener("mousedown", handleMenuOutsideClick);
         };
     }, [menuOpen]);
+
+    // playback useEffect
+    useEffect(() => {
+        if (!isPlaying || !hasTrack) return;
+
+        const timer = setInterval(() => {
+            setCurrentTime((time) => {
+                if (time >= duration) {
+                    clearInterval(timer);
+
+                    setIsPlaying(false);
+                    setCurrentTime(duration);
+
+                    return duration;
+                }
+
+                return time + 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [
+        isPlaying,
+        hasTrack,
+        duration,
+        setCurrentTime,
+        setIsPlaying,
+    ]);
+
+    // playback helper
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = String(seconds % 60).padStart(2, "0");
+
+        return `${mins}:${secs}`;
+    };
 
     // icons
     const iconFill =
@@ -218,22 +293,22 @@ export default function FloatingPlayer({
                     >
                         <div
                             onClick={() => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 setShuffleOn((on) => !on);
                             }}
                             onMouseEnter={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = "translateY(0)";
                             }}
                             onMouseDown={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "scale(0.94)";
                             }}
                             onMouseUp={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             style={{
@@ -244,7 +319,9 @@ export default function FloatingPlayer({
                                 alignItems: "center",
                                 justifyContent: "center",
 
-                                cursor: signedIn ? "pointer" : "default",
+                                cursor: controlsEnabled ? "pointer" : "default",
+
+                                opacity: controlsEnabled ? 1 : 0.45,
 
                                 borderRadius: "50%",
 
@@ -277,21 +354,21 @@ export default function FloatingPlayer({
                             alt="Rewind"
                             draggable={false}
                             onClick={() => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                             }}
                             onMouseEnter={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = "translateY(0)";
                             }}
                             onMouseDown={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "scale(0.94)";
                             }}
                             onMouseUp={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             style={{
@@ -300,7 +377,9 @@ export default function FloatingPlayer({
 
                                 display: "block",
 
-                                cursor: signedIn ? "pointer" : "default",
+                                cursor: controlsEnabled ? "pointer" : "default",
+
+                                opacity: controlsEnabled ? 1 : 0.45,
 
                                 userSelect: "none",
                                 WebkitUserDrag: "none",
@@ -313,28 +392,30 @@ export default function FloatingPlayer({
                                         : "invert(0)",
                             }}
                         />
+                        
                         {/* play */}
                         <img
                             src={isPlaying ? pauseIcon : playIcon}
                             alt={isPlaying ? "Pause" : "Play"}
                             draggable={false}
                             onClick={() => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
+
                                 setIsPlaying((playing) => !playing);
                             }}
                             onMouseEnter={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = "translateY(0)";
                             }}
                             onMouseDown={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "scale(0.94)";
                             }}
                             onMouseUp={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             style={{
@@ -343,14 +424,14 @@ export default function FloatingPlayer({
 
                                 display: "block",
 
-                                cursor: signedIn ? "pointer" : "default",
+                                cursor: controlsEnabled ? "pointer" : "default",
+
+                                opacity: controlsEnabled ? 1 : 0.45,
 
                                 userSelect: "none",
                                 WebkitUserDrag: "none",
 
                                 transition: "transform 120ms ease",
-
-                                // opacity: !signedIn ? theme.mode === "dark" ? "0.55" : "0.85" : "1",
 
                                 filter:
                                     theme.mode === "dark"
@@ -364,21 +445,21 @@ export default function FloatingPlayer({
                             alt="FastForward"
                             draggable={false}
                             onClick={() => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                             }}
                             onMouseEnter={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform = "translateY(0)";
                             }}
                             onMouseDown={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "scale(0.94)";
                             }}
                             onMouseUp={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
                             style={{
@@ -387,7 +468,9 @@ export default function FloatingPlayer({
 
                                 display: "block",
 
-                                cursor: signedIn ? "pointer" : "default",
+                                cursor: controlsEnabled ? "pointer" : "default",
+
+                                opacity: controlsEnabled ? 1 : 0.45,
 
                                 userSelect: "none",
                                 WebkitUserDrag: "none",
@@ -406,26 +489,29 @@ export default function FloatingPlayer({
                                 strokeWidth={2}
                                 color={theme.colors.text}
                                 onClick={() => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     setRepeatOne(false);
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     e.currentTarget.style.transform = "translateY(-1px)";
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = "translateY(0)";
                                 }}
                                 onMouseDown={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     e.currentTarget.style.transform = "scale(0.94)";
                                 }}
                                 onMouseUp={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     e.currentTarget.style.transform = "translateY(-1px)";
                                 }}
                                 style={{
-                                    cursor: signedIn ? "pointer" : "default",
+                                    cursor: controlsEnabled ? "pointer" : "default",
+
+                                    opacity: controlsEnabled ? 1 : 0.45,
+
                                     transition: "transform 120ms ease",
                                 }}
                             />
@@ -435,34 +521,36 @@ export default function FloatingPlayer({
                                 strokeWidth={2}
                                 color={theme.colors.text}
                                 onClick={() => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     setRepeatOne(true);
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     e.currentTarget.style.transform = "translateY(-1px)";
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = "translateY(0)";
                                 }}
                                 onMouseDown={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     e.currentTarget.style.transform = "scale(0.94)";
                                 }}
                                 onMouseUp={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
                                     e.currentTarget.style.transform = "translateY(-1px)";
                                 }}
                                 style={{
-                                    cursor: signedIn ? "pointer" : "default",
                                     transition: "transform 120ms ease",
+
+                                    cursor: controlsEnabled ? "pointer" : "default",
+
+                                    opacity: controlsEnabled ? 1 : 0.45,
                                 }}
                             />
                         )}
                     </div>
 
                     {/* CENTER CONTROLS */}
-                    {/* CENTER */}
 
                     {!hasTrack ? (
                         <img
@@ -500,17 +588,24 @@ export default function FloatingPlayer({
 
                             {/* top row */}
                             <div
+                                onClick={() => {
+                                    if (!hasTrack) return;
+
+                                    setExpandedPlayerOpen(true);
+                                }}
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
                                     gap: 14,
+
+                                    cursor: "pointer",
                                 }}
                             >
                                 {/* artwork */}
                                 <div
                                     style={{
-                                        width: 35,
-                                        height: 35,
+                                        width: 33,
+                                        height: 33,
 
                                         flexShrink: 0,
 
@@ -525,6 +620,25 @@ export default function FloatingPlayer({
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
                                                 : "0 8px 18px rgba(0, 0, 0, 0.09)",
+
+                                        transition: "transform 180ms ease, box-shadow 180ms ease",
+
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = "translateY(-2px)";
+
+                                        e.currentTarget.style.boxShadow =
+                                            theme.mode === "dark"
+                                                ? "0 12px 26px rgba(0,0,0,.48)"
+                                                : "0 12px 26px rgba(0,0,0,.15)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = "translateY(0)";
+
+                                        e.currentTarget.style.boxShadow =
+                                            theme.mode === "dark"
+                                                ? "0 8px 18px rgba(0,0,0,.35)"
+                                                : "0 8px 18px rgba(0,0,0,.09)";
                                     }}
                                 />
 
@@ -565,12 +679,14 @@ export default function FloatingPlayer({
                                 </div>
                             </div>
 
-                            {/* bottom row time duration */}
+                            {/* bottom row slider time duration */}
                             <div
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 10,
+                                    gap: 8,
+
+                                    marginTop: "3px",
                                 }}
                             >
                                 <div
@@ -580,13 +696,34 @@ export default function FloatingPlayer({
                                         width: 28,
                                     }}
                                 >
-                                    0:00
+                                    {formatTime(currentTime)}
                                 </div>
 
+                                {/* slider progress track */}
                                 <div
+                                    ref={progressRef}
+                                    onMouseDown={(e) => {
+                                        if (!hasTrack) return;
+
+                                        updateProgress(e.clientX);
+
+                                        const handleMove = (moveEvent) => {
+                                            updateProgress(moveEvent.clientX);
+                                        };
+
+                                        const handleUp = () => {
+                                            window.removeEventListener("mousemove", handleMove);
+                                            window.removeEventListener("mouseup", handleUp);
+                                        };
+
+                                        window.addEventListener("mousemove", handleMove);
+                                        window.addEventListener("mouseup", handleUp);
+                                    }}
                                     style={{
                                         flex: 1,
                                         height: 3,
+
+                                        cursor: hasTrack ? "pointer" : "default",
 
                                         borderRadius: 999,
 
@@ -606,7 +743,7 @@ export default function FloatingPlayer({
                                             top: 0,
                                             bottom: 0,
 
-                                            width: "18%",
+                                            width: `${(currentTime / duration) * 100}%`,
 
                                             borderRadius: 999,
 
@@ -623,7 +760,7 @@ export default function FloatingPlayer({
                                         textAlign: "right",
                                     }}
                                 >
-                                    3:42
+                                    {formatTime(duration)}
                                 </div>
                             </div>
 
@@ -653,7 +790,7 @@ export default function FloatingPlayer({
                                 strokeWidth={1.5}
                                 color={theme.colors.text}
                                 onClick={() => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
 
                                     if (!menuOpen && ellipsisRef.current) {
                                         const MENU_WIDTH = 230;
@@ -671,12 +808,12 @@ export default function FloatingPlayer({
                                     setMenuOpen((open) => !open);
                                 }}
                                 style={{
-                                    cursor: signedIn ? "pointer" : "default",
+                                    cursor: controlsEnabled ? "pointer" : "default",
+                                    opacity: !signedIn ? "0" : controlsEnabled ? "1" : "0.45",
                                     transition: "transform 180ms ease",
-                                    opacity: signedIn ? "1" : "0",
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
 
                                     e.currentTarget.style.transform = "translateY(-1px)";
                                 }}
@@ -684,12 +821,12 @@ export default function FloatingPlayer({
                                     e.currentTarget.style.transform = "translateY(0)";
                                 }}
                                 onMouseDown={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
 
                                     e.currentTarget.style.transform = "scale(0.88)";
                                 }}
                                 onMouseUp={(e) => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
 
                                     e.currentTarget.style.transform = "translateY(-1px)";
                                 }}
@@ -701,19 +838,19 @@ export default function FloatingPlayer({
                             strokeWidth={1.5}
                             color={theme.colors.text}
                             onClick={() => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
 
                                 setLyricsOpen((open) => !open);
                                 setQueueOpen(false);
                                 setMenuOpen(false);
                             }}
                             style={{
-                                cursor: signedIn ? "pointer" : "default",
+                                cursor: controlsEnabled ? "pointer" : "default",
+                                opacity: !signedIn ? "0" : controlsEnabled ? "1" : "0.45",
                                 transition: "transform 180ms ease",
-                                opacity: signedIn ? "1" : "0",
                             }}
                             onMouseEnter={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
 
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
@@ -721,12 +858,12 @@ export default function FloatingPlayer({
                                 e.currentTarget.style.transform = "translateY(0)";
                             }}
                             onMouseDown={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
 
                                 e.currentTarget.style.transform = "scale(0.88)";
                             }}
                             onMouseUp={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
 
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
@@ -737,18 +874,23 @@ export default function FloatingPlayer({
                             strokeWidth={1.5}
                             color={theme.colors.text}
                             onClick={() => {
-                                if (!signedIn) return;
+                                console.log("Queue clicked");
+
+                                if (!controlsEnabled) return;
+
+                                console.log("Opening queue");
 
                                 setQueueOpen((open) => !open);
                                 setLyricsOpen(false);
                                 setMenuOpen(false);
                             }}
                             style={{
-                                cursor: signedIn ? "pointer" : "default",
+                                cursor: controlsEnabled ? "pointer" : "default",
+                                opacity: controlsEnabled ? "1" : "0.45",
                                 transition: "transform 180ms ease",
                             }}
                             onMouseEnter={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
 
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
@@ -756,12 +898,12 @@ export default function FloatingPlayer({
                                 e.currentTarget.style.transform = "translateY(0)";
                             }}
                             onMouseDown={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
 
                                 e.currentTarget.style.transform = "scale(0.88)";
                             }}
                             onMouseUp={(e) => {
-                                if (!signedIn) return;
+                                if (!controlsEnabled) return;
 
                                 e.currentTarget.style.transform = "translateY(-1px)";
                             }}
@@ -822,7 +964,7 @@ export default function FloatingPlayer({
                                 <div
                                     ref={sliderRef}
                                     onMouseDown={(e) => {
-                                        if (!signedIn) return;
+                                        if (!controlsEnabled) return;
 
                                         updateVolume(e.clientX);
 
@@ -839,7 +981,7 @@ export default function FloatingPlayer({
                                         window.addEventListener("mouseup", handleUp);
                                     }}
                                     onMouseLeave={() => {
-                                        if (!signedIn) return;
+                                        if (!controlsEnabled) return;
 
                                         setVolumeExpanded(false);
                                     }}
@@ -852,7 +994,8 @@ export default function FloatingPlayer({
                                         display: "flex",
                                         alignItems: "center",
 
-                                        cursor: signedIn ? "pointer" : "default",
+                                        cursor: controlsEnabled ? "pointer" : "default",
+                                        opacity: controlsEnabled ? "1" : "0",
                                     }}
                                 >
                                     {/* Track */}
@@ -903,7 +1046,7 @@ export default function FloatingPlayer({
                                 }
                                 alt="Volume"
                                 onClick={() => {
-                                    if (!signedIn) return;
+                                    if (!controlsEnabled) return;
 
                                     setMenuOpen(false);
 
@@ -924,7 +1067,8 @@ export default function FloatingPlayer({
                                     width: 23,
                                     height: 23,
 
-                                    cursor: signedIn ? "pointer" : "default",
+                                    cursor: controlsEnabled ? "pointer" : "default",
+                                    opacity: controlsEnabled ? "1" : "0.45",
 
                                     transition: "transform 180ms ease",
 

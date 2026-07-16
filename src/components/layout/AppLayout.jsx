@@ -14,6 +14,7 @@ import musicIcon from "../../assets/svgs/music-thin.svg";
 import musicIcon2 from "../../assets/svgs/music-thick.svg";
 
 import GlassSlideout from "../glass/GlassSlideout";
+import ExpandedPlayer from "../player/ExpandedPlayer";
 
 import {
     AudioLines,
@@ -44,6 +45,21 @@ export default function AppLayout({
     // play
     const [isPlaying, setIsPlaying] = useState(false);
     const [hasTrack, setHasTrack] = useState(false);
+
+    const [currentTime, setCurrentTime] = useState(0);
+
+    // 3:42 = 222 seconds
+    const [duration, setDuration] = useState(222);
+
+    const [expandedPlayerOpen, setExpandedPlayerOpen] = useState(false);
+
+    // floating player
+    const [repeatOne, setRepeatOne] = useState(false);
+    const [shuffleOn, setShuffleOn] = useState(false);
+
+    const [volume, setVolume] = useState(100);
+    const [muted, setMuted] = useState(false);
+    const [previousVolume, setPreviousVolume] = useState(100);
 
     const favouriteColor =
         theme.mode === "dark"
@@ -193,6 +209,8 @@ export default function AppLayout({
                                             <div
                                                 onClick={(e) => {
                                                     e.stopPropagation();
+
+                                                    setCurrentTime(0);
 
                                                     setHasTrack(true);
                                                     setIsPlaying(true);
@@ -584,19 +602,71 @@ export default function AppLayout({
                         </div>
                     </div>
                 </GlassSlideout>
-
                 {player &&
                     React.cloneElement(player, {
                         signedIn,
-                        queueOpen,
-                        setQueueOpen,
-                        lyricsOpen,
-                        setLyricsOpen,
-                        isPlaying,
-                        setIsPlaying,
+
                         hasTrack,
                         setHasTrack,
+
+                        isPlaying,
+                        setIsPlaying,
+
+                        currentTime,
+                        setCurrentTime,
+
+                        duration,
+                        setDuration,
+
+                        queueOpen,
+                        setQueueOpen,
+
+                        lyricsOpen,
+                        setLyricsOpen,
+
+                        expandedPlayerOpen,
+                        setExpandedPlayerOpen,
+
+                        repeatOne,
+                        setRepeatOne,
+
+                        shuffleOn,
+                        setShuffleOn,
+
+                        volume,
+                        setVolume,
+
+                        muted,
+                        setMuted,
+
+                        previousVolume,
+                        setPreviousVolume,
                     })}
+
+                <ExpandedPlayer
+                    open={expandedPlayerOpen}
+                    onClose={() => setExpandedPlayerOpen(false)}
+
+                    volume={volume}
+                    setVolume={setVolume}
+
+                    muted={muted}
+                    setMuted={setMuted}
+
+                    currentTime={currentTime}
+                    setCurrentTime={setCurrentTime}
+
+                    duration={duration}
+
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+
+                    repeatOne={repeatOne}
+                    setRepeatOne={setRepeatOne}
+
+                    shuffleOn={shuffleOn}
+                    setShuffleOn={setShuffleOn}
+                />
             </div>
         </AppCanvas>
     );
