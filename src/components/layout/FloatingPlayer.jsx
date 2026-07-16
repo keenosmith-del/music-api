@@ -19,17 +19,20 @@ import GlassMenu from "../glass/GlassMenu";
 
 import {
     Shuffle,
-    SkipBack,
-    Play,
-    SkipForward,
     Repeat,
     Repeat1,
+
     AudioLines,
+
     TextAlignJustify,
-    Rewind,
-    FastForward,
     MessageSquareQuote,
     Ellipsis,
+
+    ThumbsDown,
+    Star,
+    Plus,
+    ListPlus,
+    Square,
 } from "lucide-react";
 
 export default function FloatingPlayer({
@@ -38,9 +41,15 @@ export default function FloatingPlayer({
     setQueueOpen,
     lyricsOpen,
     setLyricsOpen,
+    isPlaying,
+    setIsPlaying,
+    hasTrack,
+    setHasTrack,
 }) {
     const { theme } = useTheme();
-    const [isPlaying, setIsPlaying] = useState(false);
+
+    // const [isPlaying, setIsPlaying] = useState(false);
+
     const [repeatOne, setRepeatOne] = useState(false);
     const [shuffleOn, setShuffleOn] = useState(false);
 
@@ -138,6 +147,37 @@ export default function FloatingPlayer({
             ? "#242424"
             : "#ECECE8"
 
+    const menuItems = [
+        {
+            label: "Stop Playing",
+            icon: <Square size={15} strokeWidth={1.75} />,
+            onClick: () => {
+                console.log("Stop clicked");
+                setIsPlaying(false);
+                setHasTrack(false);
+                setMenuOpen(false);
+            },
+        },
+        "divider",
+        {
+            label: "Add to Library",
+            icon: <Plus size={15} strokeWidth={1.75} />,
+        },
+        {
+            label: "Add to Playlist",
+            icon: <ListPlus size={15} strokeWidth={1.75} />,
+        },
+        "divider",
+        {
+            label: "Favourite",
+            icon: <Star size={15} strokeWidth={1.75} />,
+        },
+        {
+            label: "Suggest Less",
+            icon: <ThumbsDown size={15} strokeWidth={1.75} />,
+        },
+    ];
+
     return (
         <div
             style={{
@@ -151,7 +191,7 @@ export default function FloatingPlayer({
             <GlassPanel
                 style={{
                     width: 710,
-                    height: 55,
+                    height: 64,
                     borderRadius: 9999,
                 }}
             >
@@ -422,21 +462,173 @@ export default function FloatingPlayer({
                     </div>
 
                     {/* CENTER CONTROLS */}
-                    <img
-                        src={microphoneIcon}
-                        alt="Microphone"
-                        style={{
-                            width: 18,
-                            height: 18,
+                    {/* CENTER */}
 
-                            opacity: "0.45",
+                    {!hasTrack ? (
+                        <img
+                            src={microphoneIcon}
+                            alt="Microphone"
+                            style={{
+                                width: 18,
+                                height: 18,
 
-                            filter:
-                                theme.mode === "dark"
-                                    ? "invert(1)"
-                                    : "invert(0)",
-                        }}
-                    />
+                                opacity: 0.45,
+
+                                filter:
+                                    theme.mode === "dark"
+                                        ? "invert(1)"
+                                        : "invert(0)",
+                            }}
+                        />
+                    ) : (
+                        <div
+                            style={{
+                                flex: 1,
+
+                                margin: "0 18px",
+
+                                display: "flex",
+                                flexDirection: "column",
+
+                                justifyContent: "center",
+
+                                gap: 4,
+
+                                overflow: "visible",
+                            }}
+                        >
+
+                            {/* top row */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 14,
+                                }}
+                            >
+                                {/* artwork */}
+                                <div
+                                    style={{
+                                        width: 35,
+                                        height: 35,
+
+                                        flexShrink: 0,
+
+                                        borderRadius: 12,
+
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "rgba(58, 58, 58, 0.08)"
+                                                : "rgba(255,255,255,0.65)",
+
+                                        boxShadow:
+                                            theme.mode === "dark"
+                                                ? "0 8px 18px rgba(0,0,0,.35)"
+                                                : "0 8px 18px rgba(0, 0, 0, 0.09)",
+                                    }}
+                                />
+
+                                {/* text */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+
+                                        gap: 1,
+
+                                        minWidth: 0,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        Billie Eilish
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            color: theme.colors.text,
+
+                                            whiteSpace: "nowrap",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+
+                                            ...theme.typography.mediumText,
+                                        }}
+                                    >
+                                        Birds of a Feather
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* bottom row time duration */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 10,
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        fontSize: 8,
+                                        color: theme.colors.textSecondary,
+                                        width: 28,
+                                    }}
+                                >
+                                    0:00
+                                </div>
+
+                                <div
+                                    style={{
+                                        flex: 1,
+                                        height: 3,
+
+                                        borderRadius: 999,
+
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "rgba(255,255,255,0.12)"
+                                                : "rgba(0,0,0,0.10)",
+
+                                        position: "relative",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            position: "absolute",
+
+                                            left: 0,
+                                            top: 0,
+                                            bottom: 0,
+
+                                            width: "18%",
+
+                                            borderRadius: 999,
+
+                                            background: theme.colors.text,
+                                        }}
+                                    />
+                                </div>
+
+                                <div
+                                    style={{
+                                        fontSize: 8,
+                                        color: theme.colors.textSecondary,
+                                        width: 28,
+                                        textAlign: "right",
+                                    }}
+                                >
+                                    3:42
+                                </div>
+                            </div>
+
+                        </div>
+                    )}
 
                     {/* RIGHT CONTROLS */}
                     <div
@@ -465,7 +657,7 @@ export default function FloatingPlayer({
 
                                     if (!menuOpen && ellipsisRef.current) {
                                         const MENU_WIDTH = 230;
-                                        const MENU_HEIGHT = 170;
+                                        const MENU_HEIGHT = 230;
                                         const GAP = 33;
 
                                         const rect = ellipsisRef.current.getBoundingClientRect();
@@ -593,7 +785,7 @@ export default function FloatingPlayer({
                                     top: "50%",
                                     transform: "translateY(-50%)",
 
-                                    width: volumeExpanded ? 180 : 0,
+                                    width: volumeExpanded ? 140 : 0,
 
                                     height: 36,
 
@@ -747,6 +939,7 @@ export default function FloatingPlayer({
                 </div>
             </GlassPanel>
             <GlassMenu
+                ref={menuRef}
                 open={menuOpen}
                 top={menuPosition.top}
                 left={menuPosition.left}
@@ -759,14 +952,8 @@ export default function FloatingPlayer({
 
                     }}
                 >
-                    {[
-                        "Add to Library",
-                        "Add to Playlist",
-                        "",
-                        "Favourite",
-                        "Suggest Less",
-                    ].map((item, index) =>
-                        item === "" ? (
+                    {menuItems.map((item, index) =>
+                        item === "divider" ? (
                             <div
                                 key={index}
                                 style={{
@@ -781,10 +968,14 @@ export default function FloatingPlayer({
                             />
                         ) : (
                             <div
-                                key={item}
+                                onClick={() => {
+                                    item.onClick?.();
+                                }}
+                                key={item.label}
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
+                                    gap: 12,
 
                                     height: 34,
 
@@ -798,7 +989,7 @@ export default function FloatingPlayer({
 
                                     transition: "all 180ms ease",
 
-                                    ...theme.typography.body,
+                                    ...theme.typography.smallText,
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = "translateY(-1px)";
@@ -816,7 +1007,23 @@ export default function FloatingPlayer({
                                     e.currentTarget.style.background = "transparent";
                                 }}
                             >
-                                {item}
+                                <>
+                                    <div
+                                        style={{
+                                            width: 18,
+
+                                            display: "flex",
+                                            justifyContent: "center",
+
+                                            flexShrink: 0,
+
+                                        }}
+                                    >
+                                        {item.icon}
+                                    </div>
+
+                                    <span>{item.label}</span>
+                                </>
                             </div>
                         )
                     )}

@@ -1,20 +1,22 @@
-import GlassPanel from "./GlassPanel";
-
+import { forwardRef } from "react";
 import { useTheme } from "../../context/ThemeContext";
 
-export default function GlassMenu({
-    open,
-    top,
-    left,
-    width = 230,
-    children,
-}) {
+const GlassMenu = forwardRef(function GlassMenu(
+    {
+        open,
+        top,
+        left,
+        width = 200,
+        children,
+    },
+    ref
+) {
     const { theme } = useTheme();
-
     const dark = theme.mode === "dark";
-    return (
 
+    return (
         <div
+            ref={ref}
             style={{
                 position: "fixed",
 
@@ -31,7 +33,8 @@ export default function GlassMenu({
 
                 pointerEvents: open ? "auto" : "none",
 
-                transition: "opacity 180ms ease, transform 180ms ease",
+                transition:
+                    "opacity 180ms ease, transform 180ms ease",
 
                 zIndex: 500,
             }}
@@ -39,7 +42,6 @@ export default function GlassMenu({
             <div
                 style={{
                     padding: 12,
-
                     borderRadius: 24,
 
                     background: theme.colors.glass,
@@ -50,17 +52,19 @@ export default function GlassMenu({
 
                     boxShadow: dark
                         ? `
-                0 8px 32px rgba(0,0,0,0.35),
-                inset 0 1px 0 rgba(255,255,255,0.05)
-              `
+                            0 8px 32px rgba(0,0,0,0.35),
+                            inset 0 1px 0 rgba(255,255,255,0.05)
+                        `
                         : `
-                0 10px 35px rgba(0,0,0,0.08),
-                inset 0 1px 0 rgba(255,255,255,0.7)
-              `,
+                            0 10px 35px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.7)
+                        `,
                 }}
             >
                 {children}
             </div>
         </div>
     );
-}
+});
+
+export default GlassMenu;

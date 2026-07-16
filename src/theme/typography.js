@@ -55,6 +55,18 @@ const typography = {
         fontWeight: 250,
         letterSpacing: "0",
     },
+
+    mediumText: {
+        fontSize: 12,
+        fontWeight: 400,
+        letterSpacing: "-0.01em",
+    },
+
+    smallText: {
+        fontSize: 11,
+        fontWeight: 250,
+        letterSpacing: "0",
+    },
 };
 
 export default typography;

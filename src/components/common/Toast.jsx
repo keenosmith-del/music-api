@@ -34,8 +34,8 @@ export default function Toast({
                 background: theme.colors.glass,
                 border: `1px solid ${theme.colors.glassBorder}`,
 
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
 
                 boxShadow: dark
                     ? `

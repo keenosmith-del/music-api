@@ -41,10 +41,14 @@ export default function AppLayout({
     const [queueOpen, setQueueOpen] = useState(false);
     const [lyricsOpen, setLyricsOpen] = useState(false);
 
+    // play
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [hasTrack, setHasTrack] = useState(false);
+
     const favouriteColor =
         theme.mode === "dark"
             ? "#cd3328"
-            : "#e31515";    
+            : "#e31515";
 
     return (
         <AppCanvas>
@@ -187,6 +191,12 @@ export default function AppLayout({
 
                                             {/* play button */}
                                             <div
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+
+                                                    setHasTrack(true);
+                                                    setIsPlaying(true);
+                                                }}
                                                 style={{
                                                     position: "absolute",
 
@@ -303,7 +313,7 @@ export default function AppLayout({
                                             style={{
                                                 color: theme.colors.textSecondary,
 
-                                                fontSize: 10,
+                                                ...theme.typography.smallText,
                                             }}
                                         >
                                             Playlist
@@ -582,6 +592,10 @@ export default function AppLayout({
                         setQueueOpen,
                         lyricsOpen,
                         setLyricsOpen,
+                        isPlaying,
+                        setIsPlaying,
+                        hasTrack,
+                        setHasTrack,
                     })}
             </div>
         </AppCanvas>
