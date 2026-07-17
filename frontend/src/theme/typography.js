@@ -9,9 +9,15 @@ const typography = {
     },
 
     display: {
-        fontSize: 33,
+        fontSize: 40,
         fontWeight: 600,
         letterSpacing: "-0.02em",
+    },
+
+    rowHeading: {
+        fontSize: 25,
+        fontWeight: 600,
+        letterSpacing: "-0.01em",
     },
 
     heading: {
@@ -20,8 +26,9 @@ const typography = {
         letterSpacing: "-0.02em",
     },
 
+    // sidebar and tile title
     title: {
-        fontSize: 20,
+        fontSize: 19,
         fontWeight: 600,
         letterSpacing: "-0.02em",
     },

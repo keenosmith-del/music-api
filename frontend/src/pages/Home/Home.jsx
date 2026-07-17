@@ -7,9 +7,6 @@ import React from "react";
 
 import musicIcon from "../../assets/svgs/music-thin.svg";
 
-//import GlassSlideout from "../glass/GlassSlideout";
-//import ExpandedPlayer from "../player/ExpandedPlayer";
-
 import {
     AudioLines,
     UserRound,
@@ -31,7 +28,73 @@ export default function Home() {
 
         favouriteColor,
     } = useApp();
-    
+
+    const topPicks = [
+        {
+            title: "Top Pick 1",
+            explicit: false,
+            favourite: true,
+        },
+        {
+            title: "Top Pick 2",
+            explicit: true,
+            favourite: false,
+        },
+        {
+            title: "Top Pick 3",
+            explicit: false,
+            favourite: true,
+        },
+        {
+            title: "Top Pick 4",
+            explicit: false,
+            favourite: false,
+        },
+        {
+            title: "Top Pick 5",
+            explicit: true,
+            favourite: false,
+        },
+        {
+            title: "Top Pick 6",
+            explicit: false,
+            favourite: true,
+        },
+    ];
+
+    const recentlyPlayed = [
+        {
+            title: "Recently Played 1",
+            explicit: true,
+            favourite: true,
+        },
+        {
+            title: "Recently Played 2",
+            explicit: true,
+            favourite: false,
+        },
+        {
+            title: "Recently Played 3",
+            explicit: false,
+            favourite: false,
+        },
+        {
+            title: "Recently Played 4",
+            explicit: true,
+            favourite: false,
+        },
+        {
+            title: "Recently Played 5",
+            explicit: false,
+            favourite: true,
+        },
+        {
+            title: "Recently Played 6",
+            explicit: true,
+            favourite: true,
+        },
+    ];
+
     return (
 
         signedIn ? (
@@ -41,254 +104,513 @@ export default function Home() {
                     paddingBottom: "220px",
                 }}
             >
+                {/* Page Heading */}
                 <h1
                     style={{
                         color: theme.colors.text,
-                        marginBottom: 40,
+                        marginBottom: 42,
                         ...theme.typography.display,
                     }}
                 >
-                    Browse
+                    Home
                 </h1>
 
-                {/* grid | dummy content */}
+                {/* ---------- Top Picks ---------- */}
                 <div
                     style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                        gap: 24,
+                        marginBottom: 54,
                     }}
                 >
-                    {[
-                        { title: "Recently Played", explicit: false, favourite: true },
-                        { title: "Made For You", explicit: false, favourite: false },
-                        { title: "Trending", explicit: true, favourite: false },
-                        { title: "New Releases", explicit: true, favourite: true },
-                        { title: "Pop", explicit: false, favourite: false },
-                        { title: "Hip Hop", explicit: true, favourite: true },
-                        { title: "Rock", explicit: false, favourite: false },
-                        { title: "Electronic", explicit: false, favourite: true },
-                        { title: "Jazz", explicit: false, favourite: false },
-                        { title: "Classical", explicit: false, favourite: false },
-                        { title: "Workout", explicit: true, favourite: false },
-                        { title: "Focus", explicit: false, favourite: true },
-                        { title: "Evening Mix", explicit: false, favourite: false },
-                        { title: "Discover Weekly", explicit: true, favourite: true },
-                        { title: "Top Charts", explicit: true, favourite: false },
-                        { title: "Recommended", explicit: false, favourite: false },
-                        { title: "Indie", explicit: false, favourite: true },
-                        { title: "Chill", explicit: false, favourite: false },
-                        { title: "Acoustic", explicit: false, favourite: false },
-                        { title: "Favourites", explicit: false, favourite: true },
-                    ].map(({ title, explicit, favourite }, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
 
-                                gap: 14,
+                            marginBottom: 18,
 
-                                cursor: "pointer",
-                            }}
-                        >
-                            {/* artwork */}
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        Top Picks
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {topPicks.map(({ title, explicit, favourite }, index) => (
                             <div
+                                key={index}
                                 style={{
-                                    position: "relative",
+                                    width: 300, // width of tile
+                                    flexShrink: 0,
 
-                                    aspectRatio: "1",
+                                    display: "flex",
+                                    flexDirection: "column",
 
-                                    borderRadius: 26,
+                                    gap: 14,
 
-                                    overflow: "hidden",
-
-                                    background:
-                                        theme.mode === "dark"
-                                            ? index % 2 === 0
-                                                ? "rgba(31, 31, 31, 0.05)"
-                                                : "rgba(29, 29, 29, 0.08)"
-                                            : index % 2 === 0
-                                                ? "rgba(255,255,255,0.45)"
-                                                : "rgba(255,255,255,0.70)",
-
-                                    boxShadow:
-                                        theme.mode === "dark"
-                                            ? "0 12px 28px rgba(0,0,0,0.30)"
-                                            : `
-                            0 12px 28px rgba(0,0,0,0.08),
-                            inset 0 1px 0 rgba(255,255,255,0.95)
-                          `,
-                                }}
-                                onMouseEnter={(e) => {
-                                    const play = e.currentTarget.querySelector(".tile-play-button");
-
-                                    if (play) {
-                                        play.style.opacity = "1";
-                                        play.style.transform = "translateY(0) scale(1)";
-                                    }
-                                }}
-
-                                onMouseLeave={(e) => {
-                                    const play = e.currentTarget.querySelector(".tile-play-button");
-
-                                    if (play) {
-                                        play.style.opacity = "0";
-                                        play.style.transform = "translateY(6px) scale(.92)";
-                                    }
+                                    cursor: "pointer",
                                 }}
                             >
-                                {/* title */}
+                                {/* artwork */}
                                 <div
                                     style={{
-                                        position: "absolute",
+                                        position: "relative",
 
-                                        top: 20,
-                                        left: 20,
+                                        aspectRatio: "1",
 
-                                        color: theme.colors.text,
+                                        borderRadius: 26,
 
-                                        ...theme.typography.title,
-                                    }}
-                                >
-                                    {title}
-                                </div>
-
-                                {/* play button */}
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-
-                                        setCurrentTime(0);
-
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
-                                    }}
-                                    style={{
-                                        position: "absolute",
-
-                                        right: 18,
-                                        bottom: 18,
-
-                                        width: 44,
-                                        height: 44,
-
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-
-                                        borderRadius: "50%",
-
-                                        opacity: 0,
-
-                                        transform: "translateY(6px) scale(.92)",
-
-                                        transition: "all 220ms ease",
+                                        overflow: "visible",
 
                                         background:
                                             theme.mode === "dark"
-                                                ? "rgba(13, 13, 13, 0.06)"
-                                                : "rgba(255,255,255,0.28)",
-
-                                        backdropFilter: "blur(16px)",
-                                        WebkitBackdropFilter: "blur(16px)",
+                                                ? index % 2 === 0
+                                                    ? "rgba(31, 31, 31, 0.05)"
+                                                    : "rgba(29, 29, 29, 0.08)"
+                                                : index % 2 === 0
+                                                    ? "rgba(255,255,255,0.45)"
+                                                    : "rgba(255,255,255,0.70)",
 
                                         boxShadow:
                                             theme.mode === "dark"
-                                                ? "0 8px 18px rgba(0,0,0,.35)"
+                                                ? "0 12px 28px rgba(0,0,0,0.30)"
                                                 : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
                                     }}
-                                    className="tile-play-button"
-                                >
-                                    <Play
-                                        size={18}
-                                        strokeWidth={1.75}
-                                        fill={theme.colors.text}
-                                        color={theme.colors.text}
-                                        style={{
-                                            marginLeft: 2,
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                                    onMouseEnter={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
 
-                            {/* title */}
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 8,
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        color: theme.colors.text,
-                                        ...theme.typography.body,
+                                        if (play) {
+                                            play.style.opacity = "1";
+                                            play.style.transform = "translateY(0) scale(1)";
+                                        }
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "0";
+                                            play.style.transform = "translateY(6px) scale(.92)";
+                                        }
                                     }}
                                 >
-                                    {title}
-                                </div>
-
-                                {explicit && (
+                                    {/* title */}
                                     <div
                                         style={{
-                                            width: 14,
-                                            height: 14,
+                                            position: "absolute",
+
+                                            top: 20,
+                                            left: 20,
+
+                                            color: theme.colors.text,
+
+                                            ...theme.typography.title,
+                                        }}
+                                    >
+                                        {title}
+                                    </div>
+
+                                    {/* play button */}
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+                                            setIsPlaying(true);
+                                        }}
+                                        style={{
+                                            position: "absolute",
+
+                                            right: 18,
+                                            bottom: 18,
+
+                                            width: 44,
+                                            height: 44,
 
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
 
-                                            flexShrink: 0,
+                                            borderRadius: "50%",
 
-                                            borderRadius: 3,
+                                            opacity: 0,
+
+                                            transform: "translateY(6px) scale(.92)",
+
+                                            transition: "all 220ms ease",
 
                                             background:
                                                 theme.mode === "dark"
-                                                    ? "rgba(255,255,255,0.10)"
-                                                    : "rgba(0,0,0,0.10)",
+                                                    ? "rgba(13, 13, 13, 0.06)"
+                                                    : "rgba(255,255,255,0.28)",
 
-                                            color:
+                                            backdropFilter: "blur(16px)",
+                                            WebkitBackdropFilter: "blur(16px)",
+
+                                            boxShadow:
                                                 theme.mode === "dark"
-                                                    ? "#D6D6D2"
-                                                    : "#4A4A47",
+                                                    ? "0 8px 18px rgba(0,0,0,.35)"
+                                                    : `
+                    0 8px 18px rgba(0,0,0,.08),
+                    inset 0 1px 0 rgba(255,255,255,.9)
+                `,
+                                        }}
+                                        className="tile-play-button"
+                                    >
+                                        <Play
+                                            size={18}
+                                            strokeWidth={1.75}
+                                            fill={theme.colors.text}
+                                            color={theme.colors.text}
+                                            style={{
+                                                marginLeft: 2,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
 
-                                            fontSize: 8,
-                                            fontWeight: 700,
-                                            lineHeight: 1,
-
-                                            userSelect: "none",
+                                {/* title */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            color: theme.colors.text,
+                                            ...theme.typography.body,
                                         }}
                                     >
-                                        E
+                                        {title}
                                     </div>
-                                )}
 
-                                <Star
-                                    size={13}
-                                    strokeWidth={1.5}
-                                    color={favouriteColor}
-                                    fill={favourite ? favouriteColor : "none"}
-                                />
+                                    {explicit && (
+                                        <div
+                                            style={{
+                                                width: 14,
+                                                height: 14,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                flexShrink: 0,
+
+                                                borderRadius: 3,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(255,255,255,0.10)"
+                                                        : "rgba(0,0,0,0.10)",
+
+                                                color:
+                                                    theme.mode === "dark"
+                                                        ? "#D6D6D2"
+                                                        : "#4A4A47",
+
+                                                fontSize: 8,
+                                                fontWeight: 700,
+                                                lineHeight: 1,
+
+                                                userSelect: "none",
+                                            }}
+                                        >
+                                            E
+                                        </div>
+                                    )}
+
+                                    <Star
+                                        size={13}
+                                        strokeWidth={1.5}
+                                        color={favouriteColor}
+                                        fill={favourite ? favouriteColor : "none"}
+                                    />
+                                </div>
+
+                                {/* subtitle */}
+                                <div
+                                    style={{
+                                        color: theme.colors.textSecondary,
+
+                                        ...theme.typography.smallText,
+                                    }}
+                                >
+                                    Playlist
+                                </div>
                             </div>
+                        ))}
+                    </div>
+                </div>
 
-                            {/* subtitle */}
+                {/* ---------- Recently Played ---------- */}
+                <div
+                    style={{
+                        marginBottom: 54,
+                    }}
+                >
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
+
+                            marginBottom: 18,
+
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        Recently Played
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {recentlyPlayed.map(({ title, explicit, favourite }, index) => (
                             <div
+                                key={index}
                                 style={{
-                                    color: theme.colors.textSecondary,
+                                    width: 300,
+                                    flexShrink: 0,
 
-                                    ...theme.typography.smallText,
+                                    display: "flex",
+                                    flexDirection: "column",
+
+                                    gap: 14,
+
+                                    cursor: "pointer",
                                 }}
                             >
-                                Playlist
+                                {/* artwork */}
+                                <div
+                                    style={{
+                                        position: "relative",
+
+                                        aspectRatio: "1",
+
+                                        borderRadius: 26,
+
+                                        overflow: "hidden",
+
+                                        background:
+                                            theme.mode === "dark"
+                                                ? index % 2 === 0
+                                                    ? "rgba(31, 31, 31, 0.05)"
+                                                    : "rgba(29, 29, 29, 0.08)"
+                                                : index % 2 === 0
+                                                    ? "rgba(255,255,255,0.45)"
+                                                    : "rgba(255,255,255,0.70)",
+
+                                        boxShadow:
+                                            theme.mode === "dark"
+                                                ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "1";
+                                            play.style.transform = "translateY(0) scale(1)";
+                                        }
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "0";
+                                            play.style.transform = "translateY(6px) scale(.92)";
+                                        }
+                                    }}
+                                >
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+
+                                            top: 20,
+                                            left: 20,
+
+                                            color: theme.colors.text,
+
+                                            ...theme.typography.title,
+                                        }}
+                                    >
+                                        {title}
+                                    </div>
+
+                                    {/* play button */}
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+                                            setIsPlaying(true);
+                                        }}
+                                        style={{
+                                            position: "absolute",
+
+                                            right: 18,
+                                            bottom: 18,
+
+                                            width: 44,
+                                            height: 44,
+
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+
+                                            borderRadius: "50%",
+
+                                            opacity: 0,
+
+                                            transform: "translateY(6px) scale(.92)",
+
+                                            transition: "all 220ms ease",
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "rgba(13, 13, 13, 0.06)"
+                                                    : "rgba(255,255,255,0.28)",
+
+                                            backdropFilter: "blur(16px)",
+                                            WebkitBackdropFilter: "blur(16px)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 8px 18px rgba(0,0,0,.35)"
+                                                    : `
+                    0 8px 18px rgba(0,0,0,.08),
+                    inset 0 1px 0 rgba(255,255,255,.9)
+                `,
+                                        }}
+                                        className="tile-play-button"
+                                    >
+                                        <Play
+                                            size={18}
+                                            strokeWidth={1.75}
+                                            fill={theme.colors.text}
+                                            color={theme.colors.text}
+                                            style={{
+                                                marginLeft: 2,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* title */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            color: theme.colors.text,
+                                            ...theme.typography.body,
+                                        }}
+                                    >
+                                        {title}
+                                    </div>
+
+                                    {explicit && (
+                                        <div
+                                            style={{
+                                                width: 14,
+                                                height: 14,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                flexShrink: 0,
+
+                                                borderRadius: 3,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(255,255,255,0.10)"
+                                                        : "rgba(0,0,0,0.10)",
+
+                                                color:
+                                                    theme.mode === "dark"
+                                                        ? "#D6D6D2"
+                                                        : "#4A4A47",
+
+                                                fontSize: 8,
+                                                fontWeight: 700,
+                                                lineHeight: 1,
+
+                                                userSelect: "none",
+                                            }}
+                                        >
+                                            E
+                                        </div>
+                                    )}
+
+                                    <Star
+                                        size={13}
+                                        strokeWidth={1.5}
+                                        color={favouriteColor}
+                                        fill={favourite ? favouriteColor : "none"}
+                                    />
+                                </div>
+
+                                {/* subtitle */}
+                                <div
+                                    style={{
+                                        color: theme.colors.textSecondary,
+
+                                        ...theme.typography.smallText,
+                                    }}
+                                >
+                                    Playlist
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-            </div >
+            </div>
 
         ) : (
             <div
