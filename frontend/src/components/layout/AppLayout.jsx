@@ -53,6 +53,11 @@ export default function AppLayout({
     // 3:42 = 222 seconds
     const [duration, setDuration] = useState(222);
 
+    // playback state
+    const [currentTrack, setCurrentTrack] = useState(null);
+
+    const [albumQueue, setAlbumQueue] = useState([]);
+
     const [expandedPlayerOpen, setExpandedPlayerOpen] = useState(false);
 
     // floating player
@@ -85,6 +90,12 @@ export default function AppLayout({
 
                 duration,
                 setDuration,
+
+                currentTrack,
+                setCurrentTrack,
+
+                albumQueue,
+                setAlbumQueue,
 
                 queueOpen,
                 setQueueOpen,
@@ -216,6 +227,9 @@ export default function AppLayout({
                             duration,
                             setDuration,
 
+                            currentTrack,
+                            albumQueue,
+
                             queueOpen,
                             setQueueOpen,
 
@@ -255,6 +269,8 @@ export default function AppLayout({
                         setCurrentTime={setCurrentTime}
 
                         duration={duration}
+
+                        currentTrack={currentTrack}
 
                         isPlaying={isPlaying}
                         setIsPlaying={setIsPlaying}

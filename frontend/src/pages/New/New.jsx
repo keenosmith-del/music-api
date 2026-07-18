@@ -1,7 +1,8 @@
 import { useTheme } from "../../context/ThemeContext";
 import { useApp } from "../../context/AppContext";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getNew } from "../../services/newService";
 
 import React from "react";
 
@@ -15,186 +16,56 @@ import {
 export default function New() {
     const { theme } = useTheme();
 
-    const newAlbums = [
-        {
-            title: "Album 1",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "Album 2",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "Album 3",
-            explicit: true,
-            favourite: false,
-        },
-        {
-            title: "Album 4",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "Album 5",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "Album 6",
-            explicit: false,
-            favourite: true,
-        },
-    ];
+    const [newData, setNewData] = useState(null);
 
-    const newSongs = [
-        {
-            title: "1",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "2",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "3",
-            explicit: true,
-            favourite: false,
-        },
+    const [favourites, setFavourites] = useState(new Set());
 
-        {
-            title: "4",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "5",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "6",
-            explicit: false,
-            favourite: true,
-        },
+    const {
+        setCurrentTime,
+        setHasTrack,
+        setIsPlaying,
+    } = useApp();
 
-        {
-            title: "7",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "8",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "9",
-            explicit: true,
-            favourite: false,
-        },
+    useEffect(() => {
+        async function loadNew() {
+            try {
+                const data = await getNew();
 
-        {
-            title: "10",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "11",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "12",
-            explicit: false,
-            favourite: true,
-        },
+                setNewData(data);
+            } catch (err) {
+                console.error(err);
+            }
+        }
 
-        {
-            title: "13",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "14",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "15",
-            explicit: false,
-            favourite: true,
-        },
-    ];
+        loadNew();
+    }, []);
 
-    const newThisWeek = [
-        {
-            title: "New This Week 1",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "New This Week 2",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "New This Week 3",
-            explicit: true,
-            favourite: false,
-        },
-        {
-            title: "New This Week 4",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "New This Week 5",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "New This Week 6",
-            explicit: false,
-            favourite: true,
-        },
-    ];
+    // toggle star handler
+    const toggleFavourite = (id) => {
+        setFavourites((prev) => {
+            const next = new Set(prev);
 
-    const recentReleases = [
-        {
-            title: "Recent Release 1",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "Recent Release 2",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "Recent Release 3",
-            explicit: true,
-            favourite: false,
-        },
-        {
-            title: "Recent Release 4",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "Recent Release 5",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "Recent Release 6",
-            explicit: false,
-            favourite: true,
-        },
-    ];
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+
+            return next;
+        });
+    };
+
+    const newAlbums =
+        newData?.newAlbums || [];
+
+    const newSongs =
+        newData?.newSongs || [];
+
+    const newThisWeek =
+        newData?.newThisWeek || [];
+
+    const recentReleases =
+        newData?.recentReleases || [];
 
     const favouriteColor =
         theme.mode === "dark"
@@ -244,7 +115,7 @@ export default function New() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {newAlbums.map(({ title, explicit, favourite }, index) => (
+                    {newAlbums.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -438,7 +309,15 @@ export default function New() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill={favourite ? favouriteColor : "none"}
+                                    fill={favourites.has(id) ? favouriteColor : "none"}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleFavourite(id);
+                                    }}
+                                    style={{
+                                        cursor: "pointer",
+                                        transition: "all 180ms ease",
+                                    }}
                                 />
                             </div>
 
@@ -450,7 +329,7 @@ export default function New() {
                                     ...theme.typography.smallText,
                                 }}
                             >
-                                Playlist
+                                {artist}
                             </div>
                         </div>
                     ))}
@@ -504,7 +383,7 @@ export default function New() {
                             gap: 24,
                         }}
                     >
-                        {newSongs.slice(0, 3).map(({ title, explicit, favourite }, index) => (
+                        {newSongs.slice(0, 3).map(({ id, title, artist, artwork, explicit }, index) => (
                             <div
                                 key={index}
                                 style={{
@@ -696,7 +575,15 @@ export default function New() {
                                             size={13}
                                             strokeWidth={1.5}
                                             color={favouriteColor}
-                                            fill={favourite ? favouriteColor : "none"}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
                                         />
                                     </div>
 
@@ -707,7 +594,7 @@ export default function New() {
                                             ...theme.typography.smallText,
                                         }}
                                     >
-                                        Playlist
+                                        {artist}
                                     </div>
                                 </div>
 
@@ -789,7 +676,7 @@ export default function New() {
                             gap: 24,
                         }}
                     >
-                        {newSongs.slice(3, 6).map(({ title, explicit, favourite }, index) => (
+                        {newSongs.slice(3, 6).map(({ id, title, artist, artwork, explicit }, index) => (
                             <div
                                 key={index}
                                 style={{
@@ -981,7 +868,15 @@ export default function New() {
                                             size={13}
                                             strokeWidth={1.5}
                                             color={favouriteColor}
-                                            fill={favourite ? favouriteColor : "none"}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
                                         />
                                     </div>
 
@@ -992,7 +887,7 @@ export default function New() {
                                             ...theme.typography.smallText,
                                         }}
                                     >
-                                        Playlist
+                                        {artist}
                                     </div>
                                 </div>
 
@@ -1074,7 +969,7 @@ export default function New() {
                             gap: 24,
                         }}
                     >
-                        {newSongs.slice(6, 9).map(({ title, explicit, favourite }, index) => (
+                        {newSongs.slice(6, 9).map(({ id, title, artist, artwork, explicit }, index) => (
                             <div
                                 key={index}
                                 style={{
@@ -1266,7 +1161,15 @@ export default function New() {
                                             size={13}
                                             strokeWidth={1.5}
                                             color={favouriteColor}
-                                            fill={favourite ? favouriteColor : "none"}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
                                         />
                                     </div>
 
@@ -1277,7 +1180,7 @@ export default function New() {
                                             ...theme.typography.smallText,
                                         }}
                                     >
-                                        Playlist
+                                        {artist}
                                     </div>
                                 </div>
 
@@ -1359,7 +1262,7 @@ export default function New() {
                             gap: 24,
                         }}
                     >
-                        {newSongs.slice(9, 12).map(({ title, explicit, favourite }, index) => (
+                        {newSongs.slice(9, 12).map(({ id, title, artist, artwork, explicit }, index) => (
                             <div
                                 key={index}
                                 style={{
@@ -1551,7 +1454,15 @@ export default function New() {
                                             size={13}
                                             strokeWidth={1.5}
                                             color={favouriteColor}
-                                            fill={favourite ? favouriteColor : "none"}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
                                         />
                                     </div>
 
@@ -1562,7 +1473,7 @@ export default function New() {
                                             ...theme.typography.smallText,
                                         }}
                                     >
-                                        Playlist
+                                        {artist}
                                     </div>
                                 </div>
 
@@ -1644,7 +1555,7 @@ export default function New() {
                             gap: 24,
                         }}
                     >
-                        {newSongs.slice(12, 15).map(({ title, explicit, favourite }, index) => (
+                        {newSongs.slice(12, 15).map(({ id, title, artist, artwork, explicit }, index) => (
                             <div
                                 key={index}
                                 style={{
@@ -1836,7 +1747,15 @@ export default function New() {
                                             size={13}
                                             strokeWidth={1.5}
                                             color={favouriteColor}
-                                            fill={favourite ? favouriteColor : "none"}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
                                         />
                                     </div>
 
@@ -1847,7 +1766,7 @@ export default function New() {
                                             ...theme.typography.smallText,
                                         }}
                                     >
-                                        Playlist
+                                        {artist}
                                     </div>
                                 </div>
 
@@ -1954,7 +1873,7 @@ export default function New() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {newThisWeek.map(({ title, explicit, favourite }, index) => (
+                    {newThisWeek.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -2148,7 +2067,15 @@ export default function New() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill={favourite ? favouriteColor : "none"}
+                                    fill={favourites.has(id) ? favouriteColor : "none"}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleFavourite(id);
+                                    }}
+                                    style={{
+                                        cursor: "pointer",
+                                        transition: "all 180ms ease",
+                                    }}
                                 />
                             </div>
 
@@ -2160,7 +2087,7 @@ export default function New() {
                                     ...theme.typography.smallText,
                                 }}
                             >
-                                Playlist
+                                {artist}
                             </div>
                         </div>
                     ))}
@@ -2202,7 +2129,7 @@ export default function New() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {recentReleases.map(({ title, explicit, favourite }, index) => (
+                    {recentReleases.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -2396,7 +2323,15 @@ export default function New() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill={favourite ? favouriteColor : "none"}
+                                    fill={favourites.has(id) ? favouriteColor : "none"}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleFavourite(id);
+                                    }}
+                                    style={{
+                                        cursor: "pointer",
+                                        transition: "all 180ms ease",
+                                    }}
                                 />
                             </div>
 
@@ -2408,7 +2343,7 @@ export default function New() {
                                     ...theme.typography.smallText,
                                 }}
                             >
-                                Playlist
+                                {artist}
                             </div>
                         </div>
                     ))}

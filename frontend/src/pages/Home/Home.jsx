@@ -1,7 +1,9 @@
 import { useTheme } from "../../context/ThemeContext";
 import { useApp } from "../../context/AppContext";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getHome } from "../../services/homeService";
+import { getAlbum } from "../../services/musicService";
 
 import React from "react";
 
@@ -18,6 +20,10 @@ import {
 export default function Home() {
     const { theme } = useTheme();
 
+    const [homeSections, setHomeSections] = useState([]);
+
+    const [favourites, setFavourites] = useState(new Set());
+
     const {
         signedIn,
         setSignedIn,
@@ -26,77 +32,82 @@ export default function Home() {
         setHasTrack,
         setIsPlaying,
 
+        setCurrentTrack,
+        setAlbumQueue,
+
         favouriteColor,
     } = useApp();
 
-    const topPicks = [
-        {
-            title: "Top Pick 1",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "Top Pick 2",
-            explicit: true,
-            favourite: false,
-        },
-        {
-            title: "Top Pick 3",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "Top Pick 4",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "Top Pick 5",
-            explicit: true,
-            favourite: false,
-        },
-        {
-            title: "Top Pick 6",
-            explicit: false,
-            favourite: true,
-        },
-    ];
+    useEffect(() => {
+        async function loadHome() {
+            try {
+                const data = await getHome();
 
-    const recentlyPlayed = [
-        {
-            title: "Recently Played 1",
-            explicit: true,
-            favourite: true,
-        },
-        {
-            title: "Recently Played 2",
-            explicit: true,
-            favourite: false,
-        },
-        {
-            title: "Recently Played 3",
-            explicit: false,
-            favourite: false,
-        },
-        {
-            title: "Recently Played 4",
-            explicit: true,
-            favourite: false,
-        },
-        {
-            title: "Recently Played 5",
-            explicit: false,
-            favourite: true,
-        },
-        {
-            title: "Recently Played 6",
-            explicit: true,
-            favourite: true,
-        },
-    ];
+                setHomeSections(data);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        loadHome();
+    }, []);
+
+    // star toggle handler
+    const toggleFavourite = (id) => {
+        setFavourites((prev) => {
+            const next = new Set(prev);
+
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+
+            return next;
+        });
+    };
+
+    const trendingAlbums =
+        homeSections.find(
+            section => section.id === "trending-albums"
+        )?.items || [];
+
+    const featuredPlaylists =
+        homeSections.find(
+            section => section.id === "featured-playlists"
+        )?.items || [];
+
+    const editorPicks =
+        homeSections.find(
+            section => section.id === "editor-picks"
+        )?.items || [];
+
+    const promotedReleases =
+        homeSections.find(
+            section => section.id === "promoted-releases"
+        )?.items || [];
+
+    const hipHop =
+        homeSections.find(
+            section => section.id === "hip-hop"
+        )?.items || [];
+
+    const rnb =
+        homeSections.find(
+            section => section.id === "rnb"
+        )?.items || [];
+
+    const jazz =
+        homeSections.find(
+            section => section.id === "jazz"
+        )?.items || [];
+
+    const chill =
+        homeSections.find(
+            section => section.id === "chill"
+        )?.items || [];
 
     return (
-
         signedIn ? (
             <div
                 style={{
@@ -131,7 +142,7 @@ export default function Home() {
                             ...theme.typography.rowHeading,
                         }}
                     >
-                        Top Picks
+                        Trending Albums
                     </h2>
 
                     {/* Scrollable Tiles */}
@@ -150,220 +161,264 @@ export default function Home() {
                             msOverflowStyle: "none",
                         }}
                     >
-                        {topPicks.map(({ title, explicit, favourite }, index) => (
-                            <div
-                                key={index}
-                                style={{
-                                    width: 300, // width of tile
-                                    flexShrink: 0,
-
-                                    display: "flex",
-                                    flexDirection: "column",
-
-                                    gap: 14,
-
-                                    cursor: "pointer",
-                                }}
-                            >
-                                {/* artwork */}
+                        {trendingAlbums.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
                                 <div
+                                    key={index}
                                     style={{
-                                        position: "relative",
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
 
-                                        aspectRatio: "1",
+                                        display: "flex",
+                                        flexDirection: "column",
 
-                                        borderRadius: 26,
+                                        gap: 14,
 
-                                        overflow: "visible",
-
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31, 31, 31, 0.05)"
-                                                    : "rgba(29, 29, 29, 0.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,0.45)"
-                                                    : "rgba(255,255,255,0.70)",
-
-                                        boxShadow:
-                                            theme.mode === "dark"
-                                                ? "0 12px 28px rgba(0,0,0,0.30)"
-                                                : `
-                            0 12px 28px rgba(0,0,0,0.08),
-                            inset 0 1px 0 rgba(255,255,255,0.95)
-                          `,
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        const play = e.currentTarget.querySelector(".tile-play-button");
-
-                                        if (play) {
-                                            play.style.opacity = "1";
-                                            play.style.transform = "translateY(0) scale(1)";
-                                        }
-                                    }}
-
-                                    onMouseLeave={(e) => {
-                                        const play = e.currentTarget.querySelector(".tile-play-button");
-
-                                        if (play) {
-                                            play.style.opacity = "0";
-                                            play.style.transform = "translateY(6px) scale(.92)";
-                                        }
+                                        cursor: "pointer",
                                     }}
                                 >
-                                    {/* title */}
+                                    {/* artwork */}
                                     <div
                                         style={{
-                                            position: "absolute",
+                                            position: "relative",
 
-                                            top: 20,
-                                            left: 20,
+                                            aspectRatio: "1",
 
-                                            color: theme.colors.text,
+                                            borderRadius: 26,
 
-                                            ...theme.typography.title,
-                                        }}
-                                    >
-                                        {title}
-                                    </div>
+                                            overflow: "hidden",
 
-                                    {/* play button */}
-                                    <div
-                                        onClick={(e) => {
-                                            e.stopPropagation();
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
 
-                                            setCurrentTime(0);
+                                            backgroundSize: "cover",
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
-                                        }}
-                                        style={{
-                                            position: "absolute",
+                                            backgroundPosition: "center",
 
-                                            right: 18,
-                                            bottom: 18,
+                                            backgroundRepeat: "no-repeat",
 
-                                            width: 44,
-                                            height: 44,
-
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-
-                                            borderRadius: "50%",
-
-                                            opacity: 0,
-
-                                            transform: "translateY(6px) scale(.92)",
-
-                                            transition: "all 220ms ease",
-
-                                            background:
+                                            backgroundColor:
                                                 theme.mode === "dark"
-                                                    ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
-
-                                            backdropFilter: "blur(16px)",
-                                            WebkitBackdropFilter: "blur(16px)",
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
 
                                             boxShadow:
                                                 theme.mode === "dark"
-                                                    ? "0 8px 18px rgba(0,0,0,.35)"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
                                                     : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
                                         }}
-                                        className="tile-play-button"
-                                    >
-                                        <Play
-                                            size={18}
-                                            strokeWidth={1.75}
-                                            fill={theme.colors.text}
-                                            color={theme.colors.text}
-                                            style={{
-                                                marginLeft: 2,
-                                            }}
-                                        />
-                                    </div>
-                                </div>
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
 
-                                {/* title */}
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 8,
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            color: theme.colors.text,
-                                            ...theme.typography.body,
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
                                         }}
                                     >
-                                        {title}
-                                    </div>
-
-                                    {explicit && (
+                                        {/* overlay */}
                                         <div
                                             style={{
-                                                width: 14,
-                                                height: 14,
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
 
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
 
-                                                flexShrink: 0,
+                                                borderRadius: "50%",
 
-                                                borderRadius: 3,
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
 
                                                 background:
                                                     theme.mode === "dark"
-                                                        ? "rgba(255,255,255,0.10)"
-                                                        : "rgba(0,0,0,0.10)",
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255, 255, 255, 0.07)",
 
-                                                color:
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
                                                     theme.mode === "dark"
-                                                        ? "#D6D6D2"
-                                                        : "#4A4A47",
-
-                                                fontSize: 8,
-                                                fontWeight: 700,
-                                                lineHeight: 1,
-
-                                                userSelect: "none",
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                             }}
+                                            className="tile-play-button"
                                         >
-                                            E
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
                                         </div>
-                                    )}
+                                    </div>
 
-                                    <Star
-                                        size={13}
-                                        strokeWidth={1.5}
-                                        color={favouriteColor}
-                                        fill={favourite ? favouriteColor : "none"}
-                                    />
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                flex: 1,
+                                                minWidth: 0,
+
+                                                color: theme.colors.text,
+
+                                                overflow: "hidden",
+                                                whiteSpace: "nowrap",
+                                                textOverflow: "ellipsis",
+
+                                                ...theme.typography.body,
+                                            }}
+                                            title={title}
+                                        >
+                                            {title}
+                                        </div>
+
+
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
                                 </div>
-
-                                {/* subtitle */}
-                                <div
-                                    style={{
-                                        color: theme.colors.textSecondary,
-
-                                        ...theme.typography.smallText,
-                                    }}
-                                >
-                                    Playlist
-                                </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 </div>
 
-                {/* ---------- Recently Played ---------- */}
+                {/* ---------- Featured Playlists ---------- */}
                 <div
                     style={{
                         marginBottom: 54,
@@ -379,7 +434,7 @@ export default function Home() {
                             ...theme.typography.rowHeading,
                         }}
                     >
-                        Recently Played
+                        Featured Playlists
                     </h2>
 
                     {/* Scrollable Tiles */}
@@ -398,218 +453,1941 @@ export default function Home() {
                             msOverflowStyle: "none",
                         }}
                     >
-                        {recentlyPlayed.map(({ title, explicit, favourite }, index) => (
-                            <div
-                                key={index}
-                                style={{
-                                    width: 300,
-                                    flexShrink: 0,
-
-                                    display: "flex",
-                                    flexDirection: "column",
-
-                                    gap: 14,
-
-                                    cursor: "pointer",
-                                }}
-                            >
-                                {/* artwork */}
+                        {featuredPlaylists.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
                                 <div
+                                    key={index}
                                     style={{
-                                        position: "relative",
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
 
-                                        aspectRatio: "1",
+                                        display: "flex",
+                                        flexDirection: "column",
 
-                                        borderRadius: 26,
+                                        gap: 14,
 
-                                        overflow: "hidden",
-
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31, 31, 31, 0.05)"
-                                                    : "rgba(29, 29, 29, 0.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,0.45)"
-                                                    : "rgba(255,255,255,0.70)",
-
-                                        boxShadow:
-                                            theme.mode === "dark"
-                                                ? "0 12px 28px rgba(0,0,0,0.30)"
-                                                : `
-                            0 12px 28px rgba(0,0,0,0.08),
-                            inset 0 1px 0 rgba(255,255,255,0.95)
-                          `,
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        const play = e.currentTarget.querySelector(".tile-play-button");
-
-                                        if (play) {
-                                            play.style.opacity = "1";
-                                            play.style.transform = "translateY(0) scale(1)";
-                                        }
-                                    }}
-
-                                    onMouseLeave={(e) => {
-                                        const play = e.currentTarget.querySelector(".tile-play-button");
-
-                                        if (play) {
-                                            play.style.opacity = "0";
-                                            play.style.transform = "translateY(6px) scale(.92)";
-                                        }
+                                        cursor: "pointer",
                                     }}
                                 >
-                                    {/* title */}
+                                    {/* artwork */}
                                     <div
                                         style={{
-                                            position: "absolute",
+                                            position: "relative",
 
-                                            top: 20,
-                                            left: 20,
+                                            aspectRatio: "1",
 
-                                            color: theme.colors.text,
+                                            borderRadius: 26,
 
-                                            ...theme.typography.title,
-                                        }}
-                                    >
-                                        {title}
-                                    </div>
+                                            overflow: "hidden",
 
-                                    {/* play button */}
-                                    <div
-                                        onClick={(e) => {
-                                            e.stopPropagation();
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
 
-                                            setCurrentTime(0);
+                                            backgroundSize: "cover",
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
-                                        }}
-                                        style={{
-                                            position: "absolute",
+                                            backgroundPosition: "center",
 
-                                            right: 18,
-                                            bottom: 18,
+                                            backgroundRepeat: "no-repeat",
 
-                                            width: 44,
-                                            height: 44,
-
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-
-                                            borderRadius: "50%",
-
-                                            opacity: 0,
-
-                                            transform: "translateY(6px) scale(.92)",
-
-                                            transition: "all 220ms ease",
-
-                                            background:
+                                            backgroundColor:
                                                 theme.mode === "dark"
-                                                    ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
-
-                                            backdropFilter: "blur(16px)",
-                                            WebkitBackdropFilter: "blur(16px)",
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
 
                                             boxShadow:
                                                 theme.mode === "dark"
-                                                    ? "0 8px 18px rgba(0,0,0,.35)"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
                                                     : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
                                         }}
-                                        className="tile-play-button"
-                                    >
-                                        <Play
-                                            size={18}
-                                            strokeWidth={1.75}
-                                            fill={theme.colors.text}
-                                            color={theme.colors.text}
-                                            style={{
-                                                marginLeft: 2,
-                                            }}
-                                        />
-                                    </div>
-                                </div>
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
 
-                                {/* title */}
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 8,
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            color: theme.colors.text,
-                                            ...theme.typography.body,
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
                                         }}
                                     >
-                                        {title}
-                                    </div>
-
-                                    {explicit && (
+                                        {/* overlay */}
                                         <div
                                             style={{
-                                                width: 14,
-                                                height: 14,
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
 
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
 
-                                                flexShrink: 0,
+                                                borderRadius: "50%",
 
-                                                borderRadius: 3,
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
 
                                                 background:
                                                     theme.mode === "dark"
-                                                        ? "rgba(255,255,255,0.10)"
-                                                        : "rgba(0,0,0,0.10)",
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255, 255, 255, 0.07)",
 
-                                                color:
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
                                                     theme.mode === "dark"
-                                                        ? "#D6D6D2"
-                                                        : "#4A4A47",
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                            }}
+                                            className="tile-play-button"
+                                        >
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
 
-                                                fontSize: 8,
-                                                fontWeight: 700,
-                                                lineHeight: 1,
-
-                                                userSelect: "none",
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                color: theme.colors.text,
+                                                ...theme.typography.body,
                                             }}
                                         >
-                                            E
+                                            {title}
                                         </div>
-                                    )}
 
-                                    <Star
-                                        size={13}
-                                        strokeWidth={1.5}
-                                        color={favouriteColor}
-                                        fill={favourite ? favouriteColor : "none"}
-                                    />
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
                                 </div>
-
-                                {/* subtitle */}
-                                <div
-                                    style={{
-                                        color: theme.colors.textSecondary,
-
-                                        ...theme.typography.smallText,
-                                    }}
-                                >
-                                    Playlist
-                                </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 </div>
+
+                {/* ---------- Editor's Picks ---------- */}
+                <div
+                    style={{
+                        marginBottom: 54,
+                    }}
+                >
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
+
+                            marginBottom: 18,
+
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        Editor's Picks
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {editorPicks.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
+
+                                        display: "flex",
+                                        flexDirection: "column",
+
+                                        gap: 14,
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    {/* artwork */}
+                                    <div
+                                        style={{
+                                            position: "relative",
+
+                                            aspectRatio: "1",
+
+                                            borderRadius: 26,
+
+                                            overflow: "hidden",
+
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
+
+                                            backgroundSize: "cover",
+
+                                            backgroundPosition: "center",
+
+                                            backgroundRepeat: "no-repeat",
+
+                                            backgroundColor:
+                                                theme.mode === "dark"
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                    : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
+                                        }}
+                                    >
+                                        {/* overlay */}
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                borderRadius: "50%",
+
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255, 255, 255, 0.07)",
+
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
+                                                    theme.mode === "dark"
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                            }}
+                                            className="tile-play-button"
+                                        >
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                color: theme.colors.text,
+                                                ...theme.typography.body,
+                                            }}
+                                        >
+                                            {title}
+                                        </div>
+
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+
+                {/* ---------- Promoted Releases ---------- */}
+                <div
+                    style={{
+                        marginBottom: 54,
+                    }}
+                >
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
+
+                            marginBottom: 18,
+
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        Promoted Releases
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {promotedReleases.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
+
+                                        display: "flex",
+                                        flexDirection: "column",
+
+                                        gap: 14,
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    {/* artwork */}
+                                    <div
+                                        style={{
+                                            position: "relative",
+
+                                            aspectRatio: "1",
+
+                                            borderRadius: 26,
+
+                                            overflow: "hidden",
+
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
+
+                                            backgroundSize: "cover",
+
+                                            backgroundPosition: "center",
+
+                                            backgroundRepeat: "no-repeat",
+
+                                            backgroundColor:
+                                                theme.mode === "dark"
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                    : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
+                                        }}
+                                    >
+                                        {/* overlay */}
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                borderRadius: "50%",
+
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255, 255, 255, 0.07)",
+
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
+                                                    theme.mode === "dark"
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                            }}
+                                            className="tile-play-button"
+                                        >
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                color: theme.colors.text,
+                                                ...theme.typography.body,
+                                            }}
+                                        >
+                                            {title}
+                                        </div>
+
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+
+                {/* ---------- Hip Hop ---------- */}
+                <div
+                    style={{
+                        marginBottom: 54,
+                    }}
+                >
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
+
+                            marginBottom: 18,
+
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        Hip Hop
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {hipHop.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
+
+                                        display: "flex",
+                                        flexDirection: "column",
+
+                                        gap: 14,
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    {/* artwork */}
+                                    <div
+                                        style={{
+                                            position: "relative",
+
+                                            aspectRatio: "1",
+
+                                            borderRadius: 26,
+
+                                            overflow: "hidden",
+
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
+
+                                            backgroundSize: "cover",
+
+                                            backgroundPosition: "center",
+
+                                            backgroundRepeat: "no-repeat",
+
+                                            backgroundColor:
+                                                theme.mode === "dark"
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                    : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
+                                        }}
+                                    >
+                                        {/* overlay */}
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                borderRadius: "50%",
+
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255, 255, 255, 0.07)",
+
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
+                                                    theme.mode === "dark"
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                            }}
+                                            className="tile-play-button"
+                                        >
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                color: theme.colors.text,
+                                                ...theme.typography.body,
+                                            }}
+                                        >
+                                            {title}
+                                        </div>
+
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+
+                {/* ---------- R&B ---------- */}
+                <div
+                    style={{
+                        marginBottom: 54,
+                    }}
+                >
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
+
+                            marginBottom: 18,
+
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        R&B
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {rnb.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
+
+                                        display: "flex",
+                                        flexDirection: "column",
+
+                                        gap: 14,
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    {/* artwork */}
+                                    <div
+                                        style={{
+                                            position: "relative",
+
+                                            aspectRatio: "1",
+
+                                            borderRadius: 26,
+
+                                            overflow: "hidden",
+
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
+
+                                            backgroundSize: "cover",
+
+                                            backgroundPosition: "center",
+
+                                            backgroundRepeat: "no-repeat",
+
+                                            backgroundColor:
+                                                theme.mode === "dark"
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                    : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
+                                        }}
+                                    >
+                                        {/* overlay */}
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                borderRadius: "50%",
+
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255, 255, 255, 0.07)",
+
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
+                                                    theme.mode === "dark"
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                            }}
+                                            className="tile-play-button"
+                                        >
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                color: theme.colors.text,
+                                                ...theme.typography.body,
+                                            }}
+                                        >
+                                            {title}
+                                        </div>
+
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+
+                {/* ---------- Jazz ---------- */}
+                <div
+                    style={{
+                        marginBottom: 54,
+                    }}
+                >
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
+
+                            marginBottom: 18,
+
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        Jazz
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {jazz.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
+
+                                        display: "flex",
+                                        flexDirection: "column",
+
+                                        gap: 14,
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    {/* artwork */}
+                                    <div
+                                        style={{
+                                            position: "relative",
+
+                                            aspectRatio: "1",
+
+                                            borderRadius: 26,
+
+                                            overflow: "hidden",
+
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
+
+                                            backgroundSize: "cover",
+
+                                            backgroundPosition: "center",
+
+                                            backgroundRepeat: "no-repeat",
+
+                                            backgroundColor:
+                                                theme.mode === "dark"
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                    : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
+                                        }}
+                                    >
+                                        {/* overlay */}
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                borderRadius: "50%",
+
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255, 255, 255, 0.07)",
+
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
+                                                    theme.mode === "dark"
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                            }}
+                                            className="tile-play-button"
+                                        >
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                color: theme.colors.text,
+                                                ...theme.typography.body,
+                                            }}
+                                        >
+                                            {title}
+                                        </div>
+
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+
+                {/* ---------- Chill ---------- */}
+                <div
+                    style={{
+                        marginBottom: 54,
+                    }}
+                >
+                    {/* Row Heading */}
+                    <h2
+                        style={{
+                            color: theme.colors.text,
+
+                            marginBottom: 18,
+
+                            ...theme.typography.rowHeading,
+                        }}
+                    >
+                        Chill
+                    </h2>
+
+                    {/* Scrollable Tiles */}
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 24,
+
+                            overflowX: "auto",
+                            overflowY: "hidden",
+
+                            paddingLeft: 20,
+                            paddingBottom: 8,
+
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                        }}
+                    >
+                        {chill.map(
+                            (
+                                {
+                                    id,
+                                    title,
+                                    artist,
+                                    artwork,
+                                    explicit,
+                                },
+                                index
+                            ) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        width: 300, // width of tile
+                                        flexShrink: 0,
+
+                                        display: "flex",
+                                        flexDirection: "column",
+
+                                        gap: 14,
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    {/* artwork */}
+                                    <div
+                                        style={{
+                                            position: "relative",
+
+                                            aspectRatio: "1",
+
+                                            borderRadius: 26,
+
+                                            overflow: "hidden",
+
+                                            backgroundImage: artwork
+                                                ? `url(${artwork})`
+                                                : "none",
+
+                                            backgroundSize: "cover",
+
+                                            backgroundPosition: "center",
+
+                                            backgroundRepeat: "no-repeat",
+
+                                            backgroundColor:
+                                                theme.mode === "dark"
+                                                    ? "rgba(31,31,31,.08)"
+                                                    : "rgba(255,255,255,.55)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                    : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "1";
+                                                play.style.transform = "translateY(0) scale(1)";
+                                            }
+                                        }}
+
+                                        onMouseLeave={(e) => {
+                                            const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                            if (play) {
+                                                play.style.opacity = "0";
+                                                play.style.transform = "translateY(6px) scale(.92)";
+                                            }
+                                        }}
+                                    >
+                                        {/* overlay */}
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                inset: 0,
+
+                                                borderRadius: 26,
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                        : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                                pointerEvents: "none",
+                                            }}
+                                        />
+
+                                        {/* play button */}
+                                        <div
+                                            onClick={async (e) => {
+                                                e.stopPropagation();
+
+                                                try {
+                                                    const album = await getAlbum(id);
+
+                                                    setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrack(album.tracks[0]);
+
+                                                    setCurrentTime(0);
+
+                                                    setHasTrack(true);
+
+                                                    setIsPlaying(true);
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            style={{
+                                                position: "absolute",
+
+                                                right: 18,
+                                                bottom: 18,
+
+                                                width: 44,
+                                                height: 44,
+
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+
+                                                borderRadius: "50%",
+
+                                                opacity: 0,
+
+                                                transform: "translateY(6px) scale(.92)",
+
+                                                transition: "all 220ms ease",
+
+                                                background:
+                                                    theme.mode === "dark"
+                                                        ? "rgba(13, 13, 13, 0.06)"
+                                                        : "rgba(255,255,255,0.28)",
+
+                                                backdropFilter: "blur(16px)",
+                                                WebkitBackdropFilter: "blur(16px)",
+
+                                                boxShadow:
+                                                    theme.mode === "dark"
+                                                        ? "0 8px 18px rgba(0,0,0,.35)"
+                                                        : `
+                    0 8px 18px rgba(0,0,0,.08),
+                    inset 0 1px 0 rgba(255,255,255,.9)
+                `,
+                                            }}
+                                            className="tile-play-button"
+                                        >
+                                            <Play
+                                                size={18}
+                                                strokeWidth={1.75}
+                                                fill={theme.colors.text}
+                                                color={theme.colors.text}
+                                                style={{
+                                                    marginLeft: 2,
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* title */}
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                color: theme.colors.text,
+                                                ...theme.typography.body,
+                                            }}
+                                        >
+                                            {title}
+                                        </div>
+
+                                        {explicit && (
+                                            <div
+                                                style={{
+                                                    width: 14,
+                                                    height: 14,
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+
+                                                    flexShrink: 0,
+
+                                                    borderRadius: 3,
+
+                                                    background:
+                                                        theme.mode === "dark"
+                                                            ? "rgba(255,255,255,0.10)"
+                                                            : "rgba(0,0,0,0.10)",
+
+                                                    color:
+                                                        theme.mode === "dark"
+                                                            ? "#D6D6D2"
+                                                            : "#4A4A47",
+
+                                                    fontSize: 8,
+                                                    fontWeight: 700,
+                                                    lineHeight: 1,
+
+                                                    userSelect: "none",
+                                                }}
+                                            >
+                                                E
+                                            </div>
+                                        )}
+
+                                        <Star
+                                            size={13}
+                                            strokeWidth={1.5}
+                                            color={favouriteColor}
+                                            fill={favourites.has(id) ? favouriteColor : "none"}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavourite(id);
+                                            }}
+                                            style={{
+                                                cursor: "pointer",
+                                                transition: "all 180ms ease",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* subtitle */}
+                                    <div
+                                        style={{
+                                            color: theme.colors.textSecondary,
+
+                                            ...theme.typography.smallText,
+                                        }}
+                                    >
+                                        {artist}
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+
             </div>
 
         ) : (
@@ -673,6 +2451,7 @@ export default function Home() {
                 {/* LOGO */}
                 {/*<AudioLines size={90} strokeWidth={1} color={theme.colors.text} /> */}
 
+                {/*
                 <img
                     src={musicIcon}
                     style={{
@@ -696,6 +2475,7 @@ export default function Home() {
                                 : "invert(0)",
                     }}
                 />
+                */}
 
                 {/* DISCRIPTION */}
                 <div

@@ -27,10 +27,7 @@ export default function GlassPanel({
                         0 8px 32px rgba(0,0,0,0.35),
                         inset 0 1px 0 rgba(255,255,255,0.05)
                       `
-                    : `
-                        0 10px 35px rgba(0,0,0,0.08),
-                        inset 0 1px 0 rgba(255,255,255,0.7)
-                      `,
+                    : "0 10px 35px rgba(0,0,0,0.08)",
 
                 transition: "all 300ms ease",
 

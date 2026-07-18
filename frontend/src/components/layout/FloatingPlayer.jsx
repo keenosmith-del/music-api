@@ -50,6 +50,9 @@ export default function FloatingPlayer({
     duration,
     setDuration,
 
+    currentTrack,
+    albumQueue,
+
     queueOpen,
     setQueueOpen,
 
@@ -391,7 +394,7 @@ export default function FloatingPlayer({
                                         : "invert(0)",
                             }}
                         />
-                        
+
                         {/* play */}
                         <img
                             src={isPlaying ? pauseIcon : playIcon}
@@ -610,15 +613,22 @@ export default function FloatingPlayer({
 
                                         borderRadius: 12,
 
-                                        background:
+                                        backgroundImage: currentTrack?.artwork
+                                            ? `url(${currentTrack.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+
+                                        backgroundColor:
                                             theme.mode === "dark"
-                                                ? "rgba(58, 58, 58, 0.08)"
-                                                : "rgba(255,255,255,0.65)",
+                                                ? "rgba(58,58,58,.08)"
+                                                : "rgba(255,255,255,.65)",
 
                                         boxShadow:
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
-                                                : "0 8px 18px rgba(0, 0, 0, 0.09)",
+                                                : "0 8px 18px rgba(0,0,0,.09)",
 
                                         transition: "transform 180ms ease, box-shadow 180ms ease",
 
@@ -659,7 +669,7 @@ export default function FloatingPlayer({
                                             ...theme.typography.smallText,
                                         }}
                                     >
-                                        Billie Eilish
+                                        {currentTrack?.artist}
                                     </div>
 
                                     <div
@@ -673,7 +683,7 @@ export default function FloatingPlayer({
                                             ...theme.typography.mediumText,
                                         }}
                                     >
-                                        Birds of a Feather
+                                        {currentTrack?.title}
                                     </div>
                                 </div>
                             </div>

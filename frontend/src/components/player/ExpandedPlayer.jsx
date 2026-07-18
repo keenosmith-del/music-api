@@ -51,6 +51,8 @@ export default function ExpandedPlayer({
 
     duration,
 
+    currentTrack,
+
     isPlaying,
     setIsPlaying,
 
@@ -548,10 +550,18 @@ export default function ExpandedPlayer({
 
                                     borderRadius: 38,
 
-                                    background:
+                                    backgroundImage: currentTrack?.artwork
+                                        ? `url(${currentTrack.artwork})`
+                                        : "none",
+
+                                    backgroundSize: "cover",
+
+                                    backgroundPosition: "center",
+
+                                    backgroundColor:
                                         theme.mode === "dark"
-                                            ? "rgba(32,32,32,0.08)"
-                                            : "rgba(255,255,255,0.60)",
+                                            ? "rgba(32,32,32,.08)"
+                                            : "rgba(255,255,255,.60)",
 
                                     boxShadow:
                                         theme.mode === "dark"
@@ -587,7 +597,7 @@ export default function ExpandedPlayer({
                                     ...theme.typography.body,
                                 }}
                             >
-                                Billie Eilish
+                                {currentTrack?.artist}
                             </div>
 
                             {/* Actions */}
@@ -598,36 +608,39 @@ export default function ExpandedPlayer({
                                     gap: 16,
                                 }}
                             >
+
                                 {/* Explicit */}
-                                <div
-                                    style={{
-                                        width: 16,
-                                        height: 16,
+                                {currentTrack?.explicit && (
+                                    <div
+                                        style={{
+                                            width: 16,
+                                            height: 16,
 
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
 
-                                        borderRadius: 4,
+                                            borderRadius: 4,
 
-                                        background:
-                                            theme.mode === "dark"
-                                                ? "rgba(255,255,255,0.10)"
-                                                : "rgba(0,0,0,0.10)",
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "rgba(255,255,255,0.10)"
+                                                    : "rgba(0,0,0,0.10)",
 
-                                        color:
-                                            theme.mode === "dark"
-                                                ? "#D6D6D2"
-                                                : "#4A4A47",
+                                            color:
+                                                theme.mode === "dark"
+                                                    ? "#D6D6D2"
+                                                    : "#4A4A47",
 
-                                        fontSize: 9,
-                                        fontWeight: 700,
+                                            fontSize: 9,
+                                            fontWeight: 700,
 
-                                        userSelect: "none",
-                                    }}
-                                >
-                                    E
-                                </div>
+                                            userSelect: "none",
+                                        }}
+                                    >
+                                        E
+                                    </div>
+                                )}
 
                                 <Star
                                     size={17}
@@ -710,7 +723,7 @@ export default function ExpandedPlayer({
                                     ...theme.typography.title,
                                 }}
                             >
-                                Birds of a Feather
+                                {currentTrack?.title}
                             </div>
                         </div>
 

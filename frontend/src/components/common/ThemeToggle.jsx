@@ -5,7 +5,7 @@ import { Sun, Moon } from "lucide-react";
 export default function ThemeToggle() {
     const { theme, toggleTheme } = useTheme();
 
-    const dark = theme.mode === "dark";
+    const dark = theme.mode === "dark"
 
     return (
         <button
@@ -28,22 +28,22 @@ export default function ThemeToggle() {
                 alignItems: "center",
                 justifyContent: "space-between",
 
-                background: dark
-                    ? "rgba(43,43,43,0.08)"
-                    : "rgba(255,255,255,0.45)",
+                background:
+                    theme.mode === "dark"
+                        ? "rgba(50, 50, 50, 0)"
+                        : "rgba(225, 18, 18, 0)",
 
-                backdropFilter: "blur(18px)",
-                WebkitBackdropFilter: "blur(18px)",
-
-                boxShadow: dark
-                    ? `
-                0 6px 18px rgba(0,0,0,0.28),
-                inset 0 1px 0 rgba(255,255,255,0.03)
-              `
-                    : `
-                0 6px 18px rgba(0,0,0,0.08),
-                inset 0 1px 0 rgba(255,255,255,0.8)
-              `,
+                boxShadow:
+                    theme.mode === "dark"
+                        ? `
+                            0 6px 18px rgba(0,0,0,0.22),
+                            inset 0 1px 0 rgba(255,255,255,0.04)
+                        `
+                        : `
+                            0 10px 28px rgba(0, 0, 0, 0),
+                            0 1px 2px rgba(0, 0, 0, 0.04),
+                            inset 0 1px 0 rgba(255,255,255,0.9)
+                        `,
 
                 transition: "all 220ms ease",
             }}

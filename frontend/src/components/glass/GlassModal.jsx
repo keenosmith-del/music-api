@@ -267,7 +267,7 @@ export default function GlassModal({
                                     background:
                                         theme.mode === "dark"
                                             ? "rgba(50, 50, 50, 0)"
-                                            : "rgba(255,255,255,0.55)",
+                                            : "rgba(255, 255, 255, 0)",
 
                                     boxShadow:
                                         theme.mode === "dark"
