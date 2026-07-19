@@ -51,7 +51,15 @@ export default function FloatingPlayer({
     setDuration,
 
     currentTrack,
+    setCurrentTrack,
+
     albumQueue,
+    setAlbumQueue,
+
+    currentTrackIndex,
+    setCurrentTrackIndex,
+
+    audioRef,
 
     queueOpen,
     setQueueOpen,
@@ -104,7 +112,13 @@ export default function FloatingPlayer({
         );
 
         setMuted(false);
+
         setVolume(value);
+
+        if (audioRef.current) {
+            audioRef.current.volume = value / 100;
+            audioRef.current.muted = false;
+        }
 
         if (value > 0) {
             setPreviousVolume(value);
@@ -125,7 +139,13 @@ export default function FloatingPlayer({
             )
         );
 
-        setCurrentTime(Math.round(percent * duration));
+        const newTime = percent * duration;
+
+        if (audioRef.current) {
+            audioRef.current.currentTime = newTime;
+        }
+
+        setCurrentTime(newTime);
     };
 
     useEffect(() => {
@@ -177,38 +197,120 @@ export default function FloatingPlayer({
         };
     }, [menuOpen]);
 
+    useEffect(() => {
+        const audio = audioRef.current;
+
+        if (!audio) return;
+
+        // No track selected
+        if (!currentTrack?.preview) {
+            audio.pause();
+            audio.removeAttribute("src");
+            audio.load();
+            return;
+        }
+
+        // New song selected
+        audio.src = currentTrack.preview;
+        audio.load();
+
+        if (isPlaying) {
+            audio.play().catch(console.error);
+        } else {
+            audio.pause();
+        }
+    }, [currentTrack, isPlaying]);
+
     // playback useEffect
     useEffect(() => {
-        if (!isPlaying || !hasTrack) return;
+        if (!audioRef.current) return;
 
-        const timer = setInterval(() => {
-            setCurrentTime((time) => {
-                if (time >= duration) {
-                    clearInterval(timer);
+        const audio = audioRef.current;
 
-                    setIsPlaying(false);
-                    setCurrentTime(duration);
+        function handleLoadedMetadata() {
+            setDuration(audio.duration || 0);
+        }
 
-                    return duration;
+        function handleTimeUpdate() {
+            console.log(audio.currentTime);
+            const time = Math.floor(audio.currentTime);
+
+            setCurrentTime((prev) => (prev === time ? prev : time));
+        }
+
+        function handleEnded() {
+            if (repeatOne) {
+                if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+
+                    setCurrentTime(0);
+
+                    audioRef.current.play().catch(console.error);
                 }
 
-                return time + 1;
-            });
-        }, 1000);
+                return;
+            }
 
-        return () => clearInterval(timer);
+            // End of queue
+            if (currentTrackIndex >= albumQueue.length - 1) {
+                setIsPlaying(false);
+                setCurrentTime(0);
+
+                if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+                }
+
+                return;
+            }
+
+            const newIndex = currentTrackIndex + 1;
+
+            setCurrentTrackIndex(newIndex);
+
+            setCurrentTrack(albumQueue[newIndex]);
+
+            setCurrentTime(0);
+
+            setIsPlaying(true);
+        }
+
+        audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+        audio.addEventListener("timeupdate", handleTimeUpdate);
+        audio.addEventListener("ended", handleEnded);
+
+        return () => {
+            audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+            audio.removeEventListener("timeupdate", handleTimeUpdate);
+            audio.removeEventListener("ended", handleEnded);
+        };
     }, [
-        isPlaying,
-        hasTrack,
-        duration,
+        audioRef,
+        repeatOne,
+        currentTrackIndex,
+        albumQueue,
+
+        setCurrentTrack,
+        setCurrentTrackIndex,
+
         setCurrentTime,
+        setDuration,
         setIsPlaying,
     ]);
 
+    useEffect(() => {
+        if (!audioRef.current) return;
+
+        audioRef.current.volume = volume / 100;
+        audioRef.current.muted = muted;
+    }, [volume, muted]);
+
+
     // playback helper
     const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = String(seconds % 60).padStart(2, "0");
+        const totalSeconds = Math.floor(seconds || 0);
+
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = String(totalSeconds % 60).padStart(2, "0");
 
         return `${mins}:${secs}`;
     };
@@ -230,9 +332,20 @@ export default function FloatingPlayer({
             label: "Stop Playing",
             icon: <Square size={14} strokeWidth={1.7} />,
             onClick: () => {
+                setMenuOpen(false);
+
+                if (audioRef.current) {
+                    audioRef.current.pause();
+                    audioRef.current.currentTime = 0;
+                }
+
+                setCurrentTime(0);
+
                 setIsPlaying(false);
                 setHasTrack(false);
-                setMenuOpen(false);
+
+                setCurrentTrack(null);
+                setAlbumQueue([]);
             },
         },
         "divider",
@@ -296,7 +409,44 @@ export default function FloatingPlayer({
                         <div
                             onClick={() => {
                                 if (!controlsEnabled) return;
-                                setShuffleOn((on) => !on);
+
+                                // Turning shuffle OFF
+                                if (shuffleOn) {
+                                    setShuffleOn(false);
+
+                                    setAlbumQueue(originalAlbumQueue);
+
+                                    const index = originalAlbumQueue.findIndex(
+                                        (track) => track.id === currentTrack.id
+                                    );
+
+                                    if (index !== -1) {
+                                        setCurrentTrackIndex(index);
+                                    }
+
+                                    return;
+                                }
+
+                                // Turning shuffle ON
+                                const shuffled = [...albumQueue];
+
+                                for (let i = shuffled.length - 1; i > 0; i--) {
+                                    const j = Math.floor(Math.random() * (i + 1));
+
+                                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                                }
+
+                                setShuffleOn(true);
+
+                                setAlbumQueue(shuffled);
+
+                                setCurrentTrackIndex(0);
+
+                                setCurrentTrack(shuffled[0]);
+
+                                setCurrentTime(0);
+
+                                setIsPlaying(true);
                             }}
                             onMouseEnter={(e) => {
                                 if (!controlsEnabled) return;
@@ -357,6 +507,36 @@ export default function FloatingPlayer({
                             draggable={false}
                             onClick={() => {
                                 if (!controlsEnabled) return;
+
+                                // Restart current song if we're more than 3 seconds in
+                                if (currentTime > 3) {
+                                    if (audioRef.current) {
+                                        audioRef.current.currentTime = 0;
+                                    }
+
+                                    setCurrentTime(0);
+                                    return;
+                                }
+
+                                // Already at first song
+                                if (currentTrackIndex === 0) {
+                                    if (audioRef.current) {
+                                        audioRef.current.currentTime = 0;
+                                    }
+
+                                    setCurrentTime(0);
+                                    return;
+                                }
+
+                                const newIndex = currentTrackIndex - 1;
+
+                                setCurrentTrackIndex(newIndex);
+
+                                setCurrentTrack(albumQueue[newIndex]);
+
+                                setCurrentTime(0);
+
+                                setIsPlaying(true);
                             }}
                             onMouseEnter={(e) => {
                                 if (!controlsEnabled) return;
@@ -448,6 +628,27 @@ export default function FloatingPlayer({
                             draggable={false}
                             onClick={() => {
                                 if (!controlsEnabled) return;
+
+                                // Already at the last song
+                                if (currentTrackIndex >= albumQueue.length - 1) {
+                                    if (audioRef.current) {
+                                        audioRef.current.currentTime = 0;
+                                    }
+
+                                    setCurrentTime(0);
+
+                                    return;
+                                }
+
+                                const newIndex = currentTrackIndex + 1;
+
+                                setCurrentTrackIndex(newIndex);
+
+                                setCurrentTrack(albumQueue[newIndex]);
+
+                                setCurrentTime(0);
+
+                                setIsPlaying(true);
                             }}
                             onMouseEnter={(e) => {
                                 if (!controlsEnabled) return;
@@ -753,6 +954,7 @@ export default function FloatingPlayer({
                                             bottom: 0,
 
                                             width: `${(currentTime / duration) * 100}%`,
+                                            transition: "width 120ms linear",
 
                                             borderRadius: 999,
 
@@ -1067,9 +1269,18 @@ export default function FloatingPlayer({
                                     if (muted) {
                                         setMuted(false);
                                         setVolume(previousVolume || 100);
+
+                                        if (audioRef.current) {
+                                            audioRef.current.muted = false;
+                                            audioRef.current.volume = (previousVolume || 100) / 100;
+                                        }
                                     } else {
                                         setPreviousVolume(volume);
                                         setMuted(true);
+
+                                        if (audioRef.current) {
+                                            audioRef.current.muted = true;
+                                        }
                                     }
                                 }}
                                 style={{
@@ -1182,6 +1393,10 @@ export default function FloatingPlayer({
                     )}
                 </div>
             </GlassMenu>
+            <audio
+                ref={audioRef}
+                preload="metadata"
+            />
         </div>
     );
 }

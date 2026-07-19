@@ -50,8 +50,21 @@ export default function ExpandedPlayer({
     setHasTrack,
 
     duration,
+    setDuration,
 
     currentTrack,
+    setCurrentTrack,
+
+    albumQueue,
+    setAlbumQueue,
+
+    originalAlbumQueue,
+    setOriginalAlbumQueue,
+
+    currentTrackIndex,
+    setCurrentTrackIndex,
+
+    audioRef,
 
     isPlaying,
     setIsPlaying,
@@ -98,57 +111,12 @@ export default function ExpandedPlayer({
 
     const menuRef = useRef(null);
 
-    useEffect(() => {
-        function handleMenuOutsideClick(event) {
-            if (
-                menuOpen &&
-                menuRef.current &&
-                !menuRef.current.contains(event.target) &&
-                !ellipsisRef.current?.contains(event.target)
-            ) {
-                setMenuOpen(false);
-            }
-        }
-
-        document.addEventListener("mousedown", handleMenuOutsideClick);
-
-        return () => {
-            document.removeEventListener("mousedown", handleMenuOutsideClick);
-        };
-    }, [menuOpen]);
-
-    // playback useEffect
-    useEffect(() => {
-        if (!isPlaying || !hasTrack) return;
-
-        const timer = setInterval(() => {
-            setCurrentTime((time) => {
-                if (time >= duration) {
-                    clearInterval(timer);
-
-                    setIsPlaying(false);
-                    setCurrentTime(duration);
-
-                    return duration;
-                }
-
-                return time + 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [
-        isPlaying,
-        hasTrack,
-        duration,
-        setCurrentTime,
-        setIsPlaying,
-    ]);
-
     // playback helper
     const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = String(seconds % 60).padStart(2, "0");
+        const totalSeconds = Math.floor(seconds || 0);
+
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = String(totalSeconds % 60).padStart(2, "0");
 
         return `${mins}:${secs}`;
     };
@@ -167,7 +135,13 @@ export default function ExpandedPlayer({
             )
         );
 
-        setCurrentTime(Math.round(percent * duration));
+        const newTime = percent * duration;
+
+        if (audioRef.current) {
+            audioRef.current.currentTime = newTime;
+        }
+
+        setCurrentTime(newTime);
     };
 
     const updateVolume = (clientX) => {
@@ -867,7 +841,43 @@ export default function ExpandedPlayer({
                             {/* Shuffle */}
                             <div
                                 onClick={() => {
-                                    setShuffleOn((on) => !on);
+                                    // Turning shuffle OFF
+                                    if (shuffleOn) {
+                                        setShuffleOn(false);
+
+                                        setAlbumQueue(originalAlbumQueue);
+
+                                        const index = originalAlbumQueue.findIndex(
+                                            (track) => track.id === currentTrack.id
+                                        );
+
+                                        if (index !== -1) {
+                                            setCurrentTrackIndex(index);
+                                        }
+
+                                        return;
+                                    }
+
+                                    // Turning shuffle ON
+                                    const shuffled = [...albumQueue];
+
+                                    for (let i = shuffled.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+
+                                        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                                    }
+
+                                    setShuffleOn(true);
+
+                                    setAlbumQueue(shuffled);
+
+                                    setCurrentTrackIndex(0);
+
+                                    setCurrentTrack(shuffled[0]);
+
+                                    setCurrentTime(0);
+
+                                    setIsPlaying(true);
                                 }}
                                 style={{
                                     display: "flex",
@@ -940,7 +950,35 @@ export default function ExpandedPlayer({
                                             : "invert(0)",
                                 }}
                                 onClick={() => {
-                                    // build later restart song or prev song
+                                    // Restart current song if we're more than 3 seconds in
+                                    if (currentTime > 3) {
+                                        if (audioRef.current) {
+                                            audioRef.current.currentTime = 0;
+                                        }
+
+                                        setCurrentTime(0);
+                                        return;
+                                    }
+
+                                    // Already at first song
+                                    if (currentTrackIndex === 0) {
+                                        if (audioRef.current) {
+                                            audioRef.current.currentTime = 0;
+                                        }
+
+                                        setCurrentTime(0);
+                                        return;
+                                    }
+
+                                    const newIndex = currentTrackIndex - 1;
+
+                                    setCurrentTrackIndex(newIndex);
+
+                                    setCurrentTrack(albumQueue[newIndex]);
+
+                                    setCurrentTime(0);
+
+                                    setIsPlaying(true);
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = "translateY(-1px)";
@@ -1018,7 +1056,26 @@ export default function ExpandedPlayer({
                                             : "invert(0)",
                                 }}
                                 onClick={() => {
-                                    // build later next song in queue
+                                    // Already at the last song
+                                    if (currentTrackIndex >= albumQueue.length - 1) {
+                                        if (audioRef.current) {
+                                            audioRef.current.currentTime = 0;
+                                        }
+
+                                        setCurrentTime(0);
+
+                                        return;
+                                    }
+
+                                    const newIndex = currentTrackIndex + 1;
+
+                                    setCurrentTrackIndex(newIndex);
+
+                                    setCurrentTrack(albumQueue[newIndex]);
+
+                                    setCurrentTime(0);
+
+                                    setIsPlaying(true);
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = "translateY(-1px)";

@@ -36,7 +36,7 @@ const typography = {
     title2: {
         fontSize: 21,
         fontWeight: 600,
-        letterSpacing: "-0.02em",
+        letterSpacing: "-0.01em",
     },
 
     body: {

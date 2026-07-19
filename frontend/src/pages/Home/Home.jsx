@@ -35,6 +35,10 @@ export default function Home() {
         setCurrentTrack,
         setAlbumQueue,
 
+        setOriginalAlbumQueue,
+
+        setCurrentTrackIndex,
+
         favouriteColor,
     } = useApp();
 
@@ -263,7 +267,11 @@ export default function Home() {
                                                 try {
                                                     const album = await getAlbum(id);
 
+                                                    setOriginalAlbumQueue(album.tracks);
+
                                                     setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrackIndex(0);
 
                                                     setCurrentTrack(album.tracks[0]);
 
@@ -557,6 +565,8 @@ export default function Home() {
 
                                                     setAlbumQueue(album.tracks);
 
+                                                    setCurrentTrackIndex(0);
+
                                                     setCurrentTrack(album.tracks[0]);
 
                                                     setCurrentTime(0);
@@ -837,6 +847,8 @@ export default function Home() {
                                                     const album = await getAlbum(id);
 
                                                     setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrackIndex(0);
 
                                                     setCurrentTrack(album.tracks[0]);
 
@@ -1119,6 +1131,8 @@ export default function Home() {
 
                                                     setAlbumQueue(album.tracks);
 
+                                                    setCurrentTrackIndex(0);
+
                                                     setCurrentTrack(album.tracks[0]);
 
                                                     setCurrentTime(0);
@@ -1399,6 +1413,8 @@ export default function Home() {
                                                     const album = await getAlbum(id);
 
                                                     setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrackIndex(0);
 
                                                     setCurrentTrack(album.tracks[0]);
 
@@ -1681,6 +1697,8 @@ export default function Home() {
 
                                                     setAlbumQueue(album.tracks);
 
+                                                    setCurrentTrackIndex(0);
+
                                                     setCurrentTrack(album.tracks[0]);
 
                                                     setCurrentTime(0);
@@ -1962,6 +1980,8 @@ export default function Home() {
 
                                                     setAlbumQueue(album.tracks);
 
+                                                    setCurrentTrackIndex(0);
+
                                                     setCurrentTrack(album.tracks[0]);
 
                                                     setCurrentTime(0);
@@ -2242,6 +2262,8 @@ export default function Home() {
                                                     const album = await getAlbum(id);
 
                                                     setAlbumQueue(album.tracks);
+
+                                                    setCurrentTrackIndex(0);
 
                                                     setCurrentTrack(album.tracks[0]);
 

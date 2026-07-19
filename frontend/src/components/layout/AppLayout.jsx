@@ -9,7 +9,7 @@ import ThemeToggle from "../common/ThemeToggle";
 
 import { useTheme } from "../../context/ThemeContext";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import React from "react";
 
@@ -50,6 +50,8 @@ export default function AppLayout({
 
     const [currentTime, setCurrentTime] = useState(0);
 
+    const audioRef = useRef(null);
+
     // 3:42 = 222 seconds
     const [duration, setDuration] = useState(222);
 
@@ -57,6 +59,10 @@ export default function AppLayout({
     const [currentTrack, setCurrentTrack] = useState(null);
 
     const [albumQueue, setAlbumQueue] = useState([]);
+
+    const [originalAlbumQueue, setOriginalAlbumQueue] = useState([]);
+
+    const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
     const [expandedPlayerOpen, setExpandedPlayerOpen] = useState(false);
 
@@ -96,6 +102,14 @@ export default function AppLayout({
 
                 albumQueue,
                 setAlbumQueue,
+
+                currentTrackIndex,
+                setCurrentTrackIndex,
+
+                originalAlbumQueue,
+                setOriginalAlbumQueue,
+
+                audioRef,
 
                 queueOpen,
                 setQueueOpen,
@@ -228,7 +242,18 @@ export default function AppLayout({
                             setDuration,
 
                             currentTrack,
+                            setCurrentTrack,
+
                             albumQueue,
+                            setAlbumQueue,
+
+                            currentTrackIndex,
+                            setCurrentTrackIndex,
+
+                            originalAlbumQueue,
+                            setOriginalAlbumQueue,
+
+                            audioRef,
 
                             queueOpen,
                             setQueueOpen,
@@ -271,6 +296,15 @@ export default function AppLayout({
                         duration={duration}
 
                         currentTrack={currentTrack}
+                        setCurrentTrack={setCurrentTrack}
+
+                        albumQueue={albumQueue}
+                        setAlbumQueue={setAlbumQueue}
+
+                        currentTrackIndex={currentTrackIndex}
+                        setCurrentTrackIndex={setCurrentTrackIndex}
+
+                        audioRef={audioRef}
 
                         isPlaying={isPlaying}
                         setIsPlaying={setIsPlaying}

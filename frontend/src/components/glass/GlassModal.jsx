@@ -68,20 +68,16 @@ export default function GlassModal({
                     borderRadius: 34,
 
                     background: theme.colors.glass,
+
                     border: `1px solid ${theme.colors.glassBorder}`,
 
                     backdropFilter: "blur(10px)",
                     WebkitBackdropFilter: "blur(10px)",
 
-                    boxShadow: dark
-                        ? `
-                0 18px 60px rgba(0,0,0,0.45),
-                inset 0 1px 0 rgba(255,255,255,0.05)
-            `
-                        : `
-                0 18px 60px rgba(0,0,0,0.10),
-                inset 0 1px 0 rgba(255,255,255,0.85)
-            `,
+                    boxShadow:
+                        theme.mode === "dark"
+                            ? "0 6px 18px rgba(0,0,0,0.45)"
+                            : "0 1px 2px rgba(0,0,0,0.10)",
                 }}
             >
                 {/* container */}
@@ -220,15 +216,8 @@ export default function GlassModal({
 
                                     boxShadow:
                                         theme.mode === "dark"
-                                            ? `
-                            0 6px 18px rgba(0,0,0,0.22),
-                            inset 0 1px 0 rgba(255,255,255,0.04)
-                        `
-                                            : `
-                            0 10px 28px rgba(0, 0, 0, 0),
-                            0 1px 2px rgba(0, 0, 0, 0.04),
-                            inset 0 1px 0 rgba(255,255,255,0.9)
-                        `,
+                                            ? "0 6px 18px rgba(0,0,0,0.22)"
+                                            : "0 1px 2px rgba(0,0,0,0.05)",
 
                                     color: theme.colors.text,
 
@@ -271,15 +260,8 @@ export default function GlassModal({
 
                                     boxShadow:
                                         theme.mode === "dark"
-                                            ? `
-                            0 6px 18px rgba(0,0,0,0.22),
-                            inset 0 1px 0 rgba(255,255,255,0.04)
-                        `
-                                            : `
-                            0 10px 28px rgba(0, 0, 0, 0),
-                            0 1px 2px rgba(0, 0, 0, 0.04),
-                            inset 0 1px 0 rgba(255,255,255,0.9)
-                        `,
+                                            ? "0 6px 18px rgba(0,0,0,0.22)"
+                                            : "0 1px 2px rgba(0,0,0,0.05)",
 
                                     color: theme.colors.text,
 
@@ -339,19 +321,12 @@ export default function GlassModal({
                                 background:
                                     theme.mode === "dark"
                                         ? "rgba(50,50,50,0.08)"
-                                        : "rgba(255,255,255,0.55)",
+                                        : "rgba(255, 255, 255, 0.08)",
 
                                 boxShadow:
                                     theme.mode === "dark"
-                                        ? `
-                        0 6px 18px rgba(0,0,0,0.22),
-                        inset 0 1px 0 rgba(255,255,255,0.04)
-                    `
-                                        : `
-                        0 10px 28px rgba(0,0,0,0.08),
-                        0 1px 2px rgba(0,0,0,0.05),
-                        inset 0 1px 0 rgba(255,255,255,0.9)
-                    `,
+                                        ? "0 6px 18px rgba(0,0,0,0.22)"
+                                        : "0 1px 2px rgba(0,0,0,0.05)",
 
                                 color: theme.colors.text,
 
@@ -400,15 +375,8 @@ export default function GlassModal({
 
                                 boxShadow:
                                     theme.mode === "dark"
-                                        ? `
-                        0 6px 18px rgba(0,0,0,0.22),
-                        inset 0 1px 0 rgba(255,255,255,0.04)
-                    `
-                                        : `
-                        0 10px 28px rgba(0,0,0,0.08),
-                        0 1px 2px rgba(0,0,0,0.05),
-                        inset 0 1px 0 rgba(255,255,255,0.9)
-                    `,
+                                        ? "0 6px 18px rgba(0,0,0,0.22)"
+                                        : "0 1px 2px rgba(0,0,0,0.05)",
 
                                 color: theme.mode === "dark" ? theme.colors.text : "#ecece8",
                                 // color: "#6a2e2a",

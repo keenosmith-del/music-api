@@ -5,6 +5,35 @@ import { useState, useEffect } from "react";
 
 import { searchMusic } from "../../services/searchService";
 
+import era70sImage from "../../assets/categories/70s.jpg";
+import era80sImage from "../../assets/categories/80s.jpg";
+import era2010sImage from "../../assets/categories/2010s.jpg";
+import alternativeImage from "../../assets/categories/alternative.jpg";
+import chartsImage from "../../assets/categories/charts.jpg";
+import chillImage from "../../assets/categories/chill.jpg";
+import concertImage from "../../assets/categories/concert.jpg";
+import countryImage from "../../assets/categories/country.jpg";
+
+import danceImage from "../../assets/categories/dance.jpg";
+import essentialsImage from "../../assets/categories/essentials.jpg";
+import feelGoodImage from "../../assets/categories/feelgood.jpg";
+import focusImage from "../../assets/categories/focus.jpeg";
+import gospelImage from "../../assets/categories/gospel.jpg";
+import hipHopImage from "../../assets/categories/hiphop.jpg";
+import hitsImage from "../../assets/categories/hits.jpg";
+import jazzImage from "../../assets/categories/jazz.jpg";
+
+import liveImage from "../../assets/categories/live.jpg";
+import loveImage from "../../assets/categories/love.jpg";
+import metalImage from "../../assets/categories/metal.jpg";
+import oldiesImage from "../../assets/categories/oldies.jpg";
+import partyImage from "../../assets/categories/party.jpg";
+import reggaeImage from "../../assets/categories/reggae.jpg";
+import rnbImage from "../../assets/categories/rnb.jpeg";
+import soulImage from "../../assets/categories/soul.jpg";
+import rockImage from "../../assets/categories/rock.jpg";
+
+
 import React from "react";
 
 import {
@@ -93,100 +122,37 @@ export default function Search() {
         results.songs.length;
 
     const categories = [
-        {
-            title: "Rock"
-        },
-        {
-            title: "Hits"
-        },
-        {
-            title: "Concert"
-        },
-        {
-            title: "Chill"
-        },
-        {
-            title: "Charts"
-        },
-        {
-            title: "Hip Hop"
-        },
+        { title: "Rock", artwork: rockImage },
+        { title: "Hits", artwork: hitsImage },
+        { title: "Concert", artwork: concertImage },
+        { title: "Chill", artwork: chillImage },
+        { title: "Charts", artwork: chartsImage },
+        { title: "Hip Hop", artwork: hipHopImage },
 
-        {
-            title: "Live"
-        },
-        {
-            title: "R&B"
-        },
-        {
-            title: "Pop"
-        },
-        {
-            title: "Gospel"
-        },
-        {
-            title: "Dance"
-        },
-        {
-            title: "Alternative"
-        },
+        { title: "Live", artwork: liveImage },
+        { title: "R&B", artwork: rnbImage },
+        // { title: "Pop", artwork: popImage },
+        { title: "Gospel", artwork: gospelImage },
+        { title: "Dance", artwork: danceImage },
+        { title: "Alternative", artwork: alternativeImage },
 
-        {
-            title: "2010s"
-        },
-        {
-            title: "2000s"
-        },
-        {
-            title: "'90s'"
-        },
-        {
-            title: "'80s'"
-        },
-        {
-            title: "'70s'"
-        },
-        {
-            title: "Jazz"
-        },
+        { title: "2010s", artwork: era2010sImage },
+        { title: "'80s", artwork: era80sImage },
+        { title: "'70s", artwork: era70sImage },
+        { title: "Jazz", artwork: jazzImage },
+        { title: "Country", artwork: countryImage },
+        { title: "Essentials", artwork: essentialsImage },
 
-        {
-            title: "Sleep"
-        },
-        {
-            title: "Country"
-        },
-        {
-            title: "Essentials"
-        },
-        {
-            title: "Chill"
-        },
-        {
-            title: "Focus"
-        },
-        {
-            title: "Feel Good"
-        },
+        { title: "Chill", artwork: chillImage },
+        { title: "Focus", artwork: focusImage },
+        { title: "Feel Good", artwork: feelGoodImage },
 
-        {
-            title: "Love"
-        },
-        {
-            title: "Party"
-        },
-        {
-            title: "Soul/Funk"
-        },
-        {
-            title: "Oldies"
-        },
-        {
-            title: "Reggae"
-        },
-        {
-            title: "Metal"
-        },
+        { title: "Love", artwork: loveImage },
+        { title: "Party", artwork: partyImage },
+        { title: "Soul/Funk", artwork: soulImage },
+        { title: "Oldies", artwork: oldiesImage },
+        { title: "Reggae", artwork: reggaeImage },
+        { title: "Metal", artwork: metalImage },
     ];
 
     return (
@@ -325,14 +291,13 @@ export default function Search() {
 
                                         borderRadius: 26,
 
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31,31,31,.05)"
-                                                    : "rgba(29,29,29,.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,.45)"
-                                                    : "rgba(255,255,255,.70)",
+                                        backgroundImage: song.artwork
+                                            ? `url(${song.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                        backgroundRepeat: "no-repeat",
 
                                         boxShadow:
                                             theme.mode === "dark"
@@ -360,21 +325,24 @@ export default function Search() {
                                         }
                                     }}
                                 >
+                                    {/* overlay */}
                                     <div
                                         style={{
                                             position: "absolute",
+                                            inset: 0,
 
-                                            top: 100,
-                                            left: 20,
+                                            borderRadius: 26,
 
-                                            color: theme.colors.text,
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
 
-                                            ...theme.typography.title,
+                                            pointerEvents: "none",
                                         }}
-                                    >
-                                        {song.title}
-                                    </div>
+                                    />
 
+                                    {/* play button */}
                                     <div
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -408,7 +376,7 @@ export default function Search() {
                                             background:
                                                 theme.mode === "dark"
                                                     ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
+                                                    : "rgba(255, 255, 255, 0.07)",
 
                                             backdropFilter: "blur(16px)",
                                             WebkitBackdropFilter: "blur(16px)",
@@ -416,10 +384,7 @@ export default function Search() {
                                             boxShadow:
                                                 theme.mode === "dark"
                                                     ? "0 8px 18px rgba(0,0,0,.35)"
-                                                    : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                         }}
                                         className="tile-play-button"
                                     >
@@ -439,7 +404,7 @@ export default function Search() {
                                         ...theme.typography.body,
                                     }}
                                 >
-                                    {song.artist}
+                                    {song.title}
                                 </div>
 
                                 <div
@@ -449,7 +414,7 @@ export default function Search() {
                                         ...theme.typography.smallText,
                                     }}
                                 >
-                                    {song.album}
+                                    {song.artist}
                                 </div>
                             </div>
                         ))}
@@ -516,14 +481,13 @@ export default function Search() {
 
                                         borderRadius: 26,
 
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31,31,31,.05)"
-                                                    : "rgba(29,29,29,.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,.45)"
-                                                    : "rgba(255,255,255,.70)",
+                                        backgroundImage: album.artwork
+                                            ? `url(${album.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                        backgroundRepeat: "no-repeat",
 
                                         boxShadow:
                                             theme.mode === "dark"
@@ -552,6 +516,24 @@ export default function Search() {
                                     }}
                                 >
 
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
+
+                                    {/* play button */}
                                     <div
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -585,7 +567,7 @@ export default function Search() {
                                             background:
                                                 theme.mode === "dark"
                                                     ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
+                                                    : "rgba(255, 255, 255, 0.07)",
 
                                             backdropFilter: "blur(16px)",
                                             WebkitBackdropFilter: "blur(16px)",
@@ -593,10 +575,7 @@ export default function Search() {
                                             boxShadow:
                                                 theme.mode === "dark"
                                                     ? "0 8px 18px rgba(0,0,0,.35)"
-                                                    : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                         }}
                                         className="tile-play-button"
                                     >
@@ -693,14 +672,13 @@ export default function Search() {
 
                                         borderRadius: 26,
 
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31,31,31,.05)"
-                                                    : "rgba(29,29,29,.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,.45)"
-                                                    : "rgba(255,255,255,.70)",
+                                        backgroundImage: artist.artwork
+                                            ? `url(${artist.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                        backgroundRepeat: "no-repeat",
 
                                         boxShadow:
                                             theme.mode === "dark"
@@ -729,6 +707,24 @@ export default function Search() {
                                     }}
                                 >
 
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
+
+                                    {/* play button */}
                                     <div
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -763,7 +759,7 @@ export default function Search() {
                                             background:
                                                 theme.mode === "dark"
                                                     ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
+                                                    : "rgba(255, 255, 255, 0.07)",
 
                                             backdropFilter: "blur(16px)",
                                             WebkitBackdropFilter: "blur(16px)",
@@ -771,10 +767,7 @@ export default function Search() {
                                             boxShadow:
                                                 theme.mode === "dark"
                                                     ? "0 8px 18px rgba(0,0,0,.35)"
-                                                    : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                         }}
                                         className="tile-play-button"
                                     >
@@ -881,7 +874,7 @@ export default function Search() {
                         paddingBottom: 8,
                     }}
                 >
-                    {categories.map(({ title }, index) => (
+                    {categories.map(({ title, artwork }, index) => (
                         <div
                             key={index}
                             style={{
@@ -904,16 +897,20 @@ export default function Search() {
 
                                     borderRadius: 26,
 
-                                    overflow: "visible",
+                                    overflow: "hidden",
 
-                                    background:
+                                    backgroundImage: artwork ? `url(${artwork})` : "none",
+
+                                    backgroundSize: "cover",
+
+                                    backgroundPosition: "center",
+
+                                    backgroundRepeat: "no-repeat",
+
+                                    backgroundColor:
                                         theme.mode === "dark"
-                                            ? index % 2 === 0
-                                                ? "rgba(31, 31, 31, 0.05)"
-                                                : "rgba(29, 29, 29, 0.08)"
-                                            : index % 2 === 0
-                                                ? "rgba(255,255,255,0.45)"
-                                                : "rgba(255,255,255,0.70)",
+                                            ? "rgba(31,31,31,.08)"
+                                            : "rgba(255,255,255,.55)",
 
                                     boxShadow:
                                         theme.mode === "dark"
@@ -930,6 +927,15 @@ export default function Search() {
                                         play.style.opacity = "1";
                                         play.style.transform = "translateY(0) scale(1)";
                                     }
+
+                                    const overlay = e.currentTarget.querySelector(".tile-overlay");
+
+                                    if (overlay) {
+                                        overlay.style.background =
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,.20))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.30), rgba(255,255,255,.12))";
+                                    }
                                 }}
 
                                 onMouseLeave={(e) => {
@@ -939,8 +945,37 @@ export default function Search() {
                                         play.style.opacity = "0";
                                         play.style.transform = "translateY(6px) scale(.92)";
                                     }
+
+                                    const overlay = e.currentTarget.querySelector(".tile-overlay");
+
+                                    if (overlay) {
+                                        overlay.style.background =
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))";
+                                    }
                                 }}
                             >
+                                {/* overlay */}
+                                <div
+                                    className="tile-overlay"
+                                    style={{
+                                        position: "absolute",
+                                        inset: 0,
+
+                                        borderRadius: 26,
+
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                        transition: "background 220ms ease",
+
+                                        pointerEvents: "none",
+                                    }}
+                                />
+
                                 {/* title */}
                                 <div
                                     style={{
@@ -949,7 +984,7 @@ export default function Search() {
                                         left: 20,
                                         bottom: 20,
 
-                                        color: theme.colors.text,
+                                        color: "#ECECE8",
 
                                         ...theme.typography.title,
                                     }}
@@ -991,7 +1026,7 @@ export default function Search() {
                                         background:
                                             theme.mode === "dark"
                                                 ? "rgba(13, 13, 13, 0.06)"
-                                                : "rgba(255,255,255,0.28)",
+                                                : "rgba(255, 255, 255, 0.07)",
 
                                         backdropFilter: "blur(16px)",
                                         WebkitBackdropFilter: "blur(16px)",
@@ -999,10 +1034,7 @@ export default function Search() {
                                         boxShadow:
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
-                                                : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                     }}
                                     className="tile-play-button"
                                 >

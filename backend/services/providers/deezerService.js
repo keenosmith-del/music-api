@@ -135,8 +135,15 @@ export async function searchAlbumBrowse(artists) {
     responses.forEach((response) => {
         let count = 0;
 
+        const artistName = artistList[responses.indexOf(response)].toLowerCase();
+
         response.data.data.forEach((track) => {
             if (count >= 3) return;
+
+            // Only keep albums from the artist we searched for
+            if (!track.artist.name.toLowerCase().includes(artistName)) {
+                return;
+            }
 
             if (seen.has(track.album.id)) {
                 return;
@@ -162,6 +169,49 @@ export async function searchAlbumBrowse(artists) {
     });
 
     return albums;
+}
+
+export async function searchTrackBrowse(artists) {
+    const artistList = Array.isArray(artists)
+        ? artists
+        : [artists];
+
+    const responses = await Promise.all(
+        artistList.map((artist) =>
+            axios.get(
+                `https://api.deezer.com/search?q=${encodeURIComponent(artist)}`
+            )
+        )
+    );
+
+    const songs = [];
+    const seen = new Set();
+
+    responses.forEach((response, index) => {
+        const artistName = artistList[index].toLowerCase();
+
+        const track = response.data.data.find(
+            (track) =>
+                track.artist.name.toLowerCase().includes(artistName)
+        );
+
+        if (!track) return;
+
+        songs.push({
+            id: track.id,
+            title: track.title,
+            artist: track.artist.name,
+            artwork: track.album.cover_big,
+            duration: track.duration,
+            preview: track.preview,
+            explicit:
+                track.explicit_lyrics ??
+                track.explicit ??
+                false,
+        });
+    });
+
+    return songs;
 }
 
 export async function getAlbumTracks(albumId) {
@@ -199,4 +249,37 @@ export async function getAlbumTracks(albumId) {
                 false,
         })),
     };
+}
+
+
+export async function searchArtistBrowse(artists) {
+    const artistList = Array.isArray(artists)
+        ? artists
+        : [artists];
+
+    const responses = await Promise.all(
+        artistList.map((artist) =>
+            axios.get(
+                `https://api.deezer.com/search/artist?q=${encodeURIComponent(artist)}`
+            )
+        )
+    );
+
+    return responses
+        .map((response, index) => {
+            const artistName = artistList[index].toLowerCase();
+
+            const artist = response.data.data.find((item) =>
+                item.name.toLowerCase().includes(artistName)
+            );
+
+            if (!artist) return null;
+
+            return {
+                id: artist.id,
+                name: artist.name,
+                artwork: artist.picture_big,
+            };
+        })
+        .filter(Boolean);
 }

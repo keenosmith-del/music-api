@@ -40,20 +40,23 @@ export default function Radio() {
         loadRadio();
     }, []);
 
-    const trendingStations =
-        radio?.trendingStations || [];
+    const artistTakeover =
+        radio?.artistTakeover || [];
 
-    const liveStations =
-        radio?.liveStations || [];
+    const liveSessions =
+        radio?.liveSessions || [];
 
-    const djMixStations =
-        radio?.djMixStations || [];
+    const djMixes =
+        radio?.djMixes || [];
 
-    const rockStations =
-        radio?.rockStations || [];
+    const rockRadio =
+        radio?.rockRadio || [];
 
-    const hipHopStations =
-        radio?.hipHopStations || [];
+    const hipHopRadio =
+        radio?.hipHopRadio || [];
+
+    const houseRadio =
+        radio?.houseRadio || [];
 
     return (
         <div
@@ -108,14 +111,14 @@ export default function Radio() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {djMixStations.map((station, index) => {
+                    {djMixes.map((station, index) => {
                         const genre = station.album;
 
                         return (
                             <div
                                 key={station.id}
                                 style={{
-                                    width: 220, // width of tile
+                                    width: 280, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -137,14 +140,15 @@ export default function Radio() {
 
                                         overflow: "visible",
 
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31, 31, 31, 0.05)"
-                                                    : "rgba(29, 29, 29, 0.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,0.45)"
-                                                    : "rgba(255,255,255,0.70)",
+                                        backgroundImage: station.artwork
+                                            ? `url(${station.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+
+                                        backgroundPosition: "center",
+
+                                        backgroundRepeat: "no-repeat",
 
                                         boxShadow:
                                             theme.mode === "dark"
@@ -190,26 +194,59 @@ export default function Radio() {
                                             style={{
                                                 display: "flex",
                                                 alignItems: "center",
-                                                gap: 12,
+                                                gap: 6,
 
                                                 marginBottom: 40,
                                             }}
                                         >
                                             <AudioLines
                                                 size={15}
-                                                strokeWidth={1}
-                                                color={theme.colors.text}
+                                                strokeWidth={2}
+                                                color="#ECECE8"
                                             />
 
                                             <span
                                                 style={{
-                                                    color: theme.colors.text,
+                                                    color: "#ECECE8",
                                                     ...theme.typography.label,
                                                 }}
                                             >
                                                 Music
                                             </span>
                                         </div>
+                                    </div>
+
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
+
+                                    {/* type */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+
+                                            left: 20,
+                                            bottom: 20,
+
+                                            color: "#ECECE8",
+
+                                            ...theme.typography.title2,
+                                        }}
+                                    >
+                                        Mix
                                     </div>
 
                                     {/* play button */}
@@ -246,7 +283,7 @@ export default function Radio() {
                                             background:
                                                 theme.mode === "dark"
                                                     ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
+                                                    : "rgba(255, 255, 255, 0.07)",
 
                                             backdropFilter: "blur(16px)",
                                             WebkitBackdropFilter: "blur(16px)",
@@ -254,10 +291,7 @@ export default function Radio() {
                                             boxShadow:
                                                 theme.mode === "dark"
                                                     ? "0 8px 18px rgba(0,0,0,.35)"
-                                                    : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                         }}
                                         className="tile-play-button"
                                     >
@@ -287,7 +321,7 @@ export default function Radio() {
                                             ...theme.typography.body,
                                         }}
                                     >
-                                        {station.artist}
+                                        {station.name}
                                     </div>
                                 </div>
 
@@ -307,7 +341,7 @@ export default function Radio() {
                 </div>
             </div>
 
-            {/* ---------- Trending Radio Stations ---------- */}
+            {/* ---------- Artist Takeover ---------- */}
             <div
                 style={{
                     marginBottom: 54,
@@ -323,7 +357,7 @@ export default function Radio() {
                         ...theme.typography.rowHeading,
                     }}
                 >
-                    Trending Radio
+                    Artist Takeover
                 </h2>
 
                 {/* Scrollable Tiles */}
@@ -342,14 +376,14 @@ export default function Radio() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {trendingStations.map((station, index) => {
+                    {artistTakeover.map((station, index) => {
                         const genre = station.album;
 
                         return (
                             <div
                                 key={station.id}
                                 style={{
-                                    width: 220, // width of tile
+                                    width: 280, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -371,14 +405,15 @@ export default function Radio() {
 
                                         overflow: "visible",
 
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31, 31, 31, 0.05)"
-                                                    : "rgba(29, 29, 29, 0.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,0.45)"
-                                                    : "rgba(255,255,255,0.70)",
+                                        backgroundImage: station.artwork
+                                            ? `url(${station.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+
+                                        backgroundPosition: "center",
+
+                                        backgroundRepeat: "no-repeat",
 
                                         boxShadow:
                                             theme.mode === "dark"
@@ -424,20 +459,20 @@ export default function Radio() {
                                             style={{
                                                 display: "flex",
                                                 alignItems: "center",
-                                                gap: 12,
+                                                gap: 6,
 
                                                 marginBottom: 40,
                                             }}
                                         >
                                             <AudioLines
                                                 size={15}
-                                                strokeWidth={1}
-                                                color={theme.colors.text}
+                                                strokeWidth={2}
+                                                color="#ECECE8"
                                             />
 
                                             <span
                                                 style={{
-                                                    color: theme.colors.text,
+                                                    color: "#ECECE8",
                                                     ...theme.typography.label,
                                                 }}
                                             >
@@ -445,6 +480,23 @@ export default function Radio() {
                                             </span>
                                         </div>
                                     </div>
+
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
 
                                     {/* play button */}
                                     <div
@@ -480,7 +532,7 @@ export default function Radio() {
                                             background:
                                                 theme.mode === "dark"
                                                     ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
+                                                    : "rgba(255, 255, 255, 0.07)",
 
                                             backdropFilter: "blur(16px)",
                                             WebkitBackdropFilter: "blur(16px)",
@@ -488,10 +540,7 @@ export default function Radio() {
                                             boxShadow:
                                                 theme.mode === "dark"
                                                     ? "0 8px 18px rgba(0,0,0,.35)"
-                                                    : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                         }}
                                         className="tile-play-button"
                                     >
@@ -521,7 +570,7 @@ export default function Radio() {
                                             ...theme.typography.body,
                                         }}
                                     >
-                                        {station.artist}
+                                        {station.name}
                                     </div>
                                 </div>
 
@@ -533,7 +582,7 @@ export default function Radio() {
                                         ...theme.typography.smallText,
                                     }}
                                 >
-                                    {station.album}
+                                    Artist
                                 </div>
                             </div>
                         )
@@ -576,14 +625,14 @@ export default function Radio() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {liveStations.map((station, index) => {
+                    {liveSessions.map((station, index) => {
                         const genre = station.album;
 
                         return (
                             <div
                                 key={station.id}
                                 style={{
-                                    width: 220, // width of tile
+                                    width: 280, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -605,14 +654,15 @@ export default function Radio() {
 
                                         overflow: "visible",
 
-                                        background:
-                                            theme.mode === "dark"
-                                                ? index % 2 === 0
-                                                    ? "rgba(31, 31, 31, 0.05)"
-                                                    : "rgba(29, 29, 29, 0.08)"
-                                                : index % 2 === 0
-                                                    ? "rgba(255,255,255,0.45)"
-                                                    : "rgba(255,255,255,0.70)",
+                                        backgroundImage: station.artwork
+                                            ? `url(${station.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+
+                                        backgroundPosition: "center",
+
+                                        backgroundRepeat: "no-repeat",
 
                                         boxShadow:
                                             theme.mode === "dark"
@@ -658,26 +708,59 @@ export default function Radio() {
                                             style={{
                                                 display: "flex",
                                                 alignItems: "center",
-                                                gap: 12,
+                                                gap: 6,
 
                                                 marginBottom: 40,
                                             }}
                                         >
                                             <AudioLines
                                                 size={15}
-                                                strokeWidth={1}
-                                                color={theme.colors.text}
+                                                strokeWidth={2}
+                                                color="#ECECE8"
                                             />
 
                                             <span
                                                 style={{
-                                                    color: theme.colors.text,
+                                                    color: "#ECECE8",
                                                     ...theme.typography.label,
                                                 }}
                                             >
                                                 Music
                                             </span>
                                         </div>
+                                    </div>
+
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
+
+                                    {/* type */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+
+                                            left: 20,
+                                            bottom: 20,
+
+                                            color: "#ECECE8",
+
+                                            ...theme.typography.title2,
+                                        }}
+                                    >
+                                        Live
                                     </div>
 
                                     {/* play button */}
@@ -714,7 +797,7 @@ export default function Radio() {
                                             background:
                                                 theme.mode === "dark"
                                                     ? "rgba(13, 13, 13, 0.06)"
-                                                    : "rgba(255,255,255,0.28)",
+                                                    : "rgba(255, 255, 255, 0.07)",
 
                                             backdropFilter: "blur(16px)",
                                             WebkitBackdropFilter: "blur(16px)",
@@ -722,10 +805,7 @@ export default function Radio() {
                                             boxShadow:
                                                 theme.mode === "dark"
                                                     ? "0 8px 18px rgba(0,0,0,.35)"
-                                                    : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                         }}
                                         className="tile-play-button"
                                     >
@@ -755,7 +835,7 @@ export default function Radio() {
                                             ...theme.typography.body,
                                         }}
                                     >
-                                        {station.album}
+                                        {station.name}
                                     </div>
                                 </div>
 
@@ -767,7 +847,754 @@ export default function Radio() {
                                         ...theme.typography.smallText,
                                     }}
                                 >
-                                    {station.artist}
+                                    {station.album}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+
+            {/* HIP HOP STATION */}
+            <div
+                style={{
+                    marginBottom: 54,
+                }}
+            >
+                {/* Row Heading */}
+                <h2
+                    style={{
+                        color: theme.colors.text,
+
+                        marginBottom: 18,
+
+                        ...theme.typography.rowHeading,
+                    }}
+                >
+                    Hip Hop Station
+                </h2>
+
+                {/* Scrollable Tiles */}
+                <div
+                    style={{
+                        display: "flex",
+                        gap: 24,
+
+                        overflowX: "auto",
+                        overflowY: "hidden",
+
+                        paddingLeft: 20,
+                        paddingBottom: 8,
+
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                    }}
+                >
+                    {hipHopRadio.map((station, index) => {
+                        const genre = station.album;
+
+                        return (
+                            <div
+                                key={station.id}
+                                style={{
+                                    width: 280, // width of tile
+                                    flexShrink: 0,
+
+                                    display: "flex",
+                                    flexDirection: "column",
+
+                                    gap: 14,
+
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {/* artwork */}
+                                <div
+                                    style={{
+                                        position: "relative",
+
+                                        aspectRatio: "1",
+
+                                        borderRadius: 26,
+
+                                        overflow: "visible",
+
+                                        backgroundImage: station.artwork
+                                            ? `url(${station.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+
+                                        backgroundPosition: "center",
+
+                                        backgroundRepeat: "no-repeat",
+
+                                        boxShadow:
+                                            theme.mode === "dark"
+                                                ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "1";
+                                            play.style.transform = "translateY(0) scale(1)";
+                                        }
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "0";
+                                            play.style.transform = "translateY(6px) scale(.92)";
+                                        }
+                                    }}
+                                >
+
+                                    {/* Logo */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+
+                                            top: 20,
+                                            right: 25,
+
+                                            color: theme.colors.text,
+
+                                            ...theme.typography.title,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 6,
+
+                                                marginBottom: 40,
+                                            }}
+                                        >
+                                            <AudioLines
+                                                size={15}
+                                                strokeWidth={2}
+                                                color="#ECECE8"
+                                            />
+
+                                            <span
+                                                style={{
+                                                    color: "#ECECE8",
+                                                    ...theme.typography.label,
+                                                }}
+                                            >
+                                                Music
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
+
+                                    {/* play button */}
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+                                            setIsPlaying(true);
+                                        }}
+                                        style={{
+                                            position: "absolute",
+
+                                            right: 18,
+                                            bottom: 18,
+
+                                            width: 44,
+                                            height: 44,
+
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+
+                                            borderRadius: "50%",
+
+                                            opacity: 0,
+
+                                            transform: "translateY(6px) scale(.92)",
+
+                                            transition: "all 220ms ease",
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "rgba(13, 13, 13, 0.06)"
+                                                    : "rgba(255, 255, 255, 0.07)",
+
+                                            backdropFilter: "blur(16px)",
+                                            WebkitBackdropFilter: "blur(16px)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 8px 18px rgba(0,0,0,.35)"
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                        }}
+                                        className="tile-play-button"
+                                    >
+                                        <Play
+                                            size={18}
+                                            strokeWidth={1.75}
+                                            fill={theme.colors.text}
+                                            color={theme.colors.text}
+                                            style={{
+                                                marginLeft: 2,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* title */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            color: theme.colors.text,
+                                            ...theme.typography.body,
+                                        }}
+                                    >
+                                        {station.name}
+                                    </div>
+                                </div>
+
+                                {/* subtitle */}
+                                <div
+                                    style={{
+                                        color: theme.colors.textSecondary,
+
+                                        ...theme.typography.smallText,
+                                    }}
+                                >
+                                    {station.album}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+
+            {/* ---------- Rock Station ---------- */}
+            <div
+                style={{
+                    marginBottom: 54,
+                }}
+            >
+                {/* Row Heading */}
+                <h2
+                    style={{
+                        color: theme.colors.text,
+
+                        marginBottom: 18,
+
+                        ...theme.typography.rowHeading,
+                    }}
+                >
+                    Rock Station
+                </h2>
+
+                {/* Scrollable Tiles */}
+                <div
+                    style={{
+                        display: "flex",
+                        gap: 24,
+
+                        overflowX: "auto",
+                        overflowY: "hidden",
+
+                        paddingLeft: 20,
+                        paddingBottom: 8,
+
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                    }}
+                >
+                    {rockRadio.map((station, index) => {
+                        const genre = station.album;
+
+                        return (
+                            <div
+                                key={station.id}
+                                style={{
+                                    width: 280, // width of tile
+                                    flexShrink: 0,
+
+                                    display: "flex",
+                                    flexDirection: "column",
+
+                                    gap: 14,
+
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {/* artwork */}
+                                <div
+                                    style={{
+                                        position: "relative",
+
+                                        aspectRatio: "1",
+
+                                        borderRadius: 26,
+
+                                        overflow: "visible",
+
+                                        backgroundImage: station.artwork
+                                            ? `url(${station.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+
+                                        backgroundPosition: "center",
+
+                                        backgroundRepeat: "no-repeat",
+
+                                        boxShadow:
+                                            theme.mode === "dark"
+                                                ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "1";
+                                            play.style.transform = "translateY(0) scale(1)";
+                                        }
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "0";
+                                            play.style.transform = "translateY(6px) scale(.92)";
+                                        }
+                                    }}
+                                >
+
+                                    {/* Logo */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+
+                                            top: 20,
+                                            right: 25,
+
+                                            color: theme.colors.text,
+
+                                            ...theme.typography.title,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 6,
+
+                                                marginBottom: 40,
+                                            }}
+                                        >
+                                            <AudioLines
+                                                size={15}
+                                                strokeWidth={2}
+                                                color="#ECECE8"
+                                            />
+
+                                            <span
+                                                style={{
+                                                    color: "#ECECE8",
+                                                    ...theme.typography.label,
+                                                }}
+                                            >
+                                                Music
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
+
+                                    {/* play button */}
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+                                            setIsPlaying(true);
+                                        }}
+                                        style={{
+                                            position: "absolute",
+
+                                            right: 18,
+                                            bottom: 18,
+
+                                            width: 44,
+                                            height: 44,
+
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+
+                                            borderRadius: "50%",
+
+                                            opacity: 0,
+
+                                            transform: "translateY(6px) scale(.92)",
+
+                                            transition: "all 220ms ease",
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "rgba(13, 13, 13, 0.06)"
+                                                    : "rgba(255, 255, 255, 0.07)",
+
+                                            backdropFilter: "blur(16px)",
+                                            WebkitBackdropFilter: "blur(16px)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 8px 18px rgba(0,0,0,.35)"
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                        }}
+                                        className="tile-play-button"
+                                    >
+                                        <Play
+                                            size={18}
+                                            strokeWidth={1.75}
+                                            fill={theme.colors.text}
+                                            color={theme.colors.text}
+                                            style={{
+                                                marginLeft: 2,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* title */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            color: theme.colors.text,
+                                            ...theme.typography.body,
+                                        }}
+                                    >
+                                        {station.name}
+                                    </div>
+                                </div>
+
+                                {/* subtitle */}
+                                <div
+                                    style={{
+                                        color: theme.colors.textSecondary,
+
+                                        ...theme.typography.smallText,
+                                    }}
+                                >
+                                    {station.album}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+
+            {/* ---------- House Station ---------- */}
+            <div
+                style={{
+                    marginBottom: 54,
+                }}
+            >
+                {/* Row Heading */}
+                <h2
+                    style={{
+                        color: theme.colors.text,
+
+                        marginBottom: 18,
+
+                        ...theme.typography.rowHeading,
+                    }}
+                >
+                    House Station
+                </h2>
+
+                {/* Scrollable Tiles */}
+                <div
+                    style={{
+                        display: "flex",
+                        gap: 24,
+
+                        overflowX: "auto",
+                        overflowY: "hidden",
+
+                        paddingLeft: 20,
+                        paddingBottom: 8,
+
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                    }}
+                >
+                    {houseRadio.map((station, index) => {
+                        const genre = station.album;
+
+                        return (
+                            <div
+                                key={station.id}
+                                style={{
+                                    width: 280, // width of tile
+                                    flexShrink: 0,
+
+                                    display: "flex",
+                                    flexDirection: "column",
+
+                                    gap: 14,
+
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {/* artwork */}
+                                <div
+                                    style={{
+                                        position: "relative",
+
+                                        aspectRatio: "1",
+
+                                        borderRadius: 26,
+
+                                        overflow: "visible",
+
+                                        backgroundImage: station.artwork
+                                            ? `url(${station.artwork})`
+                                            : "none",
+
+                                        backgroundSize: "cover",
+
+                                        backgroundPosition: "center",
+
+                                        backgroundRepeat: "no-repeat",
+
+                                        boxShadow:
+                                            theme.mode === "dark"
+                                                ? "0 12px 28px rgba(0,0,0,0.30)"
+                                                : `
+                            0 12px 28px rgba(0,0,0,0.08),
+                            inset 0 1px 0 rgba(255,255,255,0.95)
+                          `,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "1";
+                                            play.style.transform = "translateY(0) scale(1)";
+                                        }
+                                    }}
+
+                                    onMouseLeave={(e) => {
+                                        const play = e.currentTarget.querySelector(".tile-play-button");
+
+                                        if (play) {
+                                            play.style.opacity = "0";
+                                            play.style.transform = "translateY(6px) scale(.92)";
+                                        }
+                                    }}
+                                >
+
+                                    {/* Logo */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+
+                                            top: 20,
+                                            right: 25,
+
+                                            color: theme.colors.text,
+
+                                            ...theme.typography.title,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 6,
+
+                                                marginBottom: 40,
+                                            }}
+                                        >
+                                            <AudioLines
+                                                size={15}
+                                                strokeWidth={2}
+                                                color="#ECECE8"
+                                            />
+
+                                            <span
+                                                style={{
+                                                    color: "#ECECE8",
+                                                    ...theme.typography.label,
+                                                }}
+                                            >
+                                                Music
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* overlay */}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            inset: 0,
+
+                                            borderRadius: 26,
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                    : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
+
+                                            pointerEvents: "none",
+                                        }}
+                                    />
+
+                                    {/* play button */}
+                                    <div
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+                                            setIsPlaying(true);
+                                        }}
+                                        style={{
+                                            position: "absolute",
+
+                                            right: 18,
+                                            bottom: 18,
+
+                                            width: 44,
+                                            height: 44,
+
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+
+                                            borderRadius: "50%",
+
+                                            opacity: 0,
+
+                                            transform: "translateY(6px) scale(.92)",
+
+                                            transition: "all 220ms ease",
+
+                                            background:
+                                                theme.mode === "dark"
+                                                    ? "rgba(13, 13, 13, 0.06)"
+                                                    : "rgba(255, 255, 255, 0.07)",
+
+                                            backdropFilter: "blur(16px)",
+                                            WebkitBackdropFilter: "blur(16px)",
+
+                                            boxShadow:
+                                                theme.mode === "dark"
+                                                    ? "0 8px 18px rgba(0,0,0,.35)"
+                                                    : "0 8px 18px rgba(0, 0, 0, 0.35)",
+                                        }}
+                                        className="tile-play-button"
+                                    >
+                                        <Play
+                                            size={18}
+                                            strokeWidth={1.75}
+                                            fill={theme.colors.text}
+                                            color={theme.colors.text}
+                                            style={{
+                                                marginLeft: 2,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* title */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            color: theme.colors.text,
+                                            ...theme.typography.body,
+                                        }}
+                                    >
+                                        {station.name}
+                                    </div>
+                                </div>
+
+                                {/* subtitle */}
+                                <div
+                                    style={{
+                                        color: theme.colors.textSecondary,
+
+                                        ...theme.typography.smallText,
+                                    }}
+                                >
+                                    {station.album}
                                 </div>
                             </div>
                         )

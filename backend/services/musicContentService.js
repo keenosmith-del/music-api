@@ -2,6 +2,8 @@ import {
     searchTracks,
     searchAlbums,
     searchAlbumBrowse,
+    searchTrackBrowse,
+    searchArtistBrowse,
     searchMusic,
 } from "./providers/deezerService.js";
 
@@ -14,10 +16,10 @@ export async function buildHome() {
             title: "Trending Albums",
             type: "album",
             items: await searchAlbumBrowse([
-                "Taylor Swift",
                 "The Weeknd",
+                "ROSALÍA",
                 "Billie Eilish",
-                "Olivia Rodrigo",
+                "Billy Joel",
                 "Sabrina Carpenter",
             ]),
         },
@@ -27,11 +29,10 @@ export async function buildHome() {
             title: "Featured Albums",
             type: "album",
             items: await searchAlbumBrowse([
-                "Coldplay",
-                "Ed Sheeran",
+                "H.E.R",
                 "Adele",
-                "Bruno Mars",
-                "Imagine Dragons",
+                "Drake",
+                "Madonna",
             ]),
         },
 
@@ -53,11 +54,9 @@ export async function buildHome() {
             title: "New & Popular",
             type: "album",
             items: await searchAlbumBrowse([
-                "Dua Lipa",
-                "Doja Cat",
-                "Post Malone",
                 "SZA",
-                "Benson Boone",
+                "The Beatles",
+                "Doja Cat",
             ]),
         },
 
@@ -80,7 +79,6 @@ export async function buildHome() {
             title: "R&B",
             type: "album",
             items: await searchAlbumBrowse([
-                "SZA",
                 "Frank Ocean",
                 "Alicia Keys",
                 "Usher",
@@ -93,10 +91,11 @@ export async function buildHome() {
             title: "Jazz",
             type: "album",
             items: await searchAlbumBrowse([
-                "Louis Armstrong",
-                "Miles Davis",
                 "John Coltrane",
+                "Miles Davis",
+                "Nina Simone",
                 "Ella Fitzgerald",
+                "Louis Armstrong",
                 "Duke Ellington",
             ]),
         },
@@ -106,9 +105,9 @@ export async function buildHome() {
             title: "Chill",
             type: "album",
             items: await searchAlbumBrowse([
+                "Cigarettes After Sex",
                 "Bon Iver",
                 "Novo Amor",
-                "Cigarettes After Sex",
                 "Phoebe Bridgers",
                 "Hollow Coves",
             ]),
@@ -118,24 +117,101 @@ export async function buildHome() {
 
 export async function buildNew() {
     return {
-        newAlbums: await searchTracks("new albums"),
-        newSongs: await searchTracks("new songs"),
-        newThisWeek: await searchTracks("this week"),
-        recentReleases: await searchTracks("recent releases"),
+        newAlbums: await searchAlbumBrowse([
+            "Teddy Swims",
+            "Brent Faiyaz",
+            "Gucci Mane",
+            "Lil Baby",
+            "Roddy Ricch",
+        ]),
+
+        newSongs: await searchTrackBrowse([
+            "FKJ",
+            "Drake",
+            "Khalid",
+            "6LACK",
+            "Summer Walker",
+            "Kehlani",
+            "Jhené Aiko",
+        ]),
+
+        newThisWeek: await searchAlbumBrowse([
+            "Future",
+            "Young Thug",
+            "Ty Dolla $ign",
+            "21 Savage",
+        ]),
+
+        recentReleases: await searchAlbumBrowse([
+            "Benson Boone",
+            "Tate McRae",
+            "Offset",
+            "Quavo",
+        ]),
     };
 }
 
 export async function buildRadio() {
     return {
-        trendingStations: await searchTracks("top hits"),
+        artistTakeover: await searchArtistBrowse([
+            "Davido",
+            "Jaymin",
+            "Tyler, The Creator",
+            "Bad Bunny",
+            "Burna Boy",
+            "Omah Lay",
+            "sombr",
+        ]),
 
-        liveStations: await searchTracks("live"),
+        liveSessions: await searchArtistBrowse([
+            "LA ROSALÍA",
+            "Allyn",
+            "Pearl Jam",
+            "Soundgarden",
+            "Alice in Chains",
+            "Temple of the Dog",
+        ]),
 
-        djMixStations: await searchTracks("dj mix"),
+        djMixes: await searchArtistBrowse([
+            "Steve Angello",
+            "Cat Dealers",
+            "Armin van Buuren",
+            "Layton Giordani",
+            "Steve Aoki",
+            "Dombresky",
+            "Avicii",
+            "Mees Salomé",
+            "Lost Frequencies",
+            "Martin Garrix",
+            "Oliver Heldens",
+            "Sammy Virji",
+            "Dimitri Vegas",
+            "Kaskade",
+        ]),
 
-        rockStations: await searchTracks("rock"),
+        rockRadio: await searchArtistBrowse([
+            "Green Day",
+            "Red Hot Chili Peppers",
+            "Incubus",
+            "Rage Against the Machine",
+            "Jane's Addiction",
+        ]),
 
-        hipHopStations: await searchTracks("hip hop"),
+        hipHopRadio: await searchArtistBrowse([
+            "Travis Scott",
+            "Lil Nas X",
+            "YUNGBLUD",
+            "Jhené Aiko",
+            "Grandson",
+        ]),
+
+        houseRadio: await searchArtistBrowse([
+            "Dwson",
+            "Sio",
+            "Michael G",
+            "Sooks",
+            "Kid Fonque",
+        ]),
     };
 }
 

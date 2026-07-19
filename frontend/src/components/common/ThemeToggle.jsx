@@ -35,15 +35,8 @@ export default function ThemeToggle() {
 
                 boxShadow:
                     theme.mode === "dark"
-                        ? `
-                            0 6px 18px rgba(0,0,0,0.22),
-                            inset 0 1px 0 rgba(255,255,255,0.04)
-                        `
-                        : `
-                            0 10px 28px rgba(0, 0, 0, 0),
-                            0 1px 2px rgba(0, 0, 0, 0.04),
-                            inset 0 1px 0 rgba(255,255,255,0.9)
-                        `,
+                        ? "0 6px 18px rgba(0,0,0,0.22)"
+                        : "0 1px 2px rgba(0,0,0,0.05)",
 
                 transition: "all 220ms ease",
             }}
@@ -55,7 +48,7 @@ export default function ThemeToggle() {
 
                     top: 4,
 
-                    left: dark ? 4 : 84,
+                    left: dark ? 4 : 85,
 
                     width: 60,
                     height: 30,
@@ -63,22 +56,20 @@ export default function ThemeToggle() {
                     borderRadius: 9999,
 
                     background: dark
-                        ? "rgba(255, 255, 255, 0.01)"
-                        : "rgba(255,255,255,0.22)",
+                        ? "rgba(16, 16, 16, 0)"
+                        : "rgba(16, 16, 16, 0)",
 
                     backdropFilter: "blur(16px)",
                     WebkitBackdropFilter: "blur(16px)",
 
                     border: dark
                         ? "1px solid rgba(255,255,255,0.05)"
-                        : "1px solid rgba(255,255,255,0.7)",
+                        : "1px solid rgba(255, 255, 255, 0)",
 
-                    boxShadow: dark
-                        ? "0 6px 16px rgba(0,0,0,0.25)"
-                        : `
-                    0 8px 18px rgba(0,0,0,0.08),
-                    inset 0 1px 0 rgba(255,255,255,0.9)
-                  `,
+                    boxShadow:
+                        theme.mode === "dark"
+                            ? "0 6px 18px rgba(0,0,0,0.22)"
+                            : "0 1px 2px rgba(0,0,0,0.05)",
 
                     transition: "all 220ms ease",
                 }}

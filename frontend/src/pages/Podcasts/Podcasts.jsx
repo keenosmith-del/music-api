@@ -5,7 +5,6 @@ import { getPodcasts } from "../../services/podcastService";
 import React, { useEffect, useState } from "react";
 
 import {
-    AudioLines,
     Play,
 } from "lucide-react";
 
@@ -93,7 +92,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.psychology.map(({ id, title, artist, explicit }, index) => (
+                    {podcasts.psychology.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -117,16 +116,17 @@ export default function Podcasts() {
 
                                     borderRadius: 26,
 
-                                    overflow: "visible",
+                                    overflow: "hidden",
 
-                                    background:
-                                        theme.mode === "dark"
-                                            ? index % 2 === 0
-                                                ? "rgba(31, 31, 31, 0.05)"
-                                                : "rgba(29, 29, 29, 0.08)"
-                                            : index % 2 === 0
-                                                ? "rgba(255,255,255,0.45)"
-                                                : "rgba(255,255,255,0.70)",
+                                    backgroundImage: artwork
+                                        ? `url(${artwork})`
+                                        : "none",
+
+                                    backgroundSize: "cover",
+
+                                    backgroundPosition: "center",
+
+                                    backgroundRepeat: "no-repeat",
 
                                     boxShadow:
                                         theme.mode === "dark"
@@ -167,47 +167,24 @@ export default function Podcasts() {
                                         ...theme.typography.title,
                                     }}
                                 >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 12,
-
-                                            marginBottom: 40,
-                                        }}
-                                    >
-                                        <AudioLines
-                                            size={15}
-                                            strokeWidth={1}
-                                            color={theme.colors.text}
-                                        />
-
-                                        <span
-                                            style={{
-                                                color: theme.colors.text,
-                                                ...theme.typography.label,
-                                            }}
-                                        >
-                                            Music
-                                        </span>
-                                    </div>
                                 </div>
 
-                                {/* title */}
+                                {/* overlay */}
                                 <div
                                     style={{
                                         position: "absolute",
+                                        inset: 0,
 
-                                        top: 150,
-                                        left: 20,
+                                        borderRadius: 26,
 
-                                        color: theme.colors.text,
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
 
-                                        ...theme.typography.title,
+                                        pointerEvents: "none",
                                     }}
-                                >
-                                    {title}
-                                </div>
+                                />
 
                                 {/* play button */}
                                 <div
@@ -243,7 +220,7 @@ export default function Podcasts() {
                                         background:
                                             theme.mode === "dark"
                                                 ? "rgba(13, 13, 13, 0.06)"
-                                                : "rgba(255,255,255,0.28)",
+                                                : "rgba(255, 255, 255, 0.07)",
 
                                         backdropFilter: "blur(16px)",
                                         WebkitBackdropFilter: "blur(16px)",
@@ -251,10 +228,7 @@ export default function Podcasts() {
                                         boxShadow:
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
-                                                : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                     }}
                                     className="tile-play-button"
                                 >
@@ -373,7 +347,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.sleep.map(({ id, title, artist, explicit }, index) => (
+                    {podcasts.sleep.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -399,14 +373,15 @@ export default function Podcasts() {
 
                                     overflow: "visible",
 
-                                    background:
-                                        theme.mode === "dark"
-                                            ? index % 2 === 0
-                                                ? "rgba(31, 31, 31, 0.05)"
-                                                : "rgba(29, 29, 29, 0.08)"
-                                            : index % 2 === 0
-                                                ? "rgba(255,255,255,0.45)"
-                                                : "rgba(255,255,255,0.70)",
+                                    backgroundImage: artwork
+                                        ? `url(${artwork})`
+                                        : "none",
+
+                                    backgroundSize: "cover",
+
+                                    backgroundPosition: "center",
+
+                                    backgroundRepeat: "no-repeat",
 
                                     boxShadow:
                                         theme.mode === "dark"
@@ -447,47 +422,24 @@ export default function Podcasts() {
                                         ...theme.typography.title,
                                     }}
                                 >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 12,
-
-                                            marginBottom: 40,
-                                        }}
-                                    >
-                                        <AudioLines
-                                            size={15}
-                                            strokeWidth={1}
-                                            color={theme.colors.text}
-                                        />
-
-                                        <span
-                                            style={{
-                                                color: theme.colors.text,
-                                                ...theme.typography.label,
-                                            }}
-                                        >
-                                            Music
-                                        </span>
-                                    </div>
                                 </div>
 
-                                {/* title */}
+                                {/* overlay */}
                                 <div
                                     style={{
                                         position: "absolute",
+                                        inset: 0,
 
-                                        top: 150,
-                                        left: 20,
+                                        borderRadius: 26,
 
-                                        color: theme.colors.text,
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
 
-                                        ...theme.typography.title,
+                                        pointerEvents: "none",
                                     }}
-                                >
-                                    {title}
-                                </div>
+                                />
 
                                 {/* play button */}
                                 <div
@@ -523,7 +475,7 @@ export default function Podcasts() {
                                         background:
                                             theme.mode === "dark"
                                                 ? "rgba(13, 13, 13, 0.06)"
-                                                : "rgba(255,255,255,0.28)",
+                                                : "rgba(255, 255, 255, 0.07)",
 
                                         backdropFilter: "blur(16px)",
                                         WebkitBackdropFilter: "blur(16px)",
@@ -531,10 +483,7 @@ export default function Podcasts() {
                                         boxShadow:
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
-                                                : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                     }}
                                     className="tile-play-button"
                                 >
@@ -653,7 +602,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.trueCrime.map(({ id, title, artist, explicit }, index) => (
+                    {podcasts.trueCrime.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -679,14 +628,15 @@ export default function Podcasts() {
 
                                     overflow: "visible",
 
-                                    background:
-                                        theme.mode === "dark"
-                                            ? index % 2 === 0
-                                                ? "rgba(31, 31, 31, 0.05)"
-                                                : "rgba(29, 29, 29, 0.08)"
-                                            : index % 2 === 0
-                                                ? "rgba(255,255,255,0.45)"
-                                                : "rgba(255,255,255,0.70)",
+                                    backgroundImage: artwork
+                                        ? `url(${artwork})`
+                                        : "none",
+
+                                    backgroundSize: "cover",
+
+                                    backgroundPosition: "center",
+
+                                    backgroundRepeat: "no-repeat",
 
                                     boxShadow:
                                         theme.mode === "dark"
@@ -727,46 +677,6 @@ export default function Podcasts() {
                                         ...theme.typography.title,
                                     }}
                                 >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 12,
-
-                                            marginBottom: 40,
-                                        }}
-                                    >
-                                        <AudioLines
-                                            size={15}
-                                            strokeWidth={1}
-                                            color={theme.colors.text}
-                                        />
-
-                                        <span
-                                            style={{
-                                                color: theme.colors.text,
-                                                ...theme.typography.label,
-                                            }}
-                                        >
-                                            Music
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* title */}
-                                <div
-                                    style={{
-                                        position: "absolute",
-
-                                        top: 150,
-                                        left: 20,
-
-                                        color: theme.colors.text,
-
-                                        ...theme.typography.title,
-                                    }}
-                                >
-                                    {title}
                                 </div>
 
                                 {/* play button */}
@@ -803,7 +713,7 @@ export default function Podcasts() {
                                         background:
                                             theme.mode === "dark"
                                                 ? "rgba(13, 13, 13, 0.06)"
-                                                : "rgba(255,255,255,0.28)",
+                                                : "rgba(255, 255, 255, 0.07)",
 
                                         backdropFilter: "blur(16px)",
                                         WebkitBackdropFilter: "blur(16px)",
@@ -811,10 +721,7 @@ export default function Podcasts() {
                                         boxShadow:
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
-                                                : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                     }}
                                     className="tile-play-button"
                                 >
@@ -933,7 +840,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.technology.map(({ id, title, artist, explicit }, index) => (
+                    {podcasts.technology.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -959,14 +866,15 @@ export default function Podcasts() {
 
                                     overflow: "visible",
 
-                                    background:
-                                        theme.mode === "dark"
-                                            ? index % 2 === 0
-                                                ? "rgba(31, 31, 31, 0.05)"
-                                                : "rgba(29, 29, 29, 0.08)"
-                                            : index % 2 === 0
-                                                ? "rgba(255,255,255,0.45)"
-                                                : "rgba(255,255,255,0.70)",
+                                    backgroundImage: artwork
+                                        ? `url(${artwork})`
+                                        : "none",
+
+                                    backgroundSize: "cover",
+
+                                    backgroundPosition: "center",
+
+                                    backgroundRepeat: "no-repeat",
 
                                     boxShadow:
                                         theme.mode === "dark"
@@ -1007,47 +915,24 @@ export default function Podcasts() {
                                         ...theme.typography.title,
                                     }}
                                 >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 12,
-
-                                            marginBottom: 40,
-                                        }}
-                                    >
-                                        <AudioLines
-                                            size={15}
-                                            strokeWidth={1}
-                                            color={theme.colors.text}
-                                        />
-
-                                        <span
-                                            style={{
-                                                color: theme.colors.text,
-                                                ...theme.typography.label,
-                                            }}
-                                        >
-                                            Music
-                                        </span>
-                                    </div>
                                 </div>
 
-                                {/* title */}
+                                {/* overlay */}
                                 <div
                                     style={{
                                         position: "absolute",
+                                        inset: 0,
 
-                                        top: 150,
-                                        left: 20,
+                                        borderRadius: 26,
 
-                                        color: theme.colors.text,
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
 
-                                        ...theme.typography.title,
+                                        pointerEvents: "none",
                                     }}
-                                >
-                                    {title}
-                                </div>
+                                />
 
                                 {/* play button */}
                                 <div
@@ -1083,7 +968,7 @@ export default function Podcasts() {
                                         background:
                                             theme.mode === "dark"
                                                 ? "rgba(13, 13, 13, 0.06)"
-                                                : "rgba(255,255,255,0.28)",
+                                                : "rgba(255, 255, 255, 0.07)",
 
                                         backdropFilter: "blur(16px)",
                                         WebkitBackdropFilter: "blur(16px)",
@@ -1091,10 +976,7 @@ export default function Podcasts() {
                                         boxShadow:
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
-                                                : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                     }}
                                     className="tile-play-button"
                                 >
@@ -1213,7 +1095,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.business.map(({ id, title, artist, explicit }, index) => (
+                    {podcasts.business.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -1239,14 +1121,15 @@ export default function Podcasts() {
 
                                     overflow: "visible",
 
-                                    background:
-                                        theme.mode === "dark"
-                                            ? index % 2 === 0
-                                                ? "rgba(31, 31, 31, 0.05)"
-                                                : "rgba(29, 29, 29, 0.08)"
-                                            : index % 2 === 0
-                                                ? "rgba(255,255,255,0.45)"
-                                                : "rgba(255,255,255,0.70)",
+                                    backgroundImage: artwork
+                                        ? `url(${artwork})`
+                                        : "none",
+
+                                    backgroundSize: "cover",
+
+                                    backgroundPosition: "center",
+
+                                    backgroundRepeat: "no-repeat",
 
                                     boxShadow:
                                         theme.mode === "dark"
@@ -1287,47 +1170,24 @@ export default function Podcasts() {
                                         ...theme.typography.title,
                                     }}
                                 >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 12,
-
-                                            marginBottom: 40,
-                                        }}
-                                    >
-                                        <AudioLines
-                                            size={15}
-                                            strokeWidth={1}
-                                            color={theme.colors.text}
-                                        />
-
-                                        <span
-                                            style={{
-                                                color: theme.colors.text,
-                                                ...theme.typography.label,
-                                            }}
-                                        >
-                                            Music
-                                        </span>
-                                    </div>
                                 </div>
 
-                                {/* title */}
+                                {/* overlay */}
                                 <div
                                     style={{
                                         position: "absolute",
+                                        inset: 0,
 
-                                        top: 150,
-                                        left: 20,
+                                        borderRadius: 26,
 
-                                        color: theme.colors.text,
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
 
-                                        ...theme.typography.title,
+                                        pointerEvents: "none",
                                     }}
-                                >
-                                    {title}
-                                </div>
+                                />
 
                                 {/* play button */}
                                 <div
@@ -1363,7 +1223,7 @@ export default function Podcasts() {
                                         background:
                                             theme.mode === "dark"
                                                 ? "rgba(13, 13, 13, 0.06)"
-                                                : "rgba(255,255,255,0.28)",
+                                                : "rgba(255, 255, 255, 0.07)",
 
                                         backdropFilter: "blur(16px)",
                                         WebkitBackdropFilter: "blur(16px)",
@@ -1371,10 +1231,7 @@ export default function Podcasts() {
                                         boxShadow:
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
-                                                : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                     }}
                                     className="tile-play-button"
                                 >

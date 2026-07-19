@@ -14,7 +14,7 @@ export default function GlassPanel({
             style={{
                 background: theme.colors.glass,
 
-                border: `1px solid ${theme.colors.glassBorder}`,
+                // border: `1px solid ${theme.colors.glassBorder}`,
 
                 // blur for panels
                 backdropFilter: blur ? "blur(4px)" : undefined,
