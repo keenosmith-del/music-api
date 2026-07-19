@@ -9,3 +9,16 @@ export async function getPodcasts() {
 
     return await response.json();
 }
+
+export async function getPodcast(feedUrl) {
+    const response = await fetch(
+        `${API}/play?feedUrl=${encodeURIComponent(feedUrl)}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load podcast.");
+    }
+
+    return await response.json();
+}
+

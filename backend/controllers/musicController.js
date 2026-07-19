@@ -1,6 +1,7 @@
 import {
     searchTracks,
     getAlbumTracks,
+    getArtistTracks,
 } from "../services/musicService.js";
 
 export async function search(req, res) {
@@ -29,6 +30,20 @@ export async function getAlbum(req, res) {
 
         res.status(500).json({
             message: "Unable to load album.",
+        });
+    }
+}
+
+export async function getArtist(req, res) {
+    try {
+        const tracks = await getArtistTracks(req.params.name);
+
+        res.json(tracks);
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "Unable to load artist.",
         });
     }
 }

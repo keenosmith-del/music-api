@@ -3,6 +3,7 @@ import { useApp } from "../../context/AppContext";
 
 import { useEffect, useState } from "react";
 import { getRadio } from "../../services/radioService";
+import { getArtist } from "../../services/musicService";
 
 import React from "react";
 
@@ -19,9 +20,21 @@ export default function Radio() {
     const [loading, setLoading] = useState(true);
 
     const {
+        signedIn,
+        setSignedIn,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
+
+        setCurrentTrack,
+        setAlbumQueue,
+
+        setOriginalAlbumQueue,
+
+        setCurrentTrackIndex,
+
+        favouriteColor,
     } = useApp();
 
     useEffect(() => {
@@ -251,13 +264,28 @@ export default function Radio() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const tracks = await getArtist(station.name);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                setOriginalAlbumQueue(tracks);
+
+                                                setAlbumQueue(tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -500,13 +528,28 @@ export default function Radio() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const tracks = await getArtist(station.name);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                setOriginalAlbumQueue(tracks);
+
+                                                setAlbumQueue(tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -765,13 +808,28 @@ export default function Radio() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const tracks = await getArtist(station.name);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                setOriginalAlbumQueue(tracks);
+
+                                                setAlbumQueue(tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -1014,13 +1072,30 @@ export default function Radio() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const tracks = await getArtist(station.name);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                console.log(tracks);
+
+                                                setOriginalAlbumQueue(tracks);
+
+                                                setAlbumQueue(tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -1263,13 +1338,28 @@ export default function Radio() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const tracks = await getArtist(station.name);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                setOriginalAlbumQueue(tracks);
+
+                                                setAlbumQueue(tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -1512,13 +1602,28 @@ export default function Radio() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const tracks = await getArtist(station.name);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                setOriginalAlbumQueue(tracks);
+
+                                                setAlbumQueue(tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",

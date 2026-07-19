@@ -1,6 +1,9 @@
 import { useTheme } from "../../context/ThemeContext";
 import { useApp } from "../../context/AppContext";
-import { getPodcasts } from "../../services/podcastService";
+import {
+    getPodcasts,
+    getPodcast,
+} from "../../services/podcastService";
 
 import React, { useEffect, useState } from "react";
 
@@ -12,9 +15,17 @@ export default function Podcasts() {
     const { theme } = useTheme();
 
     const {
+        signedIn,
+        setSignedIn,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
+
+        setCurrentTrack,
+        setAlbumQueue,
+        setOriginalAlbumQueue,
+        setCurrentTrackIndex,
     } = useApp();
 
     const [podcasts, setPodcasts] = useState({
@@ -92,7 +103,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.psychology.map(({ id, title, artist, artwork, explicit }, index) => (
+                    {podcasts.psychology.map(({ id, title, artist, artwork, explicit, feedUrl }, index) => (
                         <div
                             key={index}
                             style={{
@@ -188,13 +199,28 @@ export default function Podcasts() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const podcast = await getPodcast(feedUrl);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(podcast.tracks);
+
+                                            setAlbumQueue(podcast.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(podcast.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",
@@ -347,7 +373,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.sleep.map(({ id, title, artist, artwork, explicit }, index) => (
+                    {podcasts.sleep.map(({ id, title, artist, artwork, explicit, feedUrl }, index) => (
                         <div
                             key={index}
                             style={{
@@ -443,13 +469,28 @@ export default function Podcasts() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const podcast = await getPodcast(feedUrl);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(podcast.tracks);
+
+                                            setAlbumQueue(podcast.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(podcast.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",
@@ -602,7 +643,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.trueCrime.map(({ id, title, artist, artwork, explicit }, index) => (
+                    {podcasts.trueCrime.map(({ id, title, artist, artwork, explicit, feedUrl }, index) => (
                         <div
                             key={index}
                             style={{
@@ -664,30 +705,47 @@ export default function Podcasts() {
                                     }
                                 }}
                             >
-                                {/* Logo */}
+                                {/* overlay */}
                                 <div
                                     style={{
                                         position: "absolute",
+                                        inset: 0,
 
-                                        top: 20,
-                                        right: 25,
+                                        borderRadius: 26,
 
-                                        color: theme.colors.text,
+                                        background:
+                                            theme.mode === "dark"
+                                                ? "linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.08))"
+                                                : "linear-gradient(to top, rgba(255,255,255,.15), rgba(255,255,255,.05))",
 
-                                        ...theme.typography.title,
+                                        pointerEvents: "none",
                                     }}
-                                >
-                                </div>
+                                />
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const podcast = await getPodcast(feedUrl);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(podcast.tracks);
+
+                                            setAlbumQueue(podcast.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(podcast.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",
@@ -840,7 +898,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.technology.map(({ id, title, artist, artwork, explicit }, index) => (
+                    {podcasts.technology.map(({ id, title, artist, artwork, explicit, feedUrl }, index) => (
                         <div
                             key={index}
                             style={{
@@ -936,13 +994,28 @@ export default function Podcasts() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const podcast = await getPodcast(feedUrl);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(podcast.tracks);
+
+                                            setAlbumQueue(podcast.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(podcast.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",
@@ -1095,7 +1168,7 @@ export default function Podcasts() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {podcasts.business.map(({ id, title, artist, artwork, explicit }, index) => (
+                    {podcasts.business.map(({ id, title, artist, artwork, explicit, feedUrl }, index) => (
                         <div
                             key={index}
                             style={{
@@ -1191,13 +1264,28 @@ export default function Podcasts() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const podcast = await getPodcast(feedUrl);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(podcast.tracks);
+
+                                            setAlbumQueue(podcast.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(podcast.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",

@@ -22,12 +22,18 @@ export default function New() {
     const [favourites, setFavourites] = useState(new Set());
 
     const {
+        signedIn,
+        setSignedIn,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
 
         setCurrentTrack,
         setAlbumQueue,
+
+        setOriginalAlbumQueue,
+
         setCurrentTrackIndex,
 
         favouriteColor,
@@ -204,13 +210,28 @@ export default function New() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const album = await getAlbum(id);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(album.tracks);
+
+                                            setAlbumQueue(album.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(album.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",
@@ -378,7 +399,7 @@ export default function New() {
                         msOverflowStyle: "none",
                     }}
                 >
-                    {newSongs.map(({ id, title, artist, artwork, explicit }, index) => (
+                    {newSongs.map(({ id, albumId, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
                             style={{
@@ -465,13 +486,34 @@ export default function New() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const album = await getAlbum(albumId);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            const trackIndex = album.tracks.findIndex(
+                                                (track) => track.id === id
+                                            );
+
+                                            setOriginalAlbumQueue(album.tracks);
+
+                                            setAlbumQueue(album.tracks);
+
+                                            setCurrentTrackIndex(trackIndex >= 0 ? trackIndex : 0);
+
+                                            setCurrentTrack(
+                                                album.tracks[trackIndex >= 0 ? trackIndex : 0]
+                                            );
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",
@@ -726,13 +768,28 @@ export default function New() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const album = await getAlbum(id);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(album.tracks);
+
+                                            setAlbumQueue(album.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(album.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",
@@ -987,13 +1044,28 @@ export default function New() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const album = await getAlbum(id);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            setOriginalAlbumQueue(album.tracks);
+
+                                            setAlbumQueue(album.tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(album.tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",

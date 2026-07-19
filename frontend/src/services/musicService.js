@@ -23,3 +23,15 @@ export async function getAlbum(albumId) {
 
     return await response.json();
 }
+
+export async function getArtist(artistName) {
+    const response = await fetch(
+        `${API}/artist/${encodeURIComponent(artistName)}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load artist.");
+    }
+
+    return await response.json();
+}

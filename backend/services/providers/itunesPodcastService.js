@@ -1,5 +1,9 @@
 import axios from "axios";
 
+import Parser from "rss-parser";
+
+const parser = new Parser();
+
 export async function searchPodcasts(query) {
     const response = await axios.get(
         "https://itunes.apple.com/search",
@@ -30,4 +34,37 @@ export async function searchPodcasts(query) {
         explicit:
             podcast.collectionExplicitness === "explicit",
     }));
+}
+
+export async function getPodcastEpisodes(feedUrl) {
+    const feed = await parser.parseURL(feedUrl);
+
+    const episodes = feed.items
+        .filter((item) => item.enclosure?.url)
+        .map((item) => ({
+            id: item.guid || item.link,
+
+            title: item.title,
+
+            artist: feed.title,
+
+            album: feed.title,
+
+            artwork:
+                item.itunes?.image ||
+                feed.itunes?.image ||
+                feed.image?.url,
+
+            preview: item.enclosure.url,
+
+            duration: 0,
+
+            explicit: false,
+        }));
+
+    return {
+        title: feed.title,
+        artwork: feed.itunes?.image || feed.image?.url,
+        tracks: episodes,
+    };
 }

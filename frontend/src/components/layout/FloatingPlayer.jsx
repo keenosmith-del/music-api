@@ -197,12 +197,13 @@ export default function FloatingPlayer({
         };
     }, [menuOpen]);
 
+    // Changes being made
+
     useEffect(() => {
         const audio = audioRef.current;
 
         if (!audio) return;
 
-        // No track selected
         if (!currentTrack?.preview) {
             audio.pause();
             audio.removeAttribute("src");
@@ -210,16 +211,21 @@ export default function FloatingPlayer({
             return;
         }
 
-        // New song selected
         audio.src = currentTrack.preview;
         audio.load();
+    }, [currentTrack]);
+
+    useEffect(() => {
+        const audio = audioRef.current;
+
+        if (!audio || !currentTrack?.preview) return;
 
         if (isPlaying) {
             audio.play().catch(console.error);
         } else {
             audio.pause();
         }
-    }, [currentTrack, isPlaying]);
+    }, [isPlaying, currentTrack]);
 
     // playback useEffect
     useEffect(() => {

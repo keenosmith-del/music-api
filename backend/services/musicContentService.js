@@ -16,11 +16,11 @@ export async function buildHome() {
             title: "Trending Albums",
             type: "album",
             items: await searchAlbumBrowse([
-                "The Weeknd",
-                "ROSALÍA",
+                "Tyler, The Creator",
+                "Daniel Caesar",
                 "Billie Eilish",
-                "Billy Joel",
-                "Sabrina Carpenter",
+                "21 Savage",
+                "Kali Uchis",
             ]),
         },
 
@@ -29,10 +29,9 @@ export async function buildHome() {
             title: "Featured Albums",
             type: "album",
             items: await searchAlbumBrowse([
-                "H.E.R",
-                "Adele",
-                "Drake",
-                "Madonna",
+                "Kanye West",
+                "Kaytranada",
+                "James Blake",
             ]),
         },
 
@@ -41,11 +40,41 @@ export async function buildHome() {
             title: "Editor's Picks",
             type: "album",
             items: await searchAlbumBrowse([
-                "Pink Floyd",
-                "Fleetwood Mac",
-                "Queen",
-                "Radiohead",
-                "David Bowie",
+                "LE$",
+                "SiR",
+                "Arlo Parks",
+                "Nao",
+                "Chiiild",
+                "Kwaku Asante",
+
+            ]),
+        },
+
+        {
+            id: "essentials",
+            title: "Essentials",
+            type: "album",
+            items: await searchAlbumBrowse([
+                "Rina Sawayama",
+                "Cleo Sol",
+                "Sevdaliza",
+                "Sabrina Claudio",
+                "Amber Mark",
+                "Zsela",
+            ]),
+        },
+
+        {
+            id: "charts",
+            title: "Charts",
+            type: "album",
+            items: await searchAlbumBrowse([
+                "Jordan Ward",
+                "Joy Crookes",
+                "Mereba",
+                "Jordan Rakei",
+                "Alex Isley",
+                "Gallant",
             ]),
         },
 
@@ -54,9 +83,13 @@ export async function buildHome() {
             title: "New & Popular",
             type: "album",
             items: await searchAlbumBrowse([
+                "Khamari",
                 "SZA",
+                "Beabadoobee",
+                "The Marías",
+                "Ruel",
                 "The Beatles",
-                "Doja Cat",
+                "Bad Bunny",
             ]),
         },
 
@@ -65,12 +98,11 @@ export async function buildHome() {
             title: "Hip Hop",
             type: "album",
             items: await searchAlbumBrowse([
-                "Kendrick Lamar",
-                "Eminem",
-                "Drake",
-                "J. Cole",
-                "Nas",
-                "Travis Scott",
+                "FKA twigs",
+                "PinkPantheress",
+                "Remi Wolf",
+                "Dijon",
+                "Yeek",
             ]),
         },
 
@@ -80,23 +112,10 @@ export async function buildHome() {
             type: "album",
             items: await searchAlbumBrowse([
                 "Frank Ocean",
-                "Alicia Keys",
-                "Usher",
-                "H.E.R.",
-            ]),
-        },
-
-        {
-            id: "jazz",
-            title: "Jazz",
-            type: "album",
-            items: await searchAlbumBrowse([
-                "John Coltrane",
-                "Miles Davis",
-                "Nina Simone",
-                "Ella Fitzgerald",
-                "Louis Armstrong",
-                "Duke Ellington",
+                "UMI",
+                "Destin Conrad",
+                "Redveil",
+                "Kota the Friend",
             ]),
         },
 
@@ -105,11 +124,25 @@ export async function buildHome() {
             title: "Chill",
             type: "album",
             items: await searchAlbumBrowse([
+                "RIMON",
                 "Cigarettes After Sex",
                 "Bon Iver",
                 "Novo Amor",
                 "Phoebe Bridgers",
                 "Hollow Coves",
+            ]),
+        },
+
+        {
+            id: "pop",
+            title: "ChPopill",
+            type: "album",
+            items: await searchAlbumBrowse([
+                "Berhana",
+                "Kiefer",
+                "Pink Siifu",
+                "Demae",
+                "Deb Never",
             ]),
         },
     ];

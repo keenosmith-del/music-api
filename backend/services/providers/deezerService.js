@@ -283,3 +283,36 @@ export async function searchArtistBrowse(artists) {
         })
         .filter(Boolean);
 }
+
+export async function searchTracksByArtist(artistName) {
+    const response = await axios.get(
+        `https://api.deezer.com/search?q=${encodeURIComponent(artistName)}`
+    );
+
+    return response.data.data
+        .filter((track) =>
+            track.artist.name
+                .toLowerCase()
+                .includes(artistName.toLowerCase())
+        )
+        .map((track) => ({
+            id: track.id,
+
+            title: track.title,
+
+            artist: track.artist.name,
+
+            album: track.album.title,
+
+            artwork: track.album.cover_big,
+
+            duration: track.duration,
+
+            preview: track.preview,
+
+            explicit:
+                track.explicit_lyrics ??
+                track.explicit ??
+                false,
+        }));
+}
