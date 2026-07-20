@@ -28,6 +28,9 @@ export default function Home() {
         signedIn,
         setSignedIn,
 
+        homeCache,
+        setHomeCache,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
@@ -44,17 +47,39 @@ export default function Home() {
 
     useEffect(() => {
         async function loadHome() {
+            if (homeCache) {
+                setHomeSections(homeCache);
+                return;
+            }
+
+            const saved = localStorage.getItem("home-cache");
+
+            if (saved) {
+                const parsed = JSON.parse(saved);
+
+                setHomeSections(parsed);
+                setHomeCache(parsed);
+
+                return;
+            }
+
             try {
                 const data = await getHome();
 
                 setHomeSections(data);
+                setHomeCache(data);
+
+                localStorage.setItem(
+                    "home-cache",
+                    JSON.stringify(data)
+                );
             } catch (err) {
                 console.error(err);
             }
         }
 
         loadHome();
-    }, []);
+    }, [homeCache, setHomeCache]);
 
     // star toggle handler
     const toggleFavourite = (id) => {

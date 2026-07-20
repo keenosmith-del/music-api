@@ -4,6 +4,9 @@ import { useApp } from "../../context/AppContext";
 import { useState, useEffect } from "react";
 
 import { searchMusic } from "../../services/searchService";
+import { getCategory } from "../../services/musicService";
+
+import { getAlbum, getArtist } from "../../services/musicService";
 
 import era70sImage from "../../assets/categories/70s.jpg";
 import era80sImage from "../../assets/categories/80s.jpg";
@@ -58,6 +61,13 @@ export default function Search() {
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
+
+        setCurrentTrack,
+        setAlbumQueue,
+
+        setOriginalAlbumQueue,
+
+        setCurrentTrackIndex,
     } = useApp();
 
     // search effect
@@ -84,7 +94,7 @@ export default function Search() {
 
                 setResults(data);
 
-                console.log(data);
+                console.log(data.songs[0]);
 
             } catch (err) {
                 console.error(err);
@@ -122,37 +132,145 @@ export default function Search() {
         results.songs.length;
 
     const categories = [
-        { title: "Rock", artwork: rockImage },
-        { title: "Hits", artwork: hitsImage },
-        { title: "Concert", artwork: concertImage },
-        { title: "Chill", artwork: chillImage },
-        { title: "Charts", artwork: chartsImage },
-        { title: "Hip Hop", artwork: hipHopImage },
+        {
+            title: "Rock",
+            query: "rock",
+            artwork: rockImage,
+        },
+        {
+            title: "Hits",
+            query: "hits",
+            artwork: hitsImage,
+        },
+        {
+            title: "Concert",
+            query: "concert",
+            artwork: concertImage,
+        },
+        {
+            title: "Chill",
+            query: "chill",
+            artwork: chillImage,
+        },
+        {
+            title: "Charts",
+            query: "charts",
+            artwork: chartsImage,
+        },
+        {
+            title: "Hip Hop",
+            query: "hiphop",
+            artwork: hipHopImage,
+        },
 
-        { title: "Live", artwork: liveImage },
-        { title: "R&B", artwork: rnbImage },
-        // { title: "Pop", artwork: popImage },
-        { title: "Gospel", artwork: gospelImage },
-        { title: "Dance", artwork: danceImage },
-        { title: "Alternative", artwork: alternativeImage },
+        {
+            title: "Live",
+            query: "live",
+            artwork: liveImage,
+        },
+        {
+            title: "R&B",
+            query: "rnb",
+            artwork: rnbImage,
+        },
+        // {
+        //     title: "Pop",
+        //     query: "pop",
+        //     artwork: popImage,
+        // },
+        {
+            title: "Gospel",
+            query: "gospel",
+            artwork: gospelImage,
+        },
+        {
+            title: "Dance",
+            query: "dance",
+            artwork: danceImage,
+        },
+        {
+            title: "Alternative",
+            query: "alternative",
+            artwork: alternativeImage,
+        },
 
-        { title: "2010s", artwork: era2010sImage },
-        { title: "'80s", artwork: era80sImage },
-        { title: "'70s", artwork: era70sImage },
-        { title: "Jazz", artwork: jazzImage },
-        { title: "Country", artwork: countryImage },
-        { title: "Essentials", artwork: essentialsImage },
+        {
+            title: "2010s",
+            query: "2010s",
+            artwork: era2010sImage,
+        },
+        {
+            title: "'80s",
+            query: "80s",
+            artwork: era80sImage,
+        },
+        {
+            title: "'70s",
+            query: "70s",
+            artwork: era70sImage,
+        },
+        {
+            title: "Jazz",
+            query: "jazz",
+            artwork: jazzImage,
+        },
+        {
+            title: "Country",
+            query: "country",
+            artwork: countryImage,
+        },
+        {
+            title: "Essentials",
+            query: "essentials",
+            artwork: essentialsImage,
+        },
 
-        { title: "Chill", artwork: chillImage },
-        { title: "Focus", artwork: focusImage },
-        { title: "Feel Good", artwork: feelGoodImage },
+        {
+            title: "Chill",
+            query: "chill",
+            artwork: chillImage,
+        },
+        {
+            title: "Focus",
+            query: "focus",
+            artwork: focusImage,
+        },
+        {
+            title: "Feel Good",
+            query: "feelgood",
+            artwork: feelGoodImage,
+        },
 
-        { title: "Love", artwork: loveImage },
-        { title: "Party", artwork: partyImage },
-        { title: "Soul/Funk", artwork: soulImage },
-        { title: "Oldies", artwork: oldiesImage },
-        { title: "Reggae", artwork: reggaeImage },
-        { title: "Metal", artwork: metalImage },
+        {
+            title: "Love",
+            query: "love",
+            artwork: loveImage,
+        },
+        {
+            title: "Party",
+            query: "party",
+            artwork: partyImage,
+        },
+        {
+            title: "Soul/Funk",
+            query: "soulfunk",
+            artwork: soulImage,
+        },
+        {
+            title: "Oldies",
+            query: "oldies",
+            artwork: oldiesImage,
+        },
+        {
+            title: "Reggae",
+            query: "reggae",
+            artwork: reggaeImage,
+        },
+        {
+            title: "Metal",
+            query: "metal",
+            artwork: metalImage,
+        },
     ];
 
     return (
@@ -344,13 +462,34 @@ export default function Search() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const album = await getAlbum(song.albumId);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                const trackIndex = album.tracks.findIndex(
+                                                    (track) => track.id === song.id
+                                                );
+
+                                                setOriginalAlbumQueue(album.tracks);
+
+                                                setAlbumQueue(album.tracks);
+
+                                                setCurrentTrackIndex(trackIndex >= 0 ? trackIndex : 0);
+
+                                                setCurrentTrack(
+                                                    album.tracks[trackIndex >= 0 ? trackIndex : 0]
+                                                );
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -535,13 +674,28 @@ export default function Search() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const albumData = await getAlbum(album.id);
 
-                                            setHasTrack(true);
-                                            setIsPlaying(true);
+                                                setOriginalAlbumQueue(albumData.tracks);
+
+                                                setAlbumQueue(albumData.tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(albumData.tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -629,7 +783,7 @@ export default function Search() {
                             ...theme.typography.rowHeading,
                         }}
                     >
-                        Artist Results
+                        Artists
                     </h2>
 
                     <div
@@ -726,14 +880,28 @@ export default function Search() {
 
                                     {/* play button */}
                                     <div
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
 
-                                            setCurrentTime(0);
+                                            try {
+                                                const tracks = await getArtist(artist.name);
 
-                                            setHasTrack(true);
+                                                setOriginalAlbumQueue(tracks);
 
-                                            setIsPlaying(true);
+                                                setAlbumQueue(tracks);
+
+                                                setCurrentTrackIndex(0);
+
+                                                setCurrentTrack(tracks[0]);
+
+                                                setCurrentTime(0);
+
+                                                setHasTrack(true);
+
+                                                setIsPlaying(true);
+                                            } catch (err) {
+                                                console.error(err);
+                                            }
                                         }}
                                         style={{
                                             position: "absolute",
@@ -874,7 +1042,7 @@ export default function Search() {
                         paddingBottom: 8,
                     }}
                 >
-                    {categories.map(({ title, artwork }, index) => (
+                    {categories.map(({ title, query, artwork }, index) => (
                         <div
                             key={index}
                             style={{
@@ -994,13 +1162,30 @@ export default function Search() {
 
                                 {/* play button */}
                                 <div
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.stopPropagation();
 
-                                        setCurrentTime(0);
+                                        try {
+                                            const tracks = await getCategory(query);
 
-                                        setHasTrack(true);
-                                        setIsPlaying(true);
+                                            if (!tracks.length) return;
+
+                                            setOriginalAlbumQueue(tracks);
+
+                                            setAlbumQueue(tracks);
+
+                                            setCurrentTrackIndex(0);
+
+                                            setCurrentTrack(tracks[0]);
+
+                                            setCurrentTime(0);
+
+                                            setHasTrack(true);
+
+                                            setIsPlaying(true);
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
                                     }}
                                     style={{
                                         position: "absolute",

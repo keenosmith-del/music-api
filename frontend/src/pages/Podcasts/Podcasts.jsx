@@ -18,6 +18,9 @@ export default function Podcasts() {
         signedIn,
         setSignedIn,
 
+        podcastsCache,
+        setPodcastsCache,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
@@ -38,17 +41,39 @@ export default function Podcasts() {
 
     useEffect(() => {
         async function loadPodcasts() {
+            if (podcastsCache) {
+                setPodcasts(podcastsCache);
+                return;
+            }
+
+            const saved = localStorage.getItem("podcasts-cache");
+
+            if (saved) {
+                const parsed = JSON.parse(saved);
+
+                setPodcasts(parsed);
+                setPodcastsCache(parsed);
+
+                return;
+            }
+
             try {
                 const data = await getPodcasts();
 
                 setPodcasts(data);
+                setPodcastsCache(data);
+
+                localStorage.setItem(
+                    "podcasts-cache",
+                    JSON.stringify(data)
+                );
             } catch (err) {
                 console.error(err);
             }
         }
 
         loadPodcasts();
-    }, []);
+    }, [podcastsCache, setPodcastsCache]);
 
     return (
         <div

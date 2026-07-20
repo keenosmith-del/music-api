@@ -9,7 +9,11 @@ import ThemeToggle from "../common/ThemeToggle";
 
 import { useTheme } from "../../context/ThemeContext";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+
+import { getUser } from "../../services/userService";
+
+import { useNavigate, useLocation } from "react-router-dom";
 
 import React from "react";
 
@@ -32,12 +36,50 @@ export default function AppLayout({
     player,
 }) {
     // STATES 
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const { theme } = useTheme();
 
     const dark = theme.mode === "dark";
 
-    // temp;; const signedIn = !!user;
-    const [signedIn, setSignedIn] = useState(false);
+    const [user, setUser] = useState(null);
+
+    const [signedIn, setSignedIn] = useState(() => {
+        return localStorage.getItem("signedIn") === "true";
+    });
+
+    useEffect(() => {
+        async function restoreUser() {
+            try {
+                const data = await getUser();
+
+                if (data) {
+                    setUser(data);
+                }
+            } catch (err) {
+                console.error("Unable to restore user.", err);
+            }
+        }
+
+        restoreUser();
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("signedIn", signedIn);
+    }, [signedIn]);
+
+    useEffect(() => {
+        if (!signedIn && location.pathname !== "/") {
+            navigate("/");
+        }
+    }, [signedIn, location.pathname, navigate]);
+
+    // Cached page data
+    const [homeCache, setHomeCache] = useState(null);
+    const [newCache, setNewCache] = useState(null);
+    const [radioCache, setRadioCache] = useState(null);
+    const [podcastsCache, setPodcastsCache] = useState(null);
 
     // slideout music in queue
     // slideout lyrics
@@ -82,8 +124,23 @@ export default function AppLayout({
     return (
         <AppProvider
             value={{
+                user,
+                setUser,
+
                 signedIn,
                 setSignedIn,
+
+                homeCache,
+                setHomeCache,
+
+                newCache,
+                setNewCache,
+
+                radioCache,
+                setRadioCache,
+
+                podcastsCache,
+                setPodcastsCache,
 
                 hasTrack,
                 setHasTrack,
@@ -145,7 +202,12 @@ export default function AppLayout({
                         display: "flex",
                     }}
                 >
-                    {sidebar && React.cloneElement(sidebar, { signedIn, setSignedIn })}
+                    {sidebar && React.cloneElement(sidebar, {
+                        signedIn,
+                        setSignedIn,
+                        user,
+                        setUser,
+                    })}
 
                     {/* main test */}
                     <main

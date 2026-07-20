@@ -2,6 +2,7 @@ import {
     searchTracks,
     searchAlbums,
     searchAlbumBrowse,
+    searchAlbumBrowseArtistArt,
     searchTrackBrowse,
     searchArtistBrowse,
     searchMusic,
@@ -152,34 +153,46 @@ export async function buildNew() {
     return {
         newAlbums: await searchAlbumBrowse([
             "Teddy Swims",
-            "Brent Faiyaz",
-            "Gucci Mane",
-            "Lil Baby",
-            "Roddy Ricch",
+            "Cleo Sol",
+            "Lucky Daye",
         ]),
 
         newSongs: await searchTrackBrowse([
             "FKJ",
+            "Tom Misch",
             "Drake",
-            "Khalid",
-            "6LACK",
+            "Daniel Caesar",
+            "Frank Ocean",
             "Summer Walker",
             "Kehlani",
             "Jhené Aiko",
+            "Kevin George",
+            "Merges",
+            "Yeek",
+            "Jean Dawson",
         ]),
 
-        newThisWeek: await searchAlbumBrowse([
+        newThisWeek: await searchAlbumBrowseArtistArt([
+            "Lucky Daye",
             "Future",
             "Young Thug",
+            "Oscar Jerome",
             "Ty Dolla $ign",
             "21 Savage",
+            //"Terrace Martin",
+            "Mndsgn",
+            "Kiefer",
         ]),
 
-        recentReleases: await searchAlbumBrowse([
+        recentReleases: await searchAlbumBrowseArtistArt([
+            "John Lennon",
             "Benson Boone",
-            "Tate McRae",
-            "Offset",
-            "Quavo",
+            "Chiiild",
+            "Snoh Aalegra",
+            "Cleo Sol",
+            "Kwaku Asante",
+            "Deb Never",
+            "Empress Of",
         ]),
     };
 }

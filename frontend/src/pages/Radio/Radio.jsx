@@ -23,6 +23,9 @@ export default function Radio() {
         signedIn,
         setSignedIn,
 
+        radioCache,
+        setRadioCache,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
@@ -39,10 +42,34 @@ export default function Radio() {
 
     useEffect(() => {
         async function loadRadio() {
+            if (radioCache) {
+                setRadio(radioCache);
+                setLoading(false);
+                return;
+            }
+
+            const saved = localStorage.getItem("radio-cache");
+
+            if (saved) {
+                const parsed = JSON.parse(saved);
+
+                setRadio(parsed);
+                setRadioCache(parsed);
+                setLoading(false);
+
+                return;
+            }
+
             try {
                 const data = await getRadio();
 
                 setRadio(data);
+                setRadioCache(data);
+
+                localStorage.setItem(
+                    "radio-cache",
+                    JSON.stringify(data)
+                );
             } catch (err) {
                 console.error(err);
             } finally {
@@ -51,7 +78,7 @@ export default function Radio() {
         }
 
         loadRadio();
-    }, []);
+    }, [radioCache, setRadioCache]);
 
     const artistTakeover =
         radio?.artistTakeover || [];

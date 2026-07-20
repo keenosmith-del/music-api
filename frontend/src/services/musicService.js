@@ -35,3 +35,15 @@ export async function getArtist(artistName) {
 
     return await response.json();
 }
+
+export async function getCategory(category) {
+    const response = await fetch(
+        `${API}/category/${encodeURIComponent(category)}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load category.");
+    }
+
+    return await response.json();
+}

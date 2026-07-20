@@ -31,6 +31,8 @@ import {
 export default function Sidebar({
     signedIn,
     setSignedIn,
+    user,
+    setUser,
 }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -804,7 +806,6 @@ export default function Sidebar({
 
                             {/* user info */}
                             <div
-                                // onClick={() => setSignedIn(false)} // temp for testing
                                 onClick={() => setAccountOpen(true)}
                                 style={{
                                     display: "flex",
@@ -833,7 +834,23 @@ export default function Sidebar({
                         </>
                     ) : (
                         <button
-                            onClick={() => setSignedIn(true)}
+                            // onClick={() => setSignedIn(true)}
+                            onClick={async () => {
+                                try {
+                                    const response = await fetch("http://localhost:5050/api/user");
+
+                                    if (!response.ok) {
+                                        throw new Error("Unable to sign in.");
+                                    }
+
+                                    const data = await response.json();
+
+                                    setUser(data);
+                                    setSignedIn(true);
+                                } catch (err) {
+                                    console.error(err);
+                                }
+                            }}
                             style={{
                                 width: "100%",
                                 height: 42,
@@ -918,8 +935,9 @@ export default function Sidebar({
                 open={accountOpen}
                 onClose={() => setAccountOpen(false)}
                 onSignOut={() => {
-                    setAccountOpen(false);
                     setSignedIn(false);
+                    setUser(null);
+                    setAccountOpen(false);
                 }}
                 onSave={() => {
                     setAccountOpen(false);

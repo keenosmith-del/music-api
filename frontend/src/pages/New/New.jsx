@@ -25,6 +25,9 @@ export default function New() {
         signedIn,
         setSignedIn,
 
+        newCache,
+        setNewCache,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
@@ -41,17 +44,39 @@ export default function New() {
 
     useEffect(() => {
         async function loadNew() {
+            if (newCache) {
+                setNewData(newCache);
+                return;
+            }
+
+            const saved = localStorage.getItem("new-cache");
+
+            if (saved) {
+                const parsed = JSON.parse(saved);
+
+                setNewData(parsed);
+                setNewCache(parsed);
+
+                return;
+            }
+
             try {
                 const data = await getNew();
 
                 setNewData(data);
+                setNewCache(data);
+
+                localStorage.setItem(
+                    "new-cache",
+                    JSON.stringify(data)
+                );
             } catch (err) {
                 console.error(err);
             }
         }
 
         loadNew();
-    }, []);
+    }, [newCache, setNewCache]);
 
     // toggle star handler
     const toggleFavourite = (id) => {
@@ -490,20 +515,23 @@ export default function New() {
                                         e.stopPropagation();
 
                                         try {
-                                            const album = await getAlbum(albumId);
+                                            const album = await getAlbum(song.albumId);
 
                                             const trackIndex = album.tracks.findIndex(
-                                                (track) => track.id === id
+                                                (track) => track.id === song.id
                                             );
+
+                                            const startIndex =
+                                                trackIndex >= 0 ? trackIndex : 0;
 
                                             setOriginalAlbumQueue(album.tracks);
 
                                             setAlbumQueue(album.tracks);
 
-                                            setCurrentTrackIndex(trackIndex >= 0 ? trackIndex : 0);
+                                            setCurrentTrackIndex(startIndex);
 
                                             setCurrentTrack(
-                                                album.tracks[trackIndex >= 0 ? trackIndex : 0]
+                                                album.tracks[startIndex]
                                             );
 
                                             setCurrentTime(0);

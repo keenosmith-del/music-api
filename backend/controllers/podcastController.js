@@ -1,9 +1,18 @@
 import { buildPodcasts } from "../services/musicContentService.js";
 import { getPodcastEpisodes } from "../services/providers/itunesPodcastService.js";
+import { getCached, setCached } from "../services/contentCache.js";
 
 export async function getPodcasts(req, res) {
     try {
+        const cachedPodcasts = getCached("podcasts");
+
+        if (cachedPodcasts) {
+            return res.json(cachedPodcasts);
+        }
+
         const data = await buildPodcasts();
+
+        setCached("podcasts", data);
 
         res.json(data);
     } catch (err) {

@@ -2,6 +2,7 @@ import {
     searchTracks,
     getAlbumTracks,
     getArtistTracks,
+    getCategoryTracks,
 } from "../services/musicService.js";
 
 export async function search(req, res) {
@@ -44,6 +45,20 @@ export async function getArtist(req, res) {
 
         res.status(500).json({
             message: "Unable to load artist.",
+        });
+    }
+}
+
+export async function getCategory(req, res) {
+    try {
+        const tracks = await getCategoryTracks(req.params.category);
+
+        res.json(tracks);
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "Unable to load category.",
         });
     }
 }
