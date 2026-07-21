@@ -4,6 +4,7 @@ import { useApp } from "../../context/AppContext";
 import { useEffect, useState } from "react";
 import { getNew } from "../../services/newService";
 import { getAlbum } from "../../services/musicService";
+import { useNavigate } from "react-router-dom";
 
 import React from "react";
 
@@ -93,6 +94,8 @@ export default function New() {
         });
     };
 
+    const navigate = useNavigate();
+
     const newAlbums =
         newData?.newAlbums || [];
 
@@ -151,6 +154,7 @@ export default function New() {
                     {newAlbums.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
+                            onClick={() => navigate(`/album/${id}`)}
                             style={{
                                 width: 280,
                                 flexShrink: 0,
@@ -427,6 +431,7 @@ export default function New() {
                     {newSongs.map(({ id, albumId, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
+                            onClick={() => navigate(`/album/${albumId}`)}
                             style={{
                                 width: 280, // width of tile
                                 flexShrink: 0,
@@ -712,6 +717,7 @@ export default function New() {
                     {newThisWeek.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
+                            onClick={() => navigate(`/album/${id}`)}
                             style={{
                                 width: 280, // width of tile
                                 flexShrink: 0,
@@ -988,6 +994,7 @@ export default function New() {
                     {recentReleases.map(({ id, title, artist, artwork, explicit }, index) => (
                         <div
                             key={index}
+                            onClick={() => navigate(`/album/${id}`)}
                             style={{
                                 width: 280, // width of tile
                                 flexShrink: 0,

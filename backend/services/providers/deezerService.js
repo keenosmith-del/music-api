@@ -328,6 +328,24 @@ export async function getAlbumTracks(albumId) {
 
         artwork: response.data.cover_big,
 
+        year: response.data.release_date
+            ? response.data.release_date.slice(0, 4)
+            : "",
+
+        releaseDate: response.data.release_date,
+
+        label: response.data.label,
+
+        genres:
+            response.data.genres?.data?.map((genre) => genre.name) ?? [],
+
+        explicit:
+            response.data.explicit_lyrics ??
+            response.data.explicit ??
+            false,
+
+        description: null,
+
         tracks: response.data.tracks.data.map((track) => ({
             id: track.id,
 
@@ -646,4 +664,99 @@ export async function getCategoryTracks(category) {
     };
 
     return searchTrackBrowse(categories[category] || []);
+}
+
+
+export async function getArtistDetails(artistId) {
+    const [artistResponse, albumsResponse, tracksResponse] = await Promise.all([
+        axios.get(
+            `https://api.deezer.com/artist/${artistId}`
+        ),
+
+        axios.get(
+            `https://api.deezer.com/artist/${artistId}/albums`
+        ),
+
+        axios.get(
+            `https://api.deezer.com/artist/${artistId}/top?limit=12`
+        ),
+    ]);
+
+    const artist = artistResponse.data;
+
+    const latestAlbum = albumsResponse.data.data[0];
+
+    const albums = albumsResponse.data.data;
+
+    return {
+        id: artist.id,
+
+        name: artist.name,
+
+        artwork:
+            artist.picture_xl ||
+            artist.picture_big ||
+            artist.picture_medium,
+
+        fans: artist.nb_fan,
+
+        genres: [],
+
+        about: null,
+
+        latestAlbum: albums.length
+            ? {
+                id: albums[0].id,
+                title: albums[0].title,
+                artwork: albums[0].cover_big,
+                year: albums[0].release_date
+                    ? albums[0].release_date.slice(0, 4)
+                    : "",
+                explicit:
+                    albums[0].explicit_lyrics ??
+                    albums[0].explicit ??
+                    false,
+            }
+            : null,
+
+        latestSongs: tracksResponse.data.data.map((track) => ({
+            id: track.id,
+
+            albumId: track.album.id,
+
+            title: track.title,
+
+            artist: track.artist.name,
+
+            album: track.album.title,
+
+            artwork: track.album.cover_big,
+
+            duration: track.duration,
+
+            preview: track.preview,
+
+            explicit:
+                track.explicit_lyrics ??
+                track.explicit ??
+                false,
+        })),
+
+        albums: albums.map((album) => ({
+            id: album.id,
+
+            title: album.title,
+
+            artwork: album.cover_big,
+
+            year: album.release_date
+                ? album.release_date.slice(0, 4)
+                : "",
+
+            explicit:
+                album.explicit_lyrics ??
+                album.explicit ??
+                false,
+        })),
+    };
 }

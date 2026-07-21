@@ -3,6 +3,8 @@ import {
     getAlbumTracks,
     getArtistTracks,
     getCategoryTracks,
+    getArtistDetails,
+    getPodcastDetails,
 } from "../services/musicService.js";
 
 export async function search(req, res) {
@@ -59,6 +61,34 @@ export async function getCategory(req, res) {
 
         res.status(500).json({
             message: "Unable to load category.",
+        });
+    }
+}
+
+export async function getArtistInfo(req, res) {
+    try {
+        const artist = await getArtistDetails(req.params.id);
+
+        res.json(artist);
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "Unable to load artist.",
+        });
+    }
+}
+
+export async function getPodcast(req, res) {
+    try {
+        const podcast = await getPodcastDetails(req.params.id);
+
+        res.json(podcast);
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "Unable to load podcast.",
         });
     }
 }

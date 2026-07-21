@@ -20,6 +20,10 @@ import Songs from "../src/pages/Songs/Songs";
 import AllPlaylists from "../src/pages/AllPlaylists/AllPlaylists";
 import FavouriteSongs from "../src/pages/FavouriteSongs/FavouriteSongs";
 
+import Album from "../src/components/common/Album";
+import Artist from "../src/components/common/Artist";
+import Podcast from "../src/components/common/Podcast";
+
 export default function AppRoutes() {
     return (
         <Routes>
@@ -38,6 +42,15 @@ export default function AppRoutes() {
                 <Route path="new" element={<New />} />
                 <Route path="radio" element={<Radio />} />
                 <Route path="podcasts" element={<Podcasts />} />
+
+                <Route path="album/:id" element={<Album />} />
+
+                <Route path="artist/:id" element={<Artist />} />
+
+                <Route
+                    path="/podcast/:id"
+                    element={<Podcast />}
+                />
 
                 <Route path="pins" element={<Pins />} />
                 <Route path="recently-added" element={<RecentlyAdded />} />

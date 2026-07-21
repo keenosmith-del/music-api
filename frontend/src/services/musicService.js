@@ -47,3 +47,27 @@ export async function getCategory(category) {
 
     return await response.json();
 }
+
+export async function getArtistInfo(id) {
+    const response = await fetch(
+        `${API}/artist-info/${id}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load artist.");
+    }
+
+    return await response.json();
+}
+
+export async function getPodcast(podcastId) {
+    const response = await fetch(
+        `${API}/podcast/${podcastId}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load podcast.");
+    }
+
+    return await response.json();
+}

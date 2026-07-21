@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { getRadio } from "../../services/radioService";
 import { getArtist } from "../../services/musicService";
 
+import { useNavigate } from "react-router-dom";
+
 import React from "react";
 
 import {
@@ -18,6 +20,8 @@ export default function Radio() {
     const [radio, setRadio] = useState(null);
 
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     const {
         signedIn,
@@ -157,6 +161,7 @@ export default function Radio() {
                         return (
                             <div
                                 key={station.id}
+                                onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
                                     width: 280, // width of tile
                                     flexShrink: 0,
@@ -437,6 +442,7 @@ export default function Radio() {
                         return (
                             <div
                                 key={station.id}
+                                onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
                                     width: 280, // width of tile
                                     flexShrink: 0,
@@ -701,6 +707,7 @@ export default function Radio() {
                         return (
                             <div
                                 key={station.id}
+                                onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
                                     width: 280, // width of tile
                                     flexShrink: 0,
@@ -981,6 +988,7 @@ export default function Radio() {
                         return (
                             <div
                                 key={station.id}
+                                onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
                                     width: 280, // width of tile
                                     flexShrink: 0,
@@ -1247,6 +1255,7 @@ export default function Radio() {
                         return (
                             <div
                                 key={station.id}
+                                onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
                                     width: 280, // width of tile
                                     flexShrink: 0,
@@ -1511,6 +1520,7 @@ export default function Radio() {
                         return (
                             <div
                                 key={station.id}
+                                onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
                                     width: 280, // width of tile
                                     flexShrink: 0,

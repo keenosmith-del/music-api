@@ -81,6 +81,8 @@ export default function AppLayout({
     const [radioCache, setRadioCache] = useState(null);
     const [podcastsCache, setPodcastsCache] = useState(null);
 
+    const [albumCache, setAlbumCache] = useState({});
+
     // slideout music in queue
     // slideout lyrics
     const [queueOpen, setQueueOpen] = useState(false);
@@ -141,6 +143,9 @@ export default function AppLayout({
 
                 podcastsCache,
                 setPodcastsCache,
+
+                albumCache,
+                setAlbumCache,
 
                 hasTrack,
                 setHasTrack,

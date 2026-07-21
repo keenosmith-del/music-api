@@ -7,12 +7,16 @@ import {
 
 import React, { useEffect, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import {
     Play,
 } from "lucide-react";
 
 export default function Podcasts() {
     const { theme } = useTheme();
+
+    const navigate = useNavigate();
 
     const {
         signedIn,
@@ -131,6 +135,7 @@ export default function Podcasts() {
                     {podcasts.psychology.map(({ id, title, artist, artwork, explicit, feedUrl }, index) => (
                         <div
                             key={index}
+                            onClick={() => navigate(`/podcast/${id}`)}
                             style={{
                                 width: 300, // width of tile
                                 flexShrink: 0,

@@ -238,7 +238,6 @@ export async function buildRadio() {
         rockRadio: await searchArtistBrowse([
             "Green Day",
             "Red Hot Chili Peppers",
-            "Incubus",
             "Rage Against the Machine",
             "Jane's Addiction",
         ]),
@@ -254,9 +253,19 @@ export async function buildRadio() {
         houseRadio: await searchArtistBrowse([
             "Dwson",
             "Sio",
-            "Michael G",
+            // "Jimmy Napes",
+            "Don Diablo",
             "Sooks",
             "Kid Fonque",
+            // "Nightcrawlers",
+            "Octave One",
+            "Ferreck Dawn",
+            // "London Topaz",
+            // "Julien Fade",
+            // "Samuel Miller",
+            // "Sam Welch",
+            // "T.Matthias",
+            // "James Carter",
         ]),
     };
 }

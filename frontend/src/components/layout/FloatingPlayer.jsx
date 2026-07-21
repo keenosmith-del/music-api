@@ -197,8 +197,6 @@ export default function FloatingPlayer({
         };
     }, [menuOpen]);
 
-    // Changes being made
-
     useEffect(() => {
         const audio = audioRef.current;
 
@@ -780,7 +778,8 @@ export default function FloatingPlayer({
                     ) : (
                         <div
                             style={{
-                                flex: 1,
+                                flex: "0 0 260px",
+                                maxWidth: 260,
 
                                 margin: "0 18px",
 
@@ -806,6 +805,9 @@ export default function FloatingPlayer({
                                     display: "flex",
                                     alignItems: "center",
                                     gap: 14,
+
+                                    width: "100%",
+                                    minWidth: 0,
 
                                     cursor: "pointer",
                                 }}
@@ -867,11 +869,16 @@ export default function FloatingPlayer({
                                         gap: 1,
 
                                         minWidth: 0,
+                                        flex: 1,
                                     }}
                                 >
                                     <div
                                         style={{
                                             color: theme.colors.textSecondary,
+
+                                            whiteSpace: "nowrap",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
 
                                             ...theme.typography.smallText,
                                         }}

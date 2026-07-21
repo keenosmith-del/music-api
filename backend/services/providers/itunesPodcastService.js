@@ -68,3 +68,48 @@ export async function getPodcastEpisodes(feedUrl) {
         tracks: episodes,
     };
 }
+
+export async function getPodcastDetails(id) {
+    const response = await axios.get(
+        "https://itunes.apple.com/lookup",
+        {
+            params: {
+                id,
+                entity: "podcast",
+            },
+        }
+    );
+
+    const podcast = response.data.results[0];
+
+    if (!podcast) {
+        throw new Error("Podcast not found.");
+    }
+
+    const episodes = await getPodcastEpisodes(
+        podcast.feedUrl
+    );
+
+    return {
+        id: podcast.collectionId,
+
+        title: podcast.collectionName,
+
+        artist: podcast.artistName,
+
+        artwork:
+            podcast.artworkUrl600 ||
+            podcast.artworkUrl100,
+
+        description: podcast.primaryGenreName,
+
+        feedUrl: podcast.feedUrl,
+
+        podcastUrl: podcast.collectionViewUrl,
+
+        explicit:
+            podcast.collectionExplicitness === "explicit",
+
+        tracks: episodes.tracks,
+    };
+}

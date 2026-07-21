@@ -9,6 +9,8 @@ import React from "react";
 
 import musicIcon from "../../assets/svgs/music-thin.svg";
 
+import { useNavigate } from "react-router-dom";
+
 import {
     AudioLines,
     UserRound,
@@ -80,6 +82,8 @@ export default function Home() {
 
         loadHome();
     }, [homeCache, setHomeCache]);
+
+    const navigate = useNavigate();
 
     // star toggle handler
     const toggleFavourite = (id) => {
@@ -165,7 +169,7 @@ export default function Home() {
                     Home
                 </h1>
 
-                {/* ---------- Top Picks ---------- */}
+                {/* ---------- Trending albums ---------- */}
                 <div
                     style={{
                         marginBottom: 54,
@@ -213,6 +217,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -509,6 +514,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -792,6 +798,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -1075,6 +1082,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -1358,6 +1366,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -1641,6 +1650,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -1924,6 +1934,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -2207,6 +2218,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -2490,6 +2502,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -2618,7 +2631,7 @@ export default function Home() {
                                                 background:
                                                     theme.mode === "dark"
                                                         ? "rgba(13, 13, 13, 0.06)"
-                                                        : "rgba(255,255,255,0.28)",
+                                                        : "rgba(255, 255, 255, 0.07)",
 
                                                 backdropFilter: "blur(16px)",
                                                 WebkitBackdropFilter: "blur(16px)",
@@ -2626,10 +2639,7 @@ export default function Home() {
                                                 boxShadow:
                                                     theme.mode === "dark"
                                                         ? "0 8px 18px rgba(0,0,0,.35)"
-                                                        : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                             }}
                                             className="tile-play-button"
                                         >
@@ -2776,6 +2786,7 @@ export default function Home() {
                             ) => (
                                 <div
                                     key={index}
+                                    onClick={() => navigate(`/album/${id}`)}
                                     style={{
                                         width: 300, // width of tile
                                         flexShrink: 0,
@@ -2904,7 +2915,7 @@ export default function Home() {
                                                 background:
                                                     theme.mode === "dark"
                                                         ? "rgba(13, 13, 13, 0.06)"
-                                                        : "rgba(255,255,255,0.28)",
+                                                        : "rgba(255, 255, 255, 0.07)",
 
                                                 backdropFilter: "blur(16px)",
                                                 WebkitBackdropFilter: "blur(16px)",
@@ -2912,10 +2923,7 @@ export default function Home() {
                                                 boxShadow:
                                                     theme.mode === "dark"
                                                         ? "0 8px 18px rgba(0,0,0,.35)"
-                                                        : `
-                    0 8px 18px rgba(0,0,0,.08),
-                    inset 0 1px 0 rgba(255,255,255,.9)
-                `,
+                                                        : "0 8px 18px rgba(0, 0, 0, 0.35)",
                                             }}
                                             className="tile-play-button"
                                         >
