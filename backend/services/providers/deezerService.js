@@ -9,7 +9,10 @@ export async function searchTracks(query) {
         id: track.id,
         title: track.title,
         artist: track.artist.name,
+        artistId: track.artist.id,
+
         album: track.album.title,
+        albumId: track.album.id,
         artwork: track.album.cover_big,
         duration: track.duration,
         preview: track.preview,
@@ -49,6 +52,8 @@ export async function searchMusic(query) {
         )
         .map((track) => ({
             id: track.id,
+
+            artistId: track.artist.id,
 
             albumId: track.album.id,
 
@@ -299,6 +304,8 @@ export async function searchTrackBrowse(artists) {
 
         songs.push({
             id: track.id,
+
+            artistId: track.artist.id,
 
             albumId: track.album.id,
 
@@ -767,7 +774,7 @@ export async function getAutoplaySongs(artistName) {
         ...deezerArtists,
     ];
 
-    const uniqueArtists = [
+    let uniqueArtists = [
         ...new Set(relatedArtists),
     ]
         .filter(
@@ -775,6 +782,12 @@ export async function getAutoplaySongs(artistName) {
                 name.toLowerCase() !== artist
         )
         .slice(0, 15);
+
+    // Fallback: no related artists found.
+    // Keep the station going with more songs from the same artist.
+    if (!uniqueArtists.length) {
+        uniqueArtists = [artistName];
+    }
 
     console.log("Related artists:", uniqueArtists);
 
@@ -799,6 +812,9 @@ export async function getAlbumTracks(albumId) {
     const response = await axios.get(
         `https://api.deezer.com/album/${albumId}`
     );
+
+    console.log("Album ID:", albumId);
+    console.log(response.data);
 
     return {
         id: response.data.id,
@@ -836,7 +852,11 @@ export async function getAlbumTracks(albumId) {
 
             artist: response.data.artist.name,
 
+            artistId: response.data.artist.id,
+
             album: response.data.title,
+
+            albumId: response.data.id,
 
             artwork: response.data.cover_big,
 
@@ -910,8 +930,10 @@ export async function searchTracksByArtist(artistName) {
             title: track.title,
 
             artist: track.artist.name,
+            artistId: track.artist.id,
 
             album: track.album.title,
+            albumId: track.album.id,
 
             artwork: track.album.cover_big,
 
@@ -1890,7 +1912,7 @@ export async function getArtistDetails(artistId) {
 
     const artist = artistResponse.data;
 
-    const latestAlbum = albumsResponse.data.data[0];
+    // const latestAlbum = albumsResponse.data.data[0];
 
     const albums = albumsResponse.data.data;
 
@@ -1927,6 +1949,8 @@ export async function getArtistDetails(artistId) {
 
         latestSongs: tracksResponse.data.data.map((track) => ({
             id: track.id,
+
+            artistId: track.artist.id,
 
             albumId: track.album.id,
 
