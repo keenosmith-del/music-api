@@ -102,6 +102,8 @@ export default function Radio() {
     const houseRadio =
         radio?.houseRadio || [];
 
+    console.log("Radio first artist:", houseRadio[0]);
+
     return (
         <div
             style={{
@@ -163,7 +165,7 @@ export default function Radio() {
                                 key={station.id}
                                 onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
-                                    width: 280, // width of tile
+                                    width: 320, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -444,7 +446,7 @@ export default function Radio() {
                                 key={station.id}
                                 onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
-                                    width: 280, // width of tile
+                                    width: 320, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -709,7 +711,7 @@ export default function Radio() {
                                 key={station.id}
                                 onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
-                                    width: 280, // width of tile
+                                    width: 320, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -990,7 +992,7 @@ export default function Radio() {
                                 key={station.id}
                                 onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
-                                    width: 280, // width of tile
+                                    width: 320, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -1257,7 +1259,7 @@ export default function Radio() {
                                 key={station.id}
                                 onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
-                                    width: 280, // width of tile
+                                    width: 320, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",
@@ -1522,7 +1524,7 @@ export default function Radio() {
                                 key={station.id}
                                 onClick={() => navigate(`/artist/${station.id}`)}
                                 style={{
-                                    width: 280, // width of tile
+                                    width: 320, // width of tile
                                     flexShrink: 0,
 
                                     display: "flex",

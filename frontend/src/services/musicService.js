@@ -71,3 +71,39 @@ export async function getPodcast(podcastId) {
 
     return await response.json();
 }
+
+export async function getCategoryArtists(category) {
+    const response = await fetch(
+        `${API}/category-artists/${encodeURIComponent(category)}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load category artists.");
+    }
+
+    return await response.json();
+}
+
+export async function getCategoryAlbums(category) {
+    const response = await fetch(
+        `${API}/category-albums/${category}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load albums.");
+    }
+
+    return await response.json();
+}
+
+export async function getAutoplay(artist) {
+    const response = await fetch(
+        `${API}/autoplay/${encodeURIComponent(artist)}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Unable to load autoplay.");
+    }
+
+    return await response.json();
+}

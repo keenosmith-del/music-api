@@ -58,6 +58,12 @@ export default function ExpandedPlayer({
     albumQueue,
     setAlbumQueue,
 
+    queueOpen,
+    setQueueOpen,
+
+    lyricsOpen,
+    setLyricsOpen,
+
     originalAlbumQueue,
     setOriginalAlbumQueue,
 
@@ -89,9 +95,6 @@ export default function ExpandedPlayer({
     const progressRef = useRef(null);
 
     const [volumeExpanded, setVolumeExpanded] = useState(false);
-
-    const [lyricsOpen, setLyricsOpen] = useState(false);
-    const [queueOpen, setQueueOpen] = useState(false);
 
     const [previousVolume, setPreviousVolume] = useState(100);
 
@@ -1239,72 +1242,7 @@ export default function ExpandedPlayer({
                         {children}
                     </div> {/* end contents wrapper */}
                 </div>
-                {/* lyrics slideout */}
-                <GlassSlideout
-                    open={lyricsOpen}
-                >
-                    <div
-                        style={{
-                            height: "100%",
 
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-
-                            padding: 40,
-
-                            textAlign: "center",
-
-                            color: theme.colors.textSecondary,
-
-                            ...theme.typography.body,
-                        }}
-                    >
-                        Play a song to see lyrics here
-                    </div>
-                </GlassSlideout>
-
-                {/* queue slideout */}
-                <GlassSlideout
-                    open={queueOpen}
-                >
-                    <div
-                        style={{
-                            height: "100%",
-
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <div
-                            style={{
-                                padding: "32px",
-
-                                color: theme.colors.text,
-
-                                ...theme.typography.title,
-                            }}
-                        >
-                            Up Next
-                        </div>
-
-                        <div
-                            style={{
-                                flex: 1,
-
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-
-                                color: theme.colors.textSecondary,
-
-                                ...theme.typography.body,
-                            }}
-                        >
-                            No upcoming songs
-                        </div>
-                    </div>
-                </GlassSlideout>
             </div> {/* end player wrapper */}
             <GlassMenu
                 ref={menuRef}

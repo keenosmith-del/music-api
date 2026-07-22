@@ -6,6 +6,8 @@ import { useParams } from "react-router-dom";
 
 import { getAlbum } from "../../services/musicService";
 
+import { useNavigate } from "react-router-dom";
+
 import {
     Play,
     Pause,
@@ -18,6 +20,8 @@ import {
 
 export default function Album() {
     const { theme } = useTheme();
+
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
@@ -50,6 +54,13 @@ export default function Album() {
 
         setCurrentTrack,
         setAlbumQueue,
+
+        shuffleOn,
+        setShuffleOn,
+
+        albumQueue,
+
+        originalAlbumQueue,
         setOriginalAlbumQueue,
 
         setCurrentTrackIndex,
@@ -335,9 +346,14 @@ export default function Album() {
 
                     {/* Artist */}
                     <div
+                        onClick={() => navigate(`/artist/${album.artistId}`)}
                         style={{
                             color: theme.colors.text,
                             marginBottom: 8,
+
+                            cursor: "pointer",
+                            width: "fit-content",
+
                             ...theme.typography.body,
                         }}
                     >
@@ -455,6 +471,27 @@ export default function Album() {
 
                         {/* Shuffle */}
                         <button
+                            onClick={() => {
+                                const shuffled = [...originalAlbumQueue];
+
+                                for (let i = shuffled.length - 1; i > 0; i--) {
+                                    const j = Math.floor(Math.random() * (i + 1));
+
+                                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                                }
+
+                                setShuffleOn(true);
+
+                                setAlbumQueue(shuffled);
+
+                                setCurrentTrackIndex(0);
+
+                                setCurrentTrack(shuffled[0]);
+
+                                setCurrentTime(0);
+
+                                setIsPlaying(true);
+                            }}
                             style={{
                                 width: 180,
                                 height: 38,

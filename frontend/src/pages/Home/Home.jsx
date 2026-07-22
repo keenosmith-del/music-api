@@ -219,7 +219,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -516,7 +516,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -800,7 +800,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -1084,7 +1084,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -1368,7 +1368,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -1652,7 +1652,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -1936,7 +1936,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -2220,7 +2220,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -2504,7 +2504,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",
@@ -2788,7 +2788,7 @@ export default function Home() {
                                     key={index}
                                     onClick={() => navigate(`/album/${id}`)}
                                     style={{
-                                        width: 300, // width of tile
+                                        width: 320, // width of tile
                                         flexShrink: 0,
 
                                         display: "flex",

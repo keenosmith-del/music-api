@@ -4,6 +4,9 @@ import {
     searchTracksByArtist as searchDeezerTracksByArtist,
     getCategoryTracks as getDeezerCategoryTracks,
     getArtistDetails as getDeezerArtistDetails,
+    getCategoryArtists as getDeezerCategoryArtists,
+    getCategoryAlbums as getDeezerCategoryAlbums,
+    getAutoplaySongs,
 } from "./providers/deezerService.js";
 
 import {
@@ -32,4 +35,16 @@ export async function getArtistDetails(artistId) {
 
 export async function getPodcastDetails(id) {
     return await getItunesPodcastDetails(id);
+}
+
+export async function getCategoryArtists(category) {
+    return await getDeezerCategoryArtists(category);
+}
+
+export async function getCategoryAlbums(category) {
+    return await getDeezerCategoryAlbums(category);
+}
+
+export async function getAutoplay(artist) {
+    return await getAutoplaySongs(artist);
 }

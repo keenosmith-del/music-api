@@ -22,7 +22,8 @@ export default function GlassSlideout({
 
                 transition: "transform 260ms ease",
 
-                zIndex: 200,
+                zIndex: 99999,
+                // background: "red",
             }}
         >
             <GlassPanel

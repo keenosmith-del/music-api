@@ -16,6 +16,10 @@ import volumeMuteIcon from "../../assets/svgs/speaker-mute.svg";
 
 import GlassMenu from "../glass/GlassMenu";
 
+import {
+    getAutoplay,
+} from "../../services/musicService";
+
 
 import {
     Shuffle,
@@ -63,6 +67,9 @@ export default function FloatingPlayer({
 
     queueOpen,
     setQueueOpen,
+
+    autoplayQueue,
+    setAutoplayQueue,
 
     lyricsOpen,
     setLyricsOpen,
@@ -242,7 +249,9 @@ export default function FloatingPlayer({
             setCurrentTime((prev) => (prev === time ? prev : time));
         }
 
-        function handleEnded() {
+        async function handleEnded() {
+            console.log("ENDED FIRED");
+
             if (repeatOne) {
                 if (audioRef.current) {
                     audioRef.current.currentTime = 0;
@@ -257,7 +266,44 @@ export default function FloatingPlayer({
 
             // End of queue
             if (currentTrackIndex >= albumQueue.length - 1) {
+
+                console.log("END OF QUEUE");
+
+                try {
+                    console.log("REQUESTING AUTOPLAY");
+
+                    const songs = await getAutoplay(currentTrack.artist);
+
+                    console.log("Autoplay returned:", songs);
+
+                    if (songs.length) {
+                        setAutoplayQueue(songs);
+
+                        const newQueue = [
+                            ...albumQueue,
+                            ...songs,
+                        ];
+
+                        setAlbumQueue(newQueue);
+
+                        const newIndex = albumQueue.length;
+
+                        setCurrentTrackIndex(newIndex);
+
+                        setCurrentTrack(newQueue[newIndex]);
+
+                        setCurrentTime(0);
+
+                        setIsPlaying(true);
+
+                        return;
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+
                 setIsPlaying(false);
+
                 setCurrentTime(0);
 
                 if (audioRef.current) {
@@ -289,12 +335,19 @@ export default function FloatingPlayer({
         };
     }, [
         audioRef,
+
         repeatOne,
+
+        currentTrack,
         currentTrackIndex,
+
         albumQueue,
 
         setCurrentTrack,
         setCurrentTrackIndex,
+
+        setAlbumQueue,
+        setAutoplayQueue,
 
         setCurrentTime,
         setDuration,

@@ -23,6 +23,7 @@ import FavouriteSongs from "../src/pages/FavouriteSongs/FavouriteSongs";
 import Album from "../src/components/common/Album";
 import Artist from "../src/components/common/Artist";
 import Podcast from "../src/components/common/Podcast";
+import Category from "../src/components/common/Category";
 
 export default function AppRoutes() {
     return (
@@ -50,6 +51,11 @@ export default function AppRoutes() {
                 <Route
                     path="/podcast/:id"
                     element={<Podcast />}
+                />
+
+                <Route
+                    path="/category/:id"
+                    element={<Category />}
                 />
 
                 <Route path="pins" element={<Pins />} />

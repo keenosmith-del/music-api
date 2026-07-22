@@ -5,7 +5,15 @@ import {
     getCategoryTracks,
     getArtistDetails,
     getPodcastDetails,
+    getCategoryArtists,
+    getCategoryAlbums,
+    getAutoplay,
 } from "../services/musicService.js";
+
+import {
+    getCached,
+    setCached,
+} from "../services/contentCache.js";
 
 export async function search(req, res) {
     try {
@@ -67,7 +75,17 @@ export async function getCategory(req, res) {
 
 export async function getArtistInfo(req, res) {
     try {
+        const key = `artist-${req.params.id}`;
+
+        const cached = getCached(key);
+
+        if (cached) {
+            return res.json(cached);
+        }
+
         const artist = await getArtistDetails(req.params.id);
+
+        setCached(key, artist);
 
         res.json(artist);
     } catch (err) {
@@ -78,7 +96,6 @@ export async function getArtistInfo(req, res) {
         });
     }
 }
-
 export async function getPodcast(req, res) {
     try {
         const podcast = await getPodcastDetails(req.params.id);
@@ -89,6 +106,44 @@ export async function getPodcast(req, res) {
 
         res.status(500).json({
             message: "Unable to load podcast.",
+        });
+    }
+}
+
+export async function getCategoryArtistList(req, res) {
+    try {
+        const key = `category-${req.params.category}`;
+
+        const cached = getCached(key);
+
+        if (cached) {
+            return res.json(cached);
+        }
+
+        const artists = await getCategoryArtists(req.params.category);
+
+        setCached(key, artists);
+
+        res.json(artists);
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "Unable to load category artists.",
+        });
+    }
+}
+
+export async function getAutoplayQueue(req, res) {
+    try {
+        const songs = await getAutoplay(req.params.artist);
+
+        res.json(songs);
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).json({
+            message: "Unable to load autoplay.",
         });
     }
 }

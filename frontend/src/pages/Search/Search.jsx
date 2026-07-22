@@ -28,7 +28,7 @@ import jazzImage from "../../assets/categories/jazz.jpg";
 
 import liveImage from "../../assets/categories/live.jpg";
 import loveImage from "../../assets/categories/love.jpg";
-import metalImage from "../../assets/categories/metal.jpg";
+import rapImage from "../../assets/categories/rap.jpeg";
 import oldiesImage from "../../assets/categories/oldies.jpg";
 import partyImage from "../../assets/categories/party.jpg";
 import reggaeImage from "../../assets/categories/reggae.jpg";
@@ -36,6 +36,7 @@ import rnbImage from "../../assets/categories/rnb.jpeg";
 import soulImage from "../../assets/categories/soul.jpg";
 import rockImage from "../../assets/categories/rock.jpg";
 
+import { useNavigate } from "react-router-dom";
 
 import React from "react";
 
@@ -46,6 +47,8 @@ import {
 
 export default function Search() {
     const { theme } = useTheme();
+
+    const navigate = useNavigate();
 
     const [search, setSearch] = useState("");
 
@@ -224,12 +227,6 @@ export default function Search() {
             query: "essentials",
             artwork: essentialsImage,
         },
-
-        {
-            title: "Chill",
-            query: "chill",
-            artwork: chillImage,
-        },
         {
             title: "Focus",
             query: "focus",
@@ -267,9 +264,9 @@ export default function Search() {
             artwork: reggaeImage,
         },
         {
-            title: "Metal",
-            query: "metal",
-            artwork: metalImage,
+            title: "Rap",
+            query: "rap",
+            artwork: rapImage,
         },
     ];
 
@@ -388,6 +385,7 @@ export default function Search() {
                         {results.songs.map((song, index) => (
                             <div
                                 key={song.id}
+                                onClick={() => navigate(`/album/${song.albumId}`)}
                                 style={{
                                     width: 220,
                                     flexShrink: 0,
@@ -599,6 +597,7 @@ export default function Search() {
                         {results.albums.map((album, index) => (
                             <div
                                 key={album.id}
+                                onClick={() => navigate(`/album/${album.id}`)}
                                 style={{
                                     width: 220,
                                     flexShrink: 0,
@@ -805,6 +804,7 @@ export default function Search() {
                         {results.artists.map((artist, index) => (
                             <div
                                 key={artist.id}
+                                onClick={() => navigate(`/artist/${artist.id}`)}
                                 style={{
                                     width: 220,
                                     flexShrink: 0,
@@ -1045,6 +1045,7 @@ export default function Search() {
                     {categories.map(({ title, query, artwork }, index) => (
                         <div
                             key={index}
+                            onClick={() => navigate(`/category/${query}`)}
                             style={{
                                 width: "100%",
 

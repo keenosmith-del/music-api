@@ -17,8 +17,8 @@ export default function GlassPanel({
                 // border: `1px solid ${theme.colors.glassBorder}`,
 
                 // blur for panels
-                backdropFilter: blur ? "blur(4px)" : undefined,
-                WebkitBackdropFilter: blur ? "blur(4px)" : undefined,
+                backdropFilter: blur ? "blur(7px)" : undefined,
+                WebkitBackdropFilter: blur ? "blur(7px)" : undefined,
 
                 borderRadius: 32,
 

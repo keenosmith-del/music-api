@@ -295,3 +295,4 @@ export async function buildSearch(query) {
 
     return await searchMusic(query);
 }
+
