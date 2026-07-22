@@ -1,12 +1,14 @@
 import { useTheme } from "../../context/ThemeContext";
 import { useApp } from "../../context/AppContext";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 
-import { getAlbum } from "../../services/musicService";
+import { getAlbum, getAutoplay } from "../../services/musicService";
 
 import { useNavigate } from "react-router-dom";
+
+import GlassMenu from "../glass/GlassMenu";
 
 import {
     Play,
@@ -16,6 +18,13 @@ import {
     Ellipsis,
     Plus,
     AudioLines,
+    Square,
+    ThumbsDown,
+    ListPlus,
+    HeartPlus,
+    ListStart,
+    ListEnd,
+    ListX,
 } from "lucide-react";
 
 export default function Album() {
@@ -67,6 +76,8 @@ export default function Album() {
 
         currentTrack,
         isPlaying,
+
+        audioRef,
     } = useApp();
 
     useEffect(() => {
@@ -117,6 +128,29 @@ export default function Album() {
         loadAlbum();
     }, [id, albumCache, setAlbumCache]);
 
+    useEffect(() => {
+        function handleOutsideClick(e) {
+            console.log("OUTSIDE", e.target);
+
+            // Ignore clicks inside the menu
+            if (
+                menuRef.current &&
+                menuRef.current.contains(e.target)
+            ) {
+                return;
+            }
+
+            setSelectedSong(null);
+            setOpenMenuId(null);
+        }
+
+        document.addEventListener("mousedown", handleOutsideClick);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+    }, []);
+
     const favouriteColor =
         theme.mode === "dark"
             ? "#cd3328"
@@ -133,6 +167,32 @@ export default function Album() {
 
     const isCurrentTrack = (song) =>
         currentTrack?.id === song.id;
+
+    // ellipsis glass menu
+    const [openMenuId, setOpenMenuId] = useState(null);
+
+    const [menuPosition, setMenuPosition] = useState({
+        top: 0,
+        left: 0,
+    });
+
+    const menuRef = useRef(null);
+
+    const [selectedSong, setSelectedSong] = useState(null);
+
+    const ellipsisRef = useRef(null);
+
+    useEffect(() => {
+        if (openMenuId !== null) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [openMenuId]);
 
     if (loading) {
         return (
@@ -196,6 +256,216 @@ export default function Album() {
             </div>
         );
     }
+
+    const menuItems = [
+        {
+            label:
+                currentTrack?.id === selectedSong?.id && isPlaying
+                    ? "Stop Playing"
+                    : "Play Song",
+
+            icon:
+                currentTrack?.id === selectedSong?.id && isPlaying ? (
+                    <Square size={14} strokeWidth={1.7} />
+                ) : (
+                    <Play size={14} strokeWidth={1.7} />
+                ),
+
+            onClick: () => {
+                const isCurrentSong =
+                    currentTrack?.id === selectedSong?.id;
+
+                if (isCurrentSong && isPlaying) {
+                    // Stop
+                    setIsPlaying(false);
+
+                    setHasTrack(false);
+
+                    setCurrentTime(0);
+
+                    setCurrentTrack(null);
+                } else {
+                    // Play
+                    const index = albumQueue.findIndex(
+                        (track) => track.id === selectedSong.id
+                    );
+
+                    if (index !== -1) {
+                        setCurrentTrackIndex(index);
+                    }
+
+                    setCurrentTrack(selectedSong);
+
+                    setCurrentTime(0);
+
+                    setHasTrack(true);
+
+                    setIsPlaying(true);
+                }
+
+                setOpenMenuId(null);
+
+                setSelectedSong(null);
+            },
+        },
+
+        "divider",
+
+        {
+            label: "Add to Library",
+            icon: <Plus size={15} strokeWidth={1.75} />,
+            onClick: () => {
+                // wire later
+            },
+        },
+
+        {
+            label: "Add to Playlist",
+            icon: <ListPlus size={15} strokeWidth={1.75} />,
+            onClick: () => {
+                // wire later
+            },
+        },
+
+        {
+            label: "Favourite",
+            icon: <Star size={15} strokeWidth={1.75} />,
+            onClick: () => {
+                // wire later
+            },
+        },
+
+        "divider",
+
+        {
+            label: "Play Next",
+            icon: <ListStart size={15} strokeWidth={1.75} />,
+            onClick: () => {
+                if (!selectedSong || !currentTrack) return;
+
+                // Remove the song if it's already in the queue
+                const queue = albumQueue.filter(
+                    (track) => track.id !== selectedSong.id
+                );
+
+                // Find the current song
+                const currentIndex = queue.findIndex(
+                    (track) => track.id === currentTrack.id
+                );
+
+                // Insert immediately after it
+                queue.splice(currentIndex + 1, 0, selectedSong);
+
+                setAlbumQueue(queue);
+
+                // Keep the player synced to the current song's new position
+                setCurrentTrackIndex(currentIndex);
+
+                setOpenMenuId(null);
+                setSelectedSong(null);
+            },
+        },
+
+        {
+            label: "Add to Queue",
+            icon: <ListEnd size={15} strokeWidth={1.75} />,
+            onClick: () => {
+                if (!selectedSong) return;
+
+                setAlbumQueue((queue) => [
+                    ...queue,
+                    selectedSong,
+                ]);
+
+                setOpenMenuId(null);
+
+                setSelectedSong(null);
+            },
+        },
+
+        ...(albumQueue.some(
+            (track) => track.id === selectedSong?.id
+        )
+            ? [
+                {
+                    label: "Remove from Queue",
+                    icon: <ListX size={15} strokeWidth={1.75} />,
+                    onClick: () => {
+                        setAlbumQueue((queue) =>
+                            queue.filter(
+                                (track) =>
+                                    track.id !== selectedSong.id
+                            )
+                        );
+
+                        setOpenMenuId(null);
+
+                        setSelectedSong(null);
+                    },
+                },
+            ]
+            : []),
+
+        {
+            label: "Create Station",
+            icon: <HeartPlus size={15} strokeWidth={1.75} />,
+            onClick: async () => {
+                if (!selectedSong) return;
+
+                setOpenMenuId(null);
+                setSelectedSong(null);
+
+                if (audioRef.current) {
+                    audioRef.current.pause();
+                    audioRef.current.currentTime = 0;
+                }
+
+                try {
+                    const songs = await getAutoplay(selectedSong.artist);
+
+                    const queue = [
+                        selectedSong,
+                        ...songs.filter(
+                            (song) => song.id !== selectedSong.id
+                        ),
+                    ];
+
+                    // Stop the current player first
+                    setIsPlaying(false);
+                    setHasTrack(false);
+
+                    setCurrentTime(0);
+                    setCurrentTrack(null);
+                    setCurrentTrackIndex(0);
+
+                    // Replace the queue
+                    setOriginalAlbumQueue(queue);
+                    setAlbumQueue(queue);
+
+                    // Start the station
+                    requestAnimationFrame(() => {
+                        setCurrentTrack(queue[0]);
+                        setHasTrack(true);
+                        setIsPlaying(true);
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+
+                setOpenMenuId(null);
+
+                setSelectedSong(null);
+            },
+        },
+
+        {
+            label: "Suggest Less",
+            icon: <ThumbsDown size={15} strokeWidth={1.75} />,
+            onClick: () => {
+                // wire later
+            },
+        },
+    ];
 
     if (!album) {
         return (
@@ -472,15 +742,22 @@ export default function Album() {
                         {/* Shuffle */}
                         <button
                             onClick={() => {
-                                const shuffled = [...originalAlbumQueue];
+                                if (!album?.tracks?.length) return;
+
+                                const shuffled = [...album.tracks];
 
                                 for (let i = shuffled.length - 1; i > 0; i--) {
                                     const j = Math.floor(Math.random() * (i + 1));
 
-                                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                                    [shuffled[i], shuffled[j]] = [
+                                        shuffled[j],
+                                        shuffled[i],
+                                    ];
                                 }
 
                                 setShuffleOn(true);
+
+                                setOriginalAlbumQueue(album.tracks);
 
                                 setAlbumQueue(shuffled);
 
@@ -489,6 +766,8 @@ export default function Album() {
                                 setCurrentTrack(shuffled[0]);
 
                                 setCurrentTime(0);
+
+                                setHasTrack(true);
 
                                 setIsPlaying(true);
                             }}
@@ -914,7 +1193,50 @@ export default function Album() {
                         >
                             <Ellipsis
                                 size={18}
+                                ref={ellipsisRef}
                                 strokeWidth={1.6}
+                                onClick={(e) => {
+                                    console.log("CLICK", {
+                                        song: song.id,
+                                        open: openMenuId,
+                                    });
+
+                                    e.stopPropagation();
+
+                                    const rect = e.currentTarget.getBoundingClientRect();
+
+                                    const MENU_HEIGHT = 295;
+                                    const GAP = 33;
+
+                                    // Same ellipsis clicked -> close
+                                    if (openMenuId === song.id) {
+                                        console.log("CLOSING");
+
+                                        setSelectedSong(null);
+                                        setOpenMenuId(null);
+                                        return;
+                                    }
+
+                                    setMenuPosition({
+                                        left: rect.left - 170,
+                                        top: rect.top - MENU_HEIGHT - GAP,
+                                    });
+
+                                    console.log("OPENING", song.id);
+
+                                    setSelectedSong(song);
+                                    setOpenMenuId(song.id);
+                                }}
+                                style={{
+                                    cursor: "pointer",
+                                    transition: "transform 180ms ease",
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = "translateY(-1px)";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = "translateY(0)";
+                                }}
                             />
                         </div>
                     </div>
@@ -969,6 +1291,97 @@ export default function Album() {
         }
     `}
             </style>
+            <GlassMenu
+                ref={menuRef}
+                open={openMenuId !== null}
+                top={menuPosition.top}
+                left={menuPosition.left}
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+
+                    }}
+                >
+                    {menuItems.map((item, index) =>
+                        item === "divider" ? (
+                            <div
+                                key={index}
+                                style={{
+                                    height: 1,
+                                    margin: "6px 4px",
+
+                                    background:
+                                        theme.mode === "dark"
+                                            ? "rgba(255,255,255,0.05)"
+                                            : "rgba(0,0,0,0.08)",
+                                }}
+                            />
+                        ) : (
+                            <div
+                                onClick={() => {
+                                    item.onClick?.();
+                                }}
+                                key={item.label}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 10,
+
+                                    height: 30,
+
+                                    padding: "0 12px",
+
+                                    borderRadius: 14,
+
+                                    cursor: "pointer",
+
+                                    color: theme.colors.textSecondary,
+
+                                    transition: "all 180ms ease",
+
+                                    ...theme.typography.smallText,
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = "translateY(-1px)";
+                                    e.currentTarget.style.color = theme.colors.text;
+
+                                    if (theme.mode === "light") {
+                                        e.currentTarget.style.background =
+                                            "rgba(255,255,255,0.65)";
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = "translateY(0)";
+                                    e.currentTarget.style.color =
+                                        theme.colors.textSecondary;
+                                    e.currentTarget.style.background = "transparent";
+                                }}
+                            >
+                                <>
+                                    <div
+                                        style={{
+                                            width: 18,
+
+                                            display: "flex",
+                                            justifyContent: "center",
+
+                                            flexShrink: 0,
+
+                                        }}
+                                    >
+                                        {item.icon}
+                                    </div>
+
+                                    <span>{item.label}</span>
+                                </>
+                            </div>
+                        )
+                    )}
+                </div>
+            </GlassMenu>
         </div>
     );
 }

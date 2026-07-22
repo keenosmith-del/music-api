@@ -15,6 +15,8 @@ import volumeMuteIcon from "../../assets/svgs/speaker-mute.svg";
 import GlassMenu from "../glass/GlassMenu";
 import GlassSlideout from "../glass/GlassSlideout";
 
+import { useNavigate } from "react-router-dom";
+
 import {
     Shuffle,
     Repeat,
@@ -31,6 +33,9 @@ import {
     Plus,
     ListPlus,
     Square,
+    SquareArrowOutUpRight,
+    UserRound,
+    HeartPlus,
 } from "lucide-react";
 
 export default function ExpandedPlayer({
@@ -84,6 +89,10 @@ export default function ExpandedPlayer({
     children,
 }) {
     const { theme } = useTheme();
+
+    console.log(currentTrack);
+
+    const navigate = useNavigate();
 
     const dark = theme.mode === "dark";
 
@@ -186,7 +195,59 @@ export default function ExpandedPlayer({
         };
     }, [volumeExpanded]);
 
+    useEffect(() => {
+        function handleMenuOutsideClick(event) {
+            if (
+                menuOpen &&
+                menuRef.current &&
+                !menuRef.current.contains(event.target) &&
+                !ellipsisRef.current?.contains(event.target)
+            ) {
+                setMenuOpen(false);
+            }
+        }
+
+        document.addEventListener(
+            "mousedown",
+            handleMenuOutsideClick
+        );
+
+        return () => {
+            document.removeEventListener(
+                "mousedown",
+                handleMenuOutsideClick
+            );
+        };
+    }, [menuOpen]);
+
     const menuItems = [
+        {
+            label: "Go to Album",
+            icon: <SquareArrowOutUpRight size={14} strokeWidth={1.7} />,
+            onClick: () => {
+                if (!currentTrack) return;
+
+                navigate(`/album/${currentTrack.albumId}`);
+
+                setMenuOpen(false);
+
+                onClose();
+            },
+        },
+        {
+            label: "Go to Artist",
+            icon: <UserRound size={14} strokeWidth={1.7} />,
+            onClick: () => {
+                if (!currentTrack) return;
+
+                navigate(`/artist/${currentTrack.artistId}`);
+
+                setMenuOpen(false);
+
+                onClose();
+            },
+        },
+        "divider",
         {
             label: "Stop Playing",
             icon: <Square size={14} strokeWidth={1.7} />,
@@ -207,10 +268,42 @@ export default function ExpandedPlayer({
             label: "Add to Playlist",
             icon: <ListPlus size={15} strokeWidth={1.75} />,
         },
-        "divider",
         {
             label: "Favourite",
             icon: <Star size={15} strokeWidth={1.75} />,
+        },
+        "divider",
+        {
+            label: "Create Station",
+            icon: <HeartPlus size={15} strokeWidth={1.75} />,
+            onClick: async () => {
+                if (!currentTrack) return;
+
+                setMenuOpen(false);
+
+                try {
+                    const songs = await getAutoplay(currentTrack.artist);
+
+                    const queue = [
+                        currentTrack,
+                        ...songs.filter(
+                            (song) => song.id !== currentTrack.id
+                        ),
+                    ];
+
+                    setOriginalAlbumQueue(queue);
+
+                    setAlbumQueue(queue);
+
+                    setCurrentTrackIndex(0);
+
+                    setMenuOpen(false);
+
+                    onClose();
+                } catch (err) {
+                    console.error(err);
+                }
+            },
         },
         {
             label: "Suggest Less",
@@ -652,7 +745,7 @@ export default function ExpandedPlayer({
                                         onClick={() => {
                                             if (!menuOpen && ellipsisRef.current) {
                                                 const MENU_WIDTH = 230;
-                                                const MENU_HEIGHT = 230;
+                                                const MENU_HEIGHT = 295;
                                                 const GAP = 33;
 
                                                 const rect = ellipsisRef.current.getBoundingClientRect();
@@ -1263,12 +1356,12 @@ export default function ExpandedPlayer({
                             <div
                                 key={index}
                                 style={{
-                                    height: 1,
+                                    height: 0.5,
                                     margin: "6px 4px",
 
                                     background:
                                         theme.mode === "dark"
-                                            ? "rgba(255,255,255,0.05)"
+                                            ? "rgba(255,255,255,0.4)"
                                             : "rgba(0,0,0,0.08)",
                                 }}
                             />
@@ -1281,9 +1374,9 @@ export default function ExpandedPlayer({
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 12,
+                                    gap: 10,
 
-                                    height: 34,
+                                    height: 30,
 
                                     padding: "0 12px",
 
@@ -1291,7 +1384,10 @@ export default function ExpandedPlayer({
 
                                     cursor: "pointer",
 
-                                    color: theme.colors.textSecondary,
+                                    color:
+                                        theme.mode === "dark"
+                                            ? "rgba(255, 255, 255, 0.96)"
+                                            : theme.colors.textSecondary,
 
                                     transition: "all 180ms ease",
 
@@ -1299,17 +1395,29 @@ export default function ExpandedPlayer({
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = "translateY(-1px)";
-                                    e.currentTarget.style.color = theme.colors.text;
 
-                                    if (theme.mode === "light") {
+                                    if (theme.mode === "dark") {
+                                        e.currentTarget.style.color = "rgba(255, 255, 255, 1)";
                                         e.currentTarget.style.background =
-                                            "rgba(255,255,255,0.65)";
+                                            "rgba(255, 255, 255, 0.06)";
+                                    } else {
+                                        e.currentTarget.style.color = theme.colors.text;
+
+                                        e.currentTarget.style.background =
+                                            "rgba(255, 255, 255, 0.17)";
                                     }
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = "translateY(0)";
-                                    e.currentTarget.style.color =
-                                        theme.colors.textSecondary;
+
+                                    if (theme.mode === "dark") {
+                                        e.currentTarget.style.color =
+                                            "rgba(255, 255, 255, 0.96)";
+                                    } else {
+                                        e.currentTarget.style.color =
+                                            theme.colors.textSecondary;
+                                    }
+
                                     e.currentTarget.style.background = "transparent";
                                 }}
                             >

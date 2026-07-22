@@ -249,19 +249,72 @@ export default function AppLayout({
                                 height: "100%",
 
                                 display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-
-                                padding: 40,
-
-                                textAlign: "center",
-
-                                color: theme.colors.textSecondary,
-
-                                ...theme.typography.body,
+                                flexDirection: "column",
                             }}
                         >
-                            Play a song to see lyrics here
+                            {/* Close */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+
+                                    padding: "18px 40px 0",
+                                }}
+                            >
+                                <div
+                                    onClick={() => {
+                                        setLyricsOpen(false);
+                                    }}
+                                    style={{
+                                        opacity: 0,
+
+                                        cursor: "pointer",
+
+                                        color: theme.colors.textSecondary,
+
+                                        transition: "all 180ms ease",
+
+                                        userSelect: "none",
+
+                                        ...theme.typography.body,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.opacity = "1";
+                                        e.currentTarget.style.transform = "translateY(-1px)";
+                                        e.currentTarget.style.color =
+                                            theme.colors.text;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.opacity = "0";
+                                        e.currentTarget.style.transform = "translateY(0)";
+                                        e.currentTarget.style.color =
+                                            theme.colors.textSecondary;
+                                    }}
+                                >
+                                    ×
+                                </div>
+                            </div>
+
+                            {/* Placeholder */}
+                            <div
+                                style={{
+                                    flex: 1,
+
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+
+                                    padding: 40,
+
+                                    textAlign: "center",
+
+                                    color: theme.colors.textSecondary,
+
+                                    ...theme.typography.body,
+                                }}
+                            >
+                                Play a song to see lyrics here
+                            </div>
                         </div>
                     </GlassSlideout>
 
@@ -275,6 +328,48 @@ export default function AppLayout({
                                 flexDirection: "column",
                             }}
                         >
+                            {/* close */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+
+                                    padding: "18px 40px 0",
+                                }}
+                            >
+                                <div
+                                    onClick={() => {
+                                        setQueueOpen(false);
+                                    }}
+                                    style={{
+                                        opacity: 0,
+
+                                        cursor: "pointer",
+
+                                        color: theme.colors.textSecondary,
+
+                                        transition: "all 180ms ease",
+
+                                        userSelect: "none",
+
+                                        ...theme.typography.body,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.opacity = "1";
+                                        e.currentTarget.style.transform = "translateY(-1px)";
+                                        e.currentTarget.style.color = theme.colors.text;
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.opacity = "0";
+                                        e.currentTarget.style.transform = "translateY(0)";
+                                        e.currentTarget.style.color =
+                                            theme.colors.textSecondary;
+                                    }}
+                                >
+                                    ×
+                                </div>
+                            </div>
+
                             <div
                                 style={{
                                     display: "flex",

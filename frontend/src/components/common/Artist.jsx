@@ -567,6 +567,7 @@ export default function Artist() {
                     {latestSongs.map((song) => (
                         <div
                             key={song.id}
+                            onClick={() => navigate(`/album/${song.albumId}`)}
                             style={{
                                 width: 220,
                                 flexShrink: 0,
@@ -701,6 +702,8 @@ export default function Artist() {
                                             theme.mode === "dark"
                                                 ? "0 8px 18px rgba(0,0,0,.35)"
                                                 : "0 8px 18px rgba(0,0,0,.35)",
+
+                                        cursor: "pointer",
                                     }}
                                 >
                                     <Play

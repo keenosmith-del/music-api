@@ -16,6 +16,8 @@ import volumeMuteIcon from "../../assets/svgs/speaker-mute.svg";
 
 import GlassMenu from "../glass/GlassMenu";
 
+import { useNavigate } from "react-router-dom";
+
 import {
     getAutoplay,
 } from "../../services/musicService";
@@ -37,6 +39,10 @@ import {
     Plus,
     ListPlus,
     Square,
+
+    UserRound,
+    SquareArrowOutUpRight,
+    HeartPlus,
 } from "lucide-react";
 
 export default function FloatingPlayer({
@@ -93,6 +99,8 @@ export default function FloatingPlayer({
     setPreviousVolume,
 }) {
     const { theme } = useTheme();
+
+    const navigate = useNavigate();
 
     const controlsEnabled = signedIn && hasTrack;
 
@@ -298,6 +306,29 @@ export default function FloatingPlayer({
 
                         return;
                     }
+
+                    // No autoplay available
+                    setAutoplayQueue([]);
+
+                    setAlbumQueue([]);
+
+                    setOriginalAlbumQueue([]);
+
+                    setCurrentTrack(null);
+
+                    setCurrentTrackIndex(0);
+
+                    setCurrentTime(0);
+
+                    setHasTrack(false);
+
+                    setIsPlaying(false);
+
+                    if (audioRef.current) {
+                        audioRef.current.currentTime = 0;
+                    }
+
+                    return;
                 } catch (err) {
                     console.error(err);
                 }
@@ -386,6 +417,33 @@ export default function FloatingPlayer({
 
     const menuItems = [
         {
+            label: "Go to Album",
+            icon: <SquareArrowOutUpRight size={14} strokeWidth={1.7} />,
+            onClick: () => {
+                if (!currentTrack) return;
+
+                navigate(`/album/${currentTrack.albumId}`);
+
+                setMenuOpen(false);
+
+                onClose();
+            },
+        },
+        {
+            label: "Go to Artist",
+            icon: <UserRound size={14} strokeWidth={1.7} />,
+            onClick: () => {
+                if (!currentTrack) return;
+
+                navigate(`/artist/${currentTrack.artistId}`);
+
+                setMenuOpen(false);
+
+                onClose();
+            },
+        },
+        "divider",
+        {
             label: "Stop Playing",
             icon: <Square size={14} strokeWidth={1.7} />,
             onClick: () => {
@@ -414,10 +472,42 @@ export default function FloatingPlayer({
             label: "Add to Playlist",
             icon: <ListPlus size={15} strokeWidth={1.75} />,
         },
-        "divider",
         {
             label: "Favourite",
             icon: <Star size={15} strokeWidth={1.75} />,
+        },
+        "divider",
+        {
+            label: "Create Station",
+            icon: <HeartPlus size={15} strokeWidth={1.75} />,
+            onClick: async () => {
+                if (!currentTrack) return;
+
+                setMenuOpen(false);
+
+                try {
+                    const songs = await getAutoplay(currentTrack.artist);
+
+                    const queue = [
+                        currentTrack,
+                        ...songs.filter(
+                            (song) => song.id !== currentTrack.id
+                        ),
+                    ];
+
+                    setOriginalAlbumQueue(queue);
+
+                    setAlbumQueue(queue);
+
+                    setCurrentTrackIndex(0);
+
+                    setMenuOpen(false);
+
+                    onClose();
+                } catch (err) {
+                    console.error(err);
+                }
+            },
         },
         {
             label: "Suggest Less",
@@ -1071,7 +1161,7 @@ export default function FloatingPlayer({
 
                                     if (!menuOpen && ellipsisRef.current) {
                                         const MENU_WIDTH = 230;
-                                        const MENU_HEIGHT = 230;
+                                        const MENU_HEIGHT = 320;
                                         const GAP = 33;
 
                                         const rect = ellipsisRef.current.getBoundingClientRect();
@@ -1405,9 +1495,9 @@ export default function FloatingPlayer({
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 12,
+                                    gap: 10,
 
-                                    height: 34,
+                                    height: 30,
 
                                     padding: "0 12px",
 
@@ -1415,7 +1505,10 @@ export default function FloatingPlayer({
 
                                     cursor: "pointer",
 
-                                    color: theme.colors.textSecondary,
+                                    color:
+                                        theme.mode === "dark"
+                                            ? "rgba(255, 255, 255, 0.96)"
+                                            : theme.colors.textSecondary,
 
                                     transition: "all 180ms ease",
 

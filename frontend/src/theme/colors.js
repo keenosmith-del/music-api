@@ -6,8 +6,8 @@ const colors = {
         textSecondary: "#B8B8B3",
         textMuted: "#888883",
 
-        glass: "rgba(52,52,52,0.05)",
-        glassBorder: "rgba(52,52,52,0.08)",
+        glass: "rgba(52, 52, 52, 0.3)",
+        glassBorder: "rgba(52, 52, 52, 0.02)",
     },
 
     light: {
@@ -17,8 +17,8 @@ const colors = {
         textSecondary: "#555553",
         textMuted: "#7C7C79",
 
-        glass: "rgba(255,255,255,0.55)",
-        glassBorder: "rgba(255,255,255,0.65)",
+        glass: "rgba(255, 255, 255, 0.5)",
+        glassBorder: "rgba(255, 255, 255, 0.22)",
     },
 };
 

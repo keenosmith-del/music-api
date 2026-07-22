@@ -68,43 +68,35 @@ export default function Category() {
         {
             title: "Rock",
             query: "rock",
-            artwork: rockImage,
         },
         {
             title: "Hits",
             query: "hits",
-            artwork: hitsImage,
         },
         {
             title: "Concert",
             query: "concert",
-            artwork: concertImage,
         },
         {
             title: "Chill",
             query: "chill",
-            artwork: chillImage,
         },
         {
             title: "Charts",
             query: "charts",
-            artwork: chartsImage,
         },
         {
             title: "Hip Hop",
             query: "hiphop",
-            artwork: hipHopImage,
         },
 
         {
             title: "Live",
             query: "live",
-            artwork: liveImage,
         },
         {
             title: "R&B",
             query: "rnb",
-            artwork: rnbImage,
         },
         // {
         //     title: "Pop",
@@ -114,95 +106,77 @@ export default function Category() {
         {
             title: "Gospel",
             query: "gospel",
-            artwork: gospelImage,
         },
         {
             title: "Dance",
             query: "dance",
-            artwork: danceImage,
         },
         {
             title: "Alternative",
             query: "alternative",
-            artwork: alternativeImage,
         },
 
         {
             title: "2010s",
             query: "2010s",
-            artwork: era2010sImage,
         },
         {
             title: "'80s",
             query: "80s",
-            artwork: era80sImage,
         },
         {
             title: "'70s",
             query: "70s",
-            artwork: era70sImage,
         },
         {
             title: "Jazz",
             query: "jazz",
-            artwork: jazzImage,
         },
         {
             title: "Country",
             query: "country",
-            artwork: countryImage,
         },
         {
             title: "Essentials",
             query: "essentials",
-            artwork: essentialsImage,
         },
 
         {
             title: "Chill",
             query: "chill",
-            artwork: chillImage,
         },
         {
             title: "Focus",
             query: "focus",
-            artwork: focusImage,
         },
         {
             title: "Feel Good",
             query: "feelgood",
-            artwork: feelGoodImage,
         },
 
         {
             title: "Love",
             query: "love",
-            artwork: loveImage,
         },
         {
             title: "Party",
             query: "party",
-            artwork: partyImage,
         },
         {
             title: "Soul/Funk",
             query: "soulfunk",
-            artwork: soulImage,
         },
         {
             title: "Oldies",
             query: "oldies",
-            artwork: oldiesImage,
         },
         {
             title: "Reggae",
             query: "reggae",
-            artwork: reggaeImage,
         },
         {
             title: "Rap",
             query: "rap",
-            artwork: rapImage,
         },
     ];
 
