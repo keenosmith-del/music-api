@@ -9,3 +9,23 @@ export async function getUser() {
 
     return await response.json();
 }
+
+export async function toggleFavourite(song) {
+    const response = await fetch(`${API}/favourite`, {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+            song,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error("Unable to update favourite.");
+    }
+
+    return await response.json();
+}

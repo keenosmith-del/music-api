@@ -19,6 +19,11 @@ const playlistSchema = new mongoose.Schema(
             default: "",
         },
 
+        isSystem: {
+            type: Boolean,
+            default: false,
+        },
+
         tracks: [
             {
                 type: mongoose.Schema.Types.ObjectId,

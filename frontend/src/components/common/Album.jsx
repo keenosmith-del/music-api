@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 
 import GlassMenu from "../glass/GlassMenu";
 
+import { toggleFavourite } from "../../services/userService";
+
 import {
     Play,
     Pause,
@@ -54,6 +56,9 @@ export default function Album() {
     }, [id]);
 
     const {
+        user,
+        setUser,
+
         albumCache,
         setAlbumCache,
 
@@ -165,8 +170,28 @@ export default function Album() {
         favourite: i % 2 === 0,
     }));
 
-    const isCurrentTrack = (song) =>
-        currentTrack?.id === song.id;
+    const isCurrentTrack = (song) => currentTrack?.id === song.id;
+
+    const isFavourite = (song) => {
+        if (!song) return false;
+
+        return user?.favourites?.some(
+            (favourite) =>
+                favourite?.deezerId === song.id
+        ) ?? false;
+    };
+
+    const handleToggleFavourite = async (song) => {
+        if (!song || !user) return;
+
+        try {
+            const data = await toggleFavourite(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error("Unable to update favourite:", err);
+        }
+    };
 
     // ellipsis glass menu
     const [openMenuId, setOpenMenuId] = useState(null);
@@ -328,10 +353,19 @@ export default function Album() {
         },
 
         {
-            label: "Favourite",
+            label: isFavourite(selectedSong)
+                ? "Unfavourite"
+                : "Favourite",
+
             icon: <Star size={15} strokeWidth={1.75} />,
-            onClick: () => {
-                // wire later
+
+            onClick: async () => {
+                if (!selectedSong) return;
+
+                await handleToggleFavourite(selectedSong);
+
+                setOpenMenuId(null);
+                setSelectedSong(null);
             },
         },
 
@@ -1097,15 +1131,24 @@ export default function Album() {
                                 </div>
                             )}
 
+                            {/* favourite song */}
                             <Star
                                 size={13}
                                 strokeWidth={1.5}
                                 color={favouriteColor}
                                 fill={
-                                    song.favourite
+                                    isFavourite(song)
                                         ? favouriteColor
                                         : "none"
                                 }
+                                onClick={(e) => {
+                                    e.stopPropagation();
+
+                                    handleToggleFavourite(song);
+                                }}
+                                style={{
+                                    cursor: "pointer",
+                                }}
                             />
                         </div>
 

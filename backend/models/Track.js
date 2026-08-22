@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 
 const trackSchema = new mongoose.Schema(
     {
+
+        deezerId: {
+            type: Number,
+            required: true,
+            unique: true,
+        },
+        
         title: {
             type: String,
             required: true,
