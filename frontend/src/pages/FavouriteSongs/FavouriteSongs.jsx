@@ -9,7 +9,11 @@ import GlassMenu from "../../components/glass/GlassMenu";
 
 import { getPlaylists } from "../../services/playlistService";
 
-import { toggleFavourite } from "../../services/userService";
+import {
+    toggleFavourite,
+    addToLibrary,
+    removeFromLibrary,
+} from "../../services/userService";
 
 import {
     Play,
@@ -17,12 +21,16 @@ import {
     Shuffle,
     Star,
     Plus,
+    Minus,
     Ellipsis,
     Square,
     ListPlus,
     ListStart,
     ListEnd,
     HeartPlus,
+    Pin,
+    UserRound,
+    SquareArrowOutUpRight,
 } from "lucide-react";
 
 export default function FavouriteSongs() {
@@ -89,7 +97,7 @@ export default function FavouriteSongs() {
         }
 
         loadPlaylist();
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         function handleOutsideClick(e) {
@@ -215,6 +223,12 @@ export default function FavouriteSongs() {
     const isCurrentTrack = (song) =>
         currentTrack?._id === song?._id;
 
+    const isInLibrary = (song) =>
+        user?.library?.some(
+            (librarySong) =>
+                librarySong?._id === song?._id
+        ) ?? false;
+
     const playPlaylist = () => {
         if (!tracks.length) return;
 
@@ -294,6 +308,25 @@ export default function FavouriteSongs() {
         }
     };
 
+    const handleToggleLibrary = async (song) => {
+        if (!song || !user) return;
+
+        try {
+            const alreadyInLibrary = isInLibrary(song);
+
+            const data = alreadyInLibrary
+                ? await removeFromLibrary(song)
+                : await addToLibrary(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update library:",
+                err
+            );
+        }
+    };
+
     const menuItems = [
         {
             label:
@@ -346,12 +379,31 @@ export default function FavouriteSongs() {
         "divider",
 
         {
-            label: "Add to Library",
+            label:
+                selectedSong && isInLibrary(selectedSong)
+                    ? "Remove from Library"
+                    : "Add to Library",
 
-            icon: <Plus size={15} strokeWidth={1.75} />,
+            icon:
+                selectedSong && isInLibrary(selectedSong) ? (
+                    <Minus
+                        size={15}
+                        strokeWidth={1.75}
+                    />
+                ) : (
+                    <Plus
+                        size={15}
+                        strokeWidth={1.75}
+                    />
+                ),
 
-            onClick: () => {
-                // wire later
+            onClick: async () => {
+                if (!selectedSong) return;
+
+                await handleToggleLibrary(selectedSong);
+
+                setOpenMenuId(null);
+                setSelectedSong(null);
             },
         },
 
@@ -377,6 +429,16 @@ export default function FavouriteSongs() {
 
                 setOpenMenuId(null);
                 setSelectedSong(null);
+            },
+        },
+
+        {
+            label: "Pin Song",
+
+            icon: <Pin size={15} strokeWidth={1.75} />,
+
+            onClick: () => {
+                // wire later
             },
         },
 
@@ -442,16 +504,30 @@ export default function FavouriteSongs() {
         {
             label: "Go to Album",
 
-            icon: <Plus size={15} strokeWidth={1.75} />,
+            icon: <SquareArrowOutUpRight size={15} strokeWidth={1.75} />,
 
             onClick: () => {
-                // See note below about the album ID.
                 if (!selectedSong?.albumId) return;
 
                 setOpenMenuId(null);
                 setSelectedSong(null);
 
                 navigate(`/album/${selectedSong.albumId}`);
+            },
+        },
+
+        {
+            label: "Go to Artist",
+
+            icon: <UserRound size={15} strokeWidth={1.75} />,
+
+            onClick: () => {
+                if (!selectedSong?.artistId) return;
+
+                setOpenMenuId(null);
+                setSelectedSong(null);
+
+                navigate(`/artist/${selectedSong.artistId}`);
             },
         },
     ];
@@ -880,6 +956,9 @@ export default function FavouriteSongs() {
 
                                         setCurrentTrackIndex(index);
 
+                                        console.log("FAVOURITE SONG BEING PLAYED:", song);
+                                        console.log("PREVIEW URL:", song?.preview);
+
                                         setCurrentTrack(song);
 
                                         setCurrentTime(0);
@@ -1097,20 +1176,38 @@ export default function FavouriteSongs() {
                                     {String(song.duration % 60).padStart(2, "0")}
                                 </div>
 
-                                {/* Add */}
+                                {/* Add to Library */}
                                 <div
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
 
-                                        cursor: "pointer",
+                                        cursor: isInLibrary(song)
+                                            ? "default"
+                                            : "pointer",
 
-                                        transition: "transform 180ms ease",
+                                        opacity: isInLibrary(song)
+                                            ? 0
+                                            : 1,
+
+                                        pointerEvents: isInLibrary(song)
+                                            ? "none"
+                                            : "auto",
+
+                                        transition:
+                                            "opacity 180ms ease, transform 180ms ease",
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        handleToggleLibrary(song);
                                     }}
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform =
-                                            "translateY(-1px)";
+                                        if (!isInLibrary(song)) {
+                                            e.currentTarget.style.transform =
+                                                "translateY(-1px)";
+                                        }
                                     }}
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.transform =
@@ -1162,7 +1259,7 @@ export default function FavouriteSongs() {
                                             const rect =
                                                 e.currentTarget.getBoundingClientRect();
 
-                                            const MENU_HEIGHT = 295;
+                                            const MENU_HEIGHT = 355;
                                             const GAP = 33;
 
                                             if (openMenuId === song._id) {

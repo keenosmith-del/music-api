@@ -1,11 +1,20 @@
 import {
     searchTracks as searchDeezerTracks,
+
+    getTrack as getDeezerTrack,
+
     getAlbumTracks as getDeezerAlbumTracks,
+
     searchTracksByArtist as searchDeezerTracksByArtist,
+
     getCategoryTracks as getDeezerCategoryTracks,
+
     getArtistDetails as getDeezerArtistDetails,
+
     getCategoryArtists as getDeezerCategoryArtists,
+
     getCategoryAlbums as getDeezerCategoryAlbums,
+
     getAutoplaySongs,
 } from "./providers/deezerService.js";
 
@@ -15,6 +24,10 @@ import {
 
 export async function searchTracks(query) {
     return await searchDeezerTracks(query);
+}
+
+export async function getTrack(trackId) {
+    return await getDeezerTrack(trackId);
 }
 
 export async function getAlbumTracks(albumId) {

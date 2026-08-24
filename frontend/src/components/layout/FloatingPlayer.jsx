@@ -22,6 +22,12 @@ import {
     getAutoplay,
 } from "../../services/musicService";
 
+import {
+    toggleFavourite,
+    addToLibrary,
+    removeFromLibrary,
+} from "../../services/userService";
+
 
 import {
     Shuffle,
@@ -37,8 +43,10 @@ import {
     ThumbsDown,
     Star,
     Plus,
+    Minus,
     ListPlus,
     Square,
+    Pin,
 
     UserRound,
     SquareArrowOutUpRight,
@@ -47,6 +55,10 @@ import {
 
 export default function FloatingPlayer({
     signedIn,
+
+    user,
+    setUser,
+
 
     hasTrack,
     setHasTrack,
@@ -103,6 +115,118 @@ export default function FloatingPlayer({
     const navigate = useNavigate();
 
     const controlsEnabled = signedIn && hasTrack;
+
+    const isFavourite = (song) => {
+        if (!song) return false;
+
+        return (
+            user?.favourites?.some(
+                (favourite) =>
+                    favourite?.deezerId === song.deezerId ||
+                    favourite?.deezerId === song.id
+            ) ?? false
+        );
+    };
+
+    const isInLibrary = (song) => {
+        if (!song) return false;
+
+        return (
+            user?.library?.some(
+                (librarySong) =>
+                    librarySong?._id === song?._id ||
+                    librarySong?.deezerId === song?.deezerId ||
+                    librarySong?.deezerId === song?.id
+            ) ?? false
+        );
+    };
+
+    const handleToggleFavourite = async () => {
+        if (!currentTrack || !user) return;
+
+        try {
+            const song = {
+                id: currentTrack.deezerId || currentTrack.id,
+
+                deezerId:
+                    currentTrack.deezerId ||
+                    currentTrack.id,
+
+                title: currentTrack.title,
+
+                artist: currentTrack.artist,
+                artistId: currentTrack.artistId,
+
+                album: currentTrack.album,
+                albumId: currentTrack.albumId,
+
+                artwork: currentTrack.artwork,
+
+                duration: currentTrack.duration,
+
+                preview: currentTrack.preview,
+
+                explicit:
+                    currentTrack.explicit ?? false,
+            };
+
+            const data = await toggleFavourite(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update favourite:",
+                err
+            );
+        }
+    };
+
+    const handleToggleLibrary = async () => {
+        if (!currentTrack || !user) return;
+
+        try {
+            const song = {
+                id: currentTrack.deezerId || currentTrack.id,
+
+                deezerId:
+                    currentTrack.deezerId ||
+                    currentTrack.id,
+
+                title: currentTrack.title,
+
+                artist: currentTrack.artist,
+                artistId: currentTrack.artistId,
+
+                album: currentTrack.album,
+                albumId: currentTrack.albumId,
+
+                artwork: currentTrack.artwork,
+
+                duration: currentTrack.duration,
+
+                preview: currentTrack.preview,
+
+                explicit:
+                    currentTrack.explicit ?? false,
+            };
+
+            const data = isInLibrary(currentTrack)
+                ? await removeFromLibrary(song)
+                : await addToLibrary(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update library:",
+                err
+            );
+        }
+    };
+
+    const favouriteColor =
+        theme.mode === "dark"
+            ? "#cd3328"
+            : "#e31515";
 
     // volume states
     const [volumeExpanded, setVolumeExpanded] = useState(false);
@@ -465,16 +589,59 @@ export default function FloatingPlayer({
         },
         "divider",
         {
-            label: "Add to Library",
-            icon: <Plus size={15} strokeWidth={1.75} />,
+            label: isInLibrary(currentTrack)
+                ? "Remove from Library"
+                : "Add to Library",
+
+            icon: isInLibrary(currentTrack) ? (
+                <Minus
+                    size={15}
+                    strokeWidth={1.75}
+                />
+            ) : (
+                <Plus
+                    size={15}
+                    strokeWidth={1.75}
+                />
+            ),
+
+            onClick: async () => {
+                await handleToggleLibrary();
+
+                setMenuOpen(false);
+            },
         },
         {
             label: "Add to Playlist",
             icon: <ListPlus size={15} strokeWidth={1.75} />,
         },
         {
-            label: "Favourite",
-            icon: <Star size={15} strokeWidth={1.75} />,
+            label: isFavourite(currentTrack)
+                ? "Unfavourite"
+                : "Favourite",
+
+            icon: (
+                <Star
+                    size={15}
+                    strokeWidth={1.75}
+                    color={favouriteColor}
+                    fill={
+                        isFavourite(currentTrack)
+                            ? favouriteColor
+                            : "none"
+                    }
+                />
+            ),
+
+            onClick: async () => {
+                await handleToggleFavourite();
+
+                setMenuOpen(false);
+            },
+        },
+        {
+            label: "Pin Song",
+            icon: <Pin size={15} strokeWidth={1.75} />,
         },
         "divider",
         {
@@ -919,6 +1086,7 @@ export default function FloatingPlayer({
                             }}
                         />
                     ) : (
+
                         <div
                             style={{
                                 flex: "0 0 260px",
@@ -1043,6 +1211,26 @@ export default function FloatingPlayer({
                                         {currentTrack?.title}
                                     </div>
                                 </div>
+
+                                {/* favourite song */}
+                                <Star
+                                    size={13}
+                                    strokeWidth={1.5}
+                                    color={favouriteColor}
+                                    fill={
+                                        isFavourite(currentTrack)
+                                            ? favouriteColor
+                                            : "none"
+                                    }
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        handleToggleFavourite();
+                                    }}
+                                    style={{
+                                        cursor: "pointer",
+                                    }}
+                                />
                             </div>
 
                             {/* bottom row slider time duration */}
@@ -1133,6 +1321,8 @@ export default function FloatingPlayer({
 
                         </div>
                     )}
+                    {/* ADD FAVOURITE / UNFAVOURITE SONG FLOW SOMEWHERE BEFORE RIGHT CONTROLS */}
+                    {/* CLAMP TITLE AND MAKE STAR APPEAR TO THE RIGHT OF CANTER CONTROLS */}
 
                     {/* RIGHT CONTROLS */}
                     <div

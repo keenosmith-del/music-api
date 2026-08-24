@@ -18,6 +18,12 @@ import GlassSlideout from "../glass/GlassSlideout";
 import { useNavigate } from "react-router-dom";
 
 import {
+    toggleFavourite,
+    addToLibrary,
+    removeFromLibrary,
+} from "../../services/userService";
+
+import {
     Shuffle,
     Repeat,
     Repeat1,
@@ -31,16 +37,21 @@ import {
     ThumbsDown,
     Star,
     Plus,
+    Minus,
     ListPlus,
     Square,
     SquareArrowOutUpRight,
     UserRound,
     HeartPlus,
+    Pin,
 } from "lucide-react";
 
 export default function ExpandedPlayer({
     open,
     onClose,
+
+    user,
+    setUser,
 
     volume,
     setVolume,
@@ -100,6 +111,113 @@ export default function ExpandedPlayer({
         theme.mode === "dark"
             ? "#cd3328"
             : "#e31515";
+
+    const isFavourite = (song) => {
+        if (!song) return false;
+
+        return (
+            user?.favourites?.some(
+                (favourite) =>
+                    favourite?.deezerId === song.deezerId ||
+                    favourite?.deezerId === song.id
+            ) ?? false
+        );
+    };
+
+    const isInLibrary = (song) => {
+        if (!song) return false;
+
+        return (
+            user?.library?.some(
+                (librarySong) =>
+                    librarySong?._id === song?._id ||
+                    librarySong?.deezerId === song?.deezerId ||
+                    librarySong?.deezerId === song?.id
+            ) ?? false
+        );
+    };
+
+    const handleToggleFavourite = async () => {
+        if (!currentTrack || !user) return;
+
+        try {
+            const song = {
+                id: currentTrack.deezerId || currentTrack.id,
+
+                deezerId:
+                    currentTrack.deezerId ||
+                    currentTrack.id,
+
+                title: currentTrack.title,
+
+                artist: currentTrack.artist,
+                artistId: currentTrack.artistId,
+
+                album: currentTrack.album,
+                albumId: currentTrack.albumId,
+
+                artwork: currentTrack.artwork,
+
+                duration: currentTrack.duration,
+
+                preview: currentTrack.preview,
+
+                explicit:
+                    currentTrack.explicit ?? false,
+            };
+
+            const data = await toggleFavourite(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update favourite:",
+                err
+            );
+        }
+    };
+
+    const handleToggleLibrary = async () => {
+        if (!currentTrack || !user) return;
+
+        try {
+            const song = {
+                id: currentTrack.deezerId || currentTrack.id,
+
+                deezerId:
+                    currentTrack.deezerId ||
+                    currentTrack.id,
+
+                title: currentTrack.title,
+
+                artist: currentTrack.artist,
+                artistId: currentTrack.artistId,
+
+                album: currentTrack.album,
+                albumId: currentTrack.albumId,
+
+                artwork: currentTrack.artwork,
+
+                duration: currentTrack.duration,
+
+                preview: currentTrack.preview,
+
+                explicit:
+                    currentTrack.explicit ?? false,
+            };
+
+            const data = isInLibrary(currentTrack)
+                ? await removeFromLibrary(song)
+                : await addToLibrary(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update library:",
+                err
+            );
+        }
+    };
 
     const progressRef = useRef(null);
 
@@ -261,16 +379,65 @@ export default function ExpandedPlayer({
         },
         "divider",
         {
-            label: "Add to Library",
-            icon: <Plus size={15} strokeWidth={1.75} />,
+            label: isInLibrary(currentTrack)
+                ? "Remove from Library"
+                : "Add to Library",
+
+            icon: isInLibrary(currentTrack) ? (
+                <Minus
+                    size={15}
+                    strokeWidth={1.75}
+                />
+            ) : (
+                <Plus
+                    size={15}
+                    strokeWidth={1.75}
+                />
+            ),
+
+            onClick: async () => {
+                await handleToggleLibrary();
+
+                setMenuOpen(false);
+            },
         },
         {
             label: "Add to Playlist",
             icon: <ListPlus size={15} strokeWidth={1.75} />,
         },
         {
-            label: "Favourite",
-            icon: <Star size={15} strokeWidth={1.75} />,
+            label: isFavourite(currentTrack)
+                ? "Unfavourite"
+                : "Favourite",
+
+            icon: (
+                <Star
+                    size={15}
+                    strokeWidth={1.75}
+                    fill={
+                        isFavourite(currentTrack)
+                            ? favouriteColor
+                            : "none"
+                    }
+                    color={
+                        isFavourite(currentTrack)
+                            ? favouriteColor
+                            : theme.colors.textSecondary
+                    }
+                />
+            ),
+
+            onClick: async () => {
+                if (!currentTrack || !user) return;
+
+                await handleToggleFavourite();
+
+                setMenuOpen(false);
+            },
+        },
+        {
+            label: "Pin Song",
+            icon: <Pin size={15} strokeWidth={1.75} />,
         },
         "divider",
         {
@@ -716,10 +883,19 @@ export default function ExpandedPlayer({
                                     size={17}
                                     strokeWidth={1.6}
                                     color={favouriteColor}
-                                    fill={favouriteColor}
+                                    fill={
+                                        isFavourite(currentTrack)
+                                            ? favouriteColor
+                                            : "none"
+                                    }
                                     style={{
                                         cursor: "pointer",
                                         transition: "transform 180ms ease",
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        handleToggleFavourite();
                                     }}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.transform = "translateY(-1px)";
@@ -745,7 +921,7 @@ export default function ExpandedPlayer({
                                         onClick={() => {
                                             if (!menuOpen && ellipsisRef.current) {
                                                 const MENU_WIDTH = 230;
-                                                const MENU_HEIGHT = 295;
+                                                const MENU_HEIGHT = 325;
                                                 const GAP = 33;
 
                                                 const rect = ellipsisRef.current.getBoundingClientRect();

@@ -10,7 +10,11 @@ import { useNavigate } from "react-router-dom";
 
 import GlassMenu from "../glass/GlassMenu";
 
-import { toggleFavourite } from "../../services/userService";
+import {
+    toggleFavourite,
+    addToLibrary,
+    removeFromLibrary,
+} from "../../services/userService";
 
 import {
     Play,
@@ -19,6 +23,7 @@ import {
     Star,
     Ellipsis,
     Plus,
+    Minus,
     AudioLines,
     Square,
     ThumbsDown,
@@ -181,6 +186,17 @@ export default function Album() {
         ) ?? false;
     };
 
+    const isInLibrary = (song) => {
+        if (!song) return false;
+
+        return (
+            user?.library?.some(
+                (librarySong) =>
+                    librarySong?.deezerId === song.id
+            ) ?? false
+        );
+    };
+
     const handleToggleFavourite = async (song) => {
         if (!song || !user) return;
 
@@ -190,6 +206,24 @@ export default function Album() {
             setUser(data.user);
         } catch (err) {
             console.error("Unable to update favourite:", err);
+        }
+    };
+
+    // add / remove from library
+    const handleToggleLibrary = async (song) => {
+        if (!song || !user) return;
+
+        try {
+            const data = isInLibrary(song)
+                ? await removeFromLibrary(song)
+                : await addToLibrary(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update library:",
+                err
+            );
         }
     };
 
@@ -337,10 +371,31 @@ export default function Album() {
         "divider",
 
         {
-            label: "Add to Library",
-            icon: <Plus size={15} strokeWidth={1.75} />,
-            onClick: () => {
-                // wire later
+            label:
+                selectedSong && isInLibrary(selectedSong)
+                    ? "Remove from Library"
+                    : "Add to Library",
+
+            icon:
+                selectedSong && isInLibrary(selectedSong) ? (
+                    <Minus
+                        size={15}
+                        strokeWidth={1.75}
+                    />
+                ) : (
+                    <Plus
+                        size={15}
+                        strokeWidth={1.75}
+                    />
+                ),
+
+            onClick: async () => {
+                if (!selectedSong) return;
+
+                await handleToggleLibrary(selectedSong);
+
+                setOpenMenuId(null);
+                setSelectedSong(null);
             },
         },
 
@@ -1179,20 +1234,38 @@ export default function Album() {
                             {String(song.duration % 60).padStart(2, "0")}
                         </div>
 
-                        {/* Add */}
+                        {/* Add to Library */}
                         <div
                             style={{
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
 
-                                cursor: "pointer",
+                                cursor: isInLibrary(song)
+                                    ? "default"
+                                    : "pointer",
 
-                                transition: "transform 180ms ease",
+                                opacity: isInLibrary(song)
+                                    ? 0
+                                    : 1,
+
+                                pointerEvents: isInLibrary(song)
+                                    ? "none"
+                                    : "auto",
+
+                                transition:
+                                    "opacity 180ms ease, transform 180ms ease",
+                            }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+
+                                handleToggleLibrary(song);
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.transform =
-                                    "translateY(-1px)";
+                                if (!isInLibrary(song)) {
+                                    e.currentTarget.style.transform =
+                                        "translateY(-1px)";
+                                }
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.transform =

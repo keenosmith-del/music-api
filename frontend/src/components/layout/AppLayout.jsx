@@ -790,6 +790,9 @@ export default function AppLayout({
                         React.cloneElement(player, {
                             signedIn,
 
+                            user,
+                            setUser,
+
                             hasTrack,
                             setHasTrack,
 
@@ -847,6 +850,9 @@ export default function AppLayout({
                     <ExpandedPlayer
                         open={expandedPlayerOpen}
                         onClose={() => setExpandedPlayerOpen(false)}
+
+                        user={user}
+                        setUser={setUser}
 
                         volume={volume}
                         setVolume={setVolume}

@@ -24,6 +24,39 @@ export async function searchTracks(query) {
     }));
 }
 
+export async function getTrack(trackId) {
+    const response = await axios.get(
+        `https://api.deezer.com/track/${trackId}`
+    );
+
+    const track = response.data;
+
+    return {
+        id: track.id,
+
+        artistId: track.artist.id,
+
+        albumId: track.album.id,
+
+        title: track.title,
+
+        artist: track.artist.name,
+
+        album: track.album.title,
+
+        artwork: track.album.cover_big,
+
+        duration: track.duration,
+
+        preview: track.preview,
+
+        explicit:
+            track.explicit_lyrics ??
+            track.explicit ??
+            false,
+    };
+}
+
 export async function searchMusic(query) {
     const term = query.trim().toLowerCase();
 

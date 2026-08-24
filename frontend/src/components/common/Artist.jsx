@@ -4,6 +4,8 @@ import { useApp } from "../../context/AppContext";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { toggleFavourite } from "../../services/userService";
+
 import {
     getArtistInfo,
     getAlbum,
@@ -67,6 +69,9 @@ export default function Artist() {
     ).sort((a, b) => Number(b.year) - Number(a.year));
 
     const {
+        user,
+        setUser,
+
         setCurrentTime,
         setHasTrack,
         setIsPlaying,
@@ -90,6 +95,32 @@ export default function Artist() {
 
     const isCurrentTrack = (song) =>
         currentTrack?.id === song.id;
+
+    const isFavourite = (song) => {
+        if (!song) return false;
+
+        return (
+            user?.favourites?.some(
+                (favourite) =>
+                    favourite?.deezerId === song.id
+            ) ?? false
+        );
+    };
+
+    const handleToggleFavourite = async (song) => {
+        if (!song || !user) return;
+
+        try {
+            const data = await toggleFavourite(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update favourite:",
+                err
+            );
+        }
+    };
 
     const latestAlbum = artist?.latestAlbum;
 
@@ -783,7 +814,16 @@ export default function Artist() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill="none"
+                                    fill={
+                                        isFavourite(song)
+                                            ? favouriteColor
+                                            : "none"
+                                    }
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        handleToggleFavourite(song);
+                                    }}
                                     style={{
                                         cursor: "pointer",
                                     }}

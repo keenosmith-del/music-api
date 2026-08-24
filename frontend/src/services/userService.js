@@ -29,3 +29,43 @@ export async function toggleFavourite(song) {
 
     return await response.json();
 }
+
+export async function addToLibrary(song) {
+    const response = await fetch(`${API}/library`, {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+            song,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error("Unable to add song to library.");
+    }
+
+    return await response.json();
+}
+
+export async function removeFromLibrary(song) {
+    const response = await fetch(`${API}/library`, {
+        method: "DELETE",
+
+        headers: {
+            "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+            song,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error("Unable to remove song from library.");
+    }
+
+    return await response.json();
+}

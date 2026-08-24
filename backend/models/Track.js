@@ -8,7 +8,17 @@ const trackSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-        
+
+        albumId: {
+            type: Number,
+            default: null,
+        },
+
+        artistId: {
+            type: Number,
+            default: null,
+        },
+
         title: {
             type: String,
             required: true,
@@ -28,6 +38,11 @@ const trackSchema = new mongoose.Schema(
         },
 
         artwork: {
+            type: String,
+            default: "",
+        },
+
+        preview: {
             type: String,
             default: "",
         },

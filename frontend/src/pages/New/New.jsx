@@ -6,6 +6,8 @@ import { getNew } from "../../services/newService";
 import { getAlbum } from "../../services/musicService";
 import { useNavigate } from "react-router-dom";
 
+import { toggleFavourite as toggleFavouriteService } from "../../services/userService";
+
 import React from "react";
 
 import {
@@ -20,11 +22,12 @@ export default function New() {
 
     const [newData, setNewData] = useState(null);
 
-    const [favourites, setFavourites] = useState(new Set());
-
     const {
         signedIn,
         setSignedIn,
+
+        user,
+        setUser,
 
         newCache,
         setNewCache,
@@ -79,21 +82,6 @@ export default function New() {
         loadNew();
     }, [newCache, setNewCache]);
 
-    // toggle star handler
-    const toggleFavourite = (id) => {
-        setFavourites((prev) => {
-            const next = new Set(prev);
-
-            if (next.has(id)) {
-                next.delete(id);
-            } else {
-                next.add(id);
-            }
-
-            return next;
-        });
-    };
-
     const navigate = useNavigate();
 
     const newAlbums =
@@ -107,6 +95,32 @@ export default function New() {
 
     const recentReleases =
         newData?.recentReleases || [];
+
+    const isFavourite = (song) => {
+        if (!song) return false;
+
+        return (
+            user?.favourites?.some(
+                (favourite) =>
+                    favourite?.deezerId === song.id
+            ) ?? false
+        );
+    };
+
+    const handleToggleFavourite = async (song) => {
+        if (!song || !user) return;
+
+        try {
+            const data = await toggleFavouriteService(song);
+
+            setUser(data.user);
+        } catch (err) {
+            console.error(
+                "Unable to update favourite:",
+                err
+            );
+        }
+    };
 
     return (
         <div
@@ -366,7 +380,6 @@ export default function New() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill={favourites.has(id) ? favouriteColor : "none"}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         toggleFavourite(id);
@@ -520,10 +533,10 @@ export default function New() {
                                         e.stopPropagation();
 
                                         try {
-                                            const album = await getAlbum(song.albumId);
+                                            const album = await getAlbum(albumId);
 
                                             const trackIndex = album.tracks.findIndex(
-                                                (track) => track.id === song.id
+                                                (track) => track.id === id
                                             );
 
                                             const startIndex =
@@ -535,9 +548,7 @@ export default function New() {
 
                                             setCurrentTrackIndex(startIndex);
 
-                                            setCurrentTrack(
-                                                album.tracks[startIndex]
-                                            );
+                                            setCurrentTrack(album.tracks[startIndex]);
 
                                             setCurrentTime(0);
 
@@ -652,11 +663,27 @@ export default function New() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill={favourites.has(id) ? favouriteColor : "none"}
-                                    onClick={(e) => {
+
+                                    fill={
+                                        isFavourite({
+                                            id,
+                                        })
+                                            ? favouriteColor
+                                            : "none"
+                                    }
+
+                                    onClick={async (e) => {
                                         e.stopPropagation();
-                                        toggleFavourite(id);
+
+                                        const song = newSongs.find(
+                                            (track) => track.id === id
+                                        );
+
+                                        if (!song) return;
+
+                                        await handleToggleFavourite(song);
                                     }}
+
                                     style={{
                                         cursor: "pointer",
                                         transition: "all 180ms ease",
@@ -929,7 +956,6 @@ export default function New() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill={favourites.has(id) ? favouriteColor : "none"}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         toggleFavourite(id);
@@ -1206,7 +1232,6 @@ export default function New() {
                                     size={13}
                                     strokeWidth={1.5}
                                     color={favouriteColor}
-                                    fill={favourites.has(id) ? favouriteColor : "none"}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         toggleFavourite(id);
