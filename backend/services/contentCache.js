@@ -7,7 +7,7 @@ export function getCached(key) {
         return null;
     }
 
-    if (Date.now() > entry.expiresAt) {
+    if (Date.now() >= entry.expiresAt) {
         cache.delete(key);
         return null;
     }
