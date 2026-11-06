@@ -52,6 +52,13 @@ The application integrates with external music APIs to provide real-time artist,
 
 ---
 
+## Backend tests
+
+Run `cd backend && npm test` with Node.js 22 or later. The tests use Node's
+built-in test runner and require no database, API credentials, or dependency
+installation. Cache tests control the clock to cover expiry boundaries,
+replacement, and invalidation without real-time waits.
+
 ## Tech Stack
 
 ### Frontend
