@@ -54,10 +54,33 @@ The application integrates with external music APIs to provide real-time artist,
 
 ## Backend tests
 
-Run `cd backend && npm test` with Node.js 22 or later. The tests use Node's
-built-in test runner and require no database, API credentials, or dependency
-installation. Cache tests control the clock to cover expiry boundaries,
-replacement, and invalidation without real-time waits.
+Use Node.js 22 or later and install the locked backend dependencies:
+
+```sh
+cd backend
+npm ci --ignore-scripts
+npm test
+```
+
+The suite uses Node's built-in test runner. It requires no database, API
+credentials, app startup or live music/RSS requests. Dependency installation
+requires package access. Cache tests control the clock; podcast-provider tests
+stub HTTP and feed fetching, with an in-memory XML fixture exercising the real
+RSS parser. They cover request parameters, metadata/artwork mapping, playable
+queues, missing results and error propagation.
+
+Episode explicit labels preserve affirmative `itunes:explicit` values (`true`,
+`yes` or `explicit`, case-insensitive). Episode values override the show's flag;
+missing episode flags inherit show metadata, and absent metadata defaults to
+false. This supplies the existing player's explicit indicator without changing
+playback controls. See [Apple's explicit-tag guidance](https://podcasters.apple.com/support/5440-explicit-content).
+
+To run only the dependency-free cache tests without installing packages:
+
+```sh
+cd backend
+node --test tests/contentCache.test.js
+```
 
 ## Tech Stack
 
