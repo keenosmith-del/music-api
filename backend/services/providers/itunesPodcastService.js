@@ -59,7 +59,9 @@ export async function getPodcastEpisodes(feedUrl) {
 
             duration: 0,
 
-            explicit: false,
+            explicit: /^(true|yes|explicit)$/i.test(
+                String(item.itunes?.explicit ?? feed.itunes?.explicit ?? "").trim()
+            ),
         }));
 
     return {
